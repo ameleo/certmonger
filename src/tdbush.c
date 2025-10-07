@@ -8086,7 +8086,6 @@ cm_tdbush_handle_method_call(DBusConnection *conn, DBusMessage *msg,
 	struct cm_tdbush_interface *iface;
 	struct cm_tdbush_interface_item *item;
 	struct cm_tdbush_method *meth;
-	struct cm_client_info self;
 	unsigned int i;
 
 	memset(&pending, 0, sizeof(pending));
@@ -8126,6 +8125,7 @@ cm_tdbush_handle_method_call(DBusConnection *conn, DBusMessage *msg,
 
 			/* "private": no bus daemon, so identify the client */
 			if (bus == cm_tdbus_private) {
+				struct cm_client_info self;
 				/* just run the method */
 				if (cm_tdbush_read_conn_id(conn,
 							   &pending.cm_uid,
@@ -8140,6 +8140,8 @@ cm_tdbush_handle_method_call(DBusConnection *conn, DBusMessage *msg,
 						       "not the same as ours, "
 						       "ignoring.\n");
 					} else {
+						self.uid = pending.cm_uid;
+						self.pid = pending.cm_pid;
 						cm_log(4, "User ID %lu PID %lu "
 						       "called %s:%s.%s.\n",
 						       (unsigned long) pending.cm_uid,
