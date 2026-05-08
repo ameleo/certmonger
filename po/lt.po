@@ -4,22 +4,23 @@
 #
 # Translators:
 # FULL NAME <EMAIL@ADDRESS>, 2014
+# Marija Grineviciute <marijagrine@protonmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2015-01-05 05:53-0500\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
-"Language-Team: Lithuanian (http://www.transifex.com/projects/p/certmonger/"
-"language/lt/)\n"
+"PO-Revision-Date: 2026-03-17 20:58+0000\n"
+"Last-Translator: Marija Grineviciute <marijagrine@protonmail.com>\n"
+"Language-Team: Lithuanian <https://translate.fedoraproject.org/projects/"
+"certmonger/master/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Zanata 3.9.6\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"(n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -33,14 +34,14 @@ msgid "Unable to determine hostname of CA.\n"
 msgstr "Nepavyko nustatyti LĮ serverio.\n"
 
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr "Nepavyko perskaityti pasirašymo užklausos.\n"
+msgstr "Nepavyko perskaityti pasirašymo užklausos iš „%s“ failo.\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr "Nepavyko perskaityti pasirašymo užklausos.\n"
+msgstr "Nepavyko perskaityti pasirašymo užklausos iš „%s“ aplinkos kintamojo.\n"
 
 #: src/certmaster.c:184
 #, c-format
@@ -65,7 +66,7 @@ msgstr "Serverio klaida.\n"
 #: src/dogtag.c:226
 #, c-format
 msgid "Profile params (-O) must be in the form of param=value.\n"
-msgstr ""
+msgstr "Profilio parametrais (-O) privalo būti param=value forma.\n"
 
 #: src/dogtag.c:249
 #, c-format
@@ -129,23 +130,23 @@ msgstr "Vidinė klaida: nėra atsakymo į „%s?%s“.\n"
 
 #: src/getcert.c:61 src/main.c:84 src/main.c:86
 msgid "COMMAND"
-msgstr ""
+msgstr "KOMANDA"
 
 #: src/getcert.c:62
 msgid "DIRECTORY"
-msgstr ""
+msgstr "KATALOGAS"
 
 #: src/getcert.c:63 src/getcert.c:70
 msgid "LIST"
-msgstr ""
+msgstr "SĄRAŠAS"
 
 #: src/getcert.c:64 src/getcert.c:68
 msgid "ADDRESS"
-msgstr ""
+msgstr "ADRESAS"
 
 #: src/getcert.c:65 src/main.c:87
 msgid "FILENAME"
-msgstr ""
+msgstr "FAILO PAVADINIMAS"
 
 #: src/getcert.c:66
 msgid "HOSTNAME"
@@ -153,35 +154,35 @@ msgstr ""
 
 #: src/getcert.c:67
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/getcert.c:69
 msgid "BITS"
-msgstr ""
+msgstr "BITAI"
 
 #: src/getcert.c:71
 msgid "MODE"
-msgstr ""
+msgstr "REŽIMAS"
 
 #: src/getcert.c:72
 msgid "NAME"
-msgstr ""
+msgstr "PAVADINIMAS"
 
 #: src/getcert.c:73
 msgid "PRINCIPAL"
-msgstr ""
+msgstr "PAGRINDINIS"
 
 #: src/getcert.c:74
 msgid "SUBJECT"
-msgstr ""
+msgstr "TEMA"
 
 #: src/getcert.c:75
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/getcert.c:76
 msgid "USERNAME[:GROUPNAME]"
-msgstr ""
+msgstr "NAUDOTOJOVARDAS[:GRUPĖSPAVADINIMAS]"
 
 #: src/getcert.c:115
 #, c-format
@@ -200,7 +201,7 @@ msgstr ""
 #: src/getcert.c:142
 #, c-format
 msgid "Path \"%s\": insufficient permissions.\n"
-msgstr ""
+msgstr "Kelias „%s“: nepakankami leidimai.\n"
 
 #: src/getcert.c:148
 #, c-format
