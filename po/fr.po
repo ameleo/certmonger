@@ -11,13 +11,14 @@
 # Natacha Rault <n.rault@me.com>, 2021.
 # Sakitou Kit <sakitou@duck.com>, 2024.
 # Antoine BACK <antoine.back@hotmail.fr>, 2024.
+# William Oprandi <william.oprandi@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2024-08-11 15:39+0000\n"
-"Last-Translator: Antoine BACK <antoine.back@hotmail.fr>\n"
+"PO-Revision-Date: 2026-03-21 14:58+0000\n"
+"Last-Translator: William Oprandi <william.oprandi@gmail.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/"
 "certmonger/master/fr/>\n"
 "Language: fr\n"
@@ -25,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.6.2\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -40,14 +41,16 @@ msgstr ""
 "Impossible de déterminer le nom d'hôte de l'autorité de certification.\n"
 
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr "Impossible de lire la signature de la demande.\n"
+msgstr "Impossible de lire la demande de signature du fichier « %s ».\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr "Impossible de lire la signature de la demande.\n"
+msgstr ""
+"Impossible de lire la demande de signature depuis la variable "
+"d'environnement « %s ».\n"
 
 #: src/certmaster.c:184
 #, c-format
