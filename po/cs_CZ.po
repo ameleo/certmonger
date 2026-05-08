@@ -5,13 +5,14 @@
 # Translators:
 # Milan Kerslager <milan.kerslager@pslib.cz>, 2011
 # Eliska Oplistilova <eliska.oplistilova@gmail.com>, 2023.
+# Jan Kalabza <jan.kalabza@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2023-05-10 19:20+0000\n"
-"Last-Translator: Eliska Oplistilova <eliska.oplistilova@gmail.com>\n"
+"PO-Revision-Date: 2025-03-02 04:05+0000\n"
+"Last-Translator: Jan Kalabza <jan.kalabza@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/"
 "certmonger/master/cs/>\n"
 "Language: cs_CZ\n"
@@ -19,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.10.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -35,12 +36,12 @@ msgstr "Nelze určit hostitele CA.\n"
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
 #, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr ""
+msgstr "Nelze přečíst požadavek na podepsání ze souboru \"%s\".\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
 #, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr ""
+msgstr "Nelze načíst požadavek na podepsání z proměnné prostředí \"%s\".\n"
 
 #: src/certmaster.c:184
 #, c-format
@@ -105,7 +106,7 @@ msgstr ""
 #: src/dogtag.c:487 src/dogtag.c:777
 #, c-format
 msgid "Internal error: unknown state.\n"
-msgstr ""
+msgstr "Interní chyba: neznámý stav.\n"
 
 #: src/dogtag.c:600
 #, c-format
@@ -115,45 +116,45 @@ msgstr ""
 #: src/dogtag.c:757 src/scep.c:619
 #, c-format
 msgid "Error %d connecting to %s: %s.\n"
-msgstr ""
+msgstr "Chyba %d při připojení k %s: %s.\n"
 
 #: src/dogtag.c:762 src/scep.c:624
 #, c-format
 msgid "Error %d connecting to %s.\n"
-msgstr ""
+msgstr "Chyba %d při připojení k %s.\n"
 
 #: src/dogtag.c:770 src/scep.c:648
 #, c-format
 msgid "Internal error: no response to \"%s?%s\".\n"
-msgstr ""
+msgstr "Interní chyba: žádná odpověď na „%s?%s“.\n"
 
 #: src/getcert.c:61 src/main.c:84 src/main.c:86
 msgid "COMMAND"
-msgstr ""
+msgstr "PŘÍKAZ"
 
 #: src/getcert.c:62
 msgid "DIRECTORY"
-msgstr ""
+msgstr "ADRESÁŘ"
 
 #: src/getcert.c:63 src/getcert.c:70
 msgid "LIST"
-msgstr ""
+msgstr "SEZNAM"
 
 #: src/getcert.c:64 src/getcert.c:68
 msgid "ADDRESS"
-msgstr ""
+msgstr "ADRESA"
 
 #: src/getcert.c:65 src/main.c:87
 msgid "FILENAME"
-msgstr ""
+msgstr "JMÉNO SOUBORU"
 
 #: src/getcert.c:66
 msgid "HOSTNAME"
-msgstr ""
+msgstr "JMÉNO HOSTA"
 
 #: src/getcert.c:67
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/getcert.c:69
 msgid "BITS"
@@ -161,11 +162,11 @@ msgstr ""
 
 #: src/getcert.c:71
 msgid "MODE"
-msgstr ""
+msgstr "MÓD"
 
 #: src/getcert.c:72
 msgid "NAME"
-msgstr ""
+msgstr "NÁZEV"
 
 #: src/getcert.c:73
 msgid "PRINCIPAL"
@@ -177,7 +178,7 @@ msgstr ""
 
 #: src/getcert.c:75
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/getcert.c:76
 msgid "USERNAME[:GROUPNAME]"
@@ -198,7 +199,7 @@ msgstr ""
 #: src/getcert.c:142
 #, c-format
 msgid "Path \"%s\": insufficient permissions.\n"
-msgstr ""
+msgstr "Cesta „%s“: nedostatečná oprávnění.\n"
 
 #: src/getcert.c:148
 #, c-format
@@ -208,12 +209,12 @@ msgstr ""
 #: src/getcert.c:154
 #, c-format
 msgid "Path \"%s\": %s.\n"
-msgstr ""
+msgstr "Cesta \"%s\": %s.\n"
 
 #: src/getcert.c:194
 #, c-format
 msgid "Path \"%s\" is not a regular file.\n"
-msgstr ""
+msgstr "Soubor %s není obyčejný soubor.\n"
 
 #: src/getcert.c:340
 #, c-format
@@ -231,9 +232,9 @@ msgid "Launching temporary dedicated service daemon.\n"
 msgstr ""
 
 #: src/getcert.c:371
-#, fuzzy, c-format
+#, c-format
 msgid "Error connecting to D-Bus.\n"
-msgstr "Chyba při připojování k D-Bus.\n"
+msgstr "Chyba připojování k D-Bus.\n"
 
 #: src/getcert.c:372 src/tdbusm.c:2166
 #, c-format
@@ -248,17 +249,16 @@ msgstr ""
 #: src/getcert.c:393
 #, c-format
 msgid "missing argument for %s"
-msgstr ""
+msgstr "chybějící argument pro %s"
 
 #: src/getcert.c:398
-#, fuzzy
 msgid "missing argument"
-msgstr "Chyba při pasování odpovědi serveru.\n"
+msgstr "chybí argument"
 
 #: src/getcert.c:401
 #, c-format
 msgid "unrecognized option %s"
-msgstr ""
+msgstr "nerozpoznaná možnost %s"
 
 #: src/getcert.c:406
 msgid "unrecognized option"
@@ -266,7 +266,7 @@ msgstr ""
 
 #: src/getcert.c:409
 msgid "aliases nested too deeply"
-msgstr ""
+msgstr "příliš hluboko vnořené aliasy"
 
 #: src/getcert.c:412
 msgid "bad parameter quoting"
@@ -274,24 +274,23 @@ msgstr ""
 
 #: src/getcert.c:418
 msgid "invalid numeric value"
-msgstr ""
+msgstr "chybná číselná hodnota"
 
 #: src/getcert.c:421
 msgid "number too large or too small"
-msgstr ""
+msgstr "číslo je příliš velké nebo příliš malé"
 
 #: src/getcert.c:424
 msgid "bad operation"
 msgstr ""
 
 #: src/getcert.c:427
-#, fuzzy
 msgid "internal error"
-msgstr "Chyba serveru.\n"
+msgstr "vnitřní chyba"
 
 #: src/getcert.c:430
 msgid "out of memory"
-msgstr ""
+msgstr "nedostatek paměti"
 
 #: src/getcert.c:434
 msgid "error in popt configuration file"
@@ -806,7 +805,7 @@ msgstr ""
 
 #: src/getcert.c:3652
 msgid "NONE"
-msgstr ""
+msgstr "NONE"
 
 #: src/getcert.c:3654
 #, c-format
@@ -886,7 +885,7 @@ msgstr ""
 
 #: src/getcert.c:3756
 msgid "\tIP address: "
-msgstr ""
+msgstr "\tIP adresa: "
 
 #: src/getcert.c:3775
 #, c-format
@@ -1780,7 +1779,7 @@ msgstr ""
 
 #: src/main.c:78
 msgid "PATHNAME"
-msgstr ""
+msgstr "CESTA"
 
 #: src/main.c:79
 msgid "don't become a daemon"
@@ -1949,9 +1948,9 @@ msgid "Server reply was of unexpected MIME type \"%s\".\n"
 msgstr ""
 
 #: src/scep.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "Error: failed to verify signature on server response.\n"
-msgstr "Chyba při pasování odpovědi serveru.\n"
+msgstr "Chyba: nepodařilo se ověřit podpis na odpovědi serveru.\n"
 
 #: src/scep.c:946
 #, c-format
@@ -1984,9 +1983,9 @@ msgid "Error: reply nonce doesn't match request.\n"
 msgstr ""
 
 #: src/scep.c:976
-#, fuzzy, c-format
+#, c-format
 msgid "Error: reply is missing senderNonce.\n"
-msgstr "Chyba při pasování odpovědi serveru.\n"
+msgstr "Chyba: chybí odpověď senderNonce.\n"
 
 #: src/scep.c:994
 #, c-format
@@ -2044,9 +2043,9 @@ msgid "No key reuse.\n"
 msgstr ""
 
 #: src/scep.c:1027
-#, fuzzy, c-format
+#, c-format
 msgid "Internal CA error.\n"
-msgstr "Chyba serveru.\n"
+msgstr "Interní chyba CA.\n"
 
 #: src/scep.c:1030
 #, c-format
@@ -2080,11 +2079,11 @@ msgstr ""
 
 #: src/tdbush.c:119 src/tdbush.c:1944 src/tdbush.c:2351
 msgid "An internal error has occurred."
-msgstr ""
+msgstr "Došlo k interní chybě."
 
 #: src/tdbush.c:183
 msgid "No matching entry found.\n"
-msgstr ""
+msgstr "Nebyl nalezen žádný odpovídající záznam.\n"
 
 #: src/tdbush.c:345
 #, c-format
@@ -2196,9 +2195,8 @@ msgid "Unrecognized parameter or wrong value type."
 msgstr ""
 
 #: src/tdbush.c:5070
-#, fuzzy
 msgid "Error parsing arguments."
-msgstr "Chyba při pasování odpovědi serveru.\n"
+msgstr "Chyba při zpracování argumentů."
 
 #: src/tdbush.c:5124
 msgid "Unrecognized property name."
