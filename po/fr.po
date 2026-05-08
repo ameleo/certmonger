@@ -10,13 +10,14 @@
 # Kévin Raymond <shaiton@fedoraproject.org>, 2012
 # Natacha Rault <n.rault@me.com>, 2021.
 # Sakitou Kit <sakitou@duck.com>, 2024.
+# Antoine BACK <antoine.back@hotmail.fr>, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2024-01-08 19:36+0000\n"
-"Last-Translator: Sakitou Kit <sakitou@duck.com>\n"
+"PO-Revision-Date: 2024-08-11 15:39+0000\n"
+"Last-Translator: Antoine BACK <antoine.back@hotmail.fr>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/"
 "certmonger/master/fr/>\n"
 "Language: fr\n"
@@ -24,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -147,7 +148,7 @@ msgstr "COMMANDE"
 
 #: src/getcert.c:62
 msgid "DIRECTORY"
-msgstr ""
+msgstr "REPERTOIRE"
 
 #: src/getcert.c:63 src/getcert.c:70
 msgid "LIST"
@@ -426,10 +427,12 @@ msgstr "taille de la clé à générer si elle n'est pas déjà en place"
 #: src/getcert.c:786 src/getcert.c:1863
 msgid "attempt to renew the certificate when expiration nears (default)"
 msgstr ""
+"tente de renouveler le certificat à l'approche de l'expiration (par défaut)"
 
 #: src/getcert.c:787 src/getcert.c:1864
 msgid "don't attempt to renew the certificate when expiration nears"
 msgstr ""
+"ne pas tenter de renouveler le certificat à l'approche de son expiration"
 
 #: src/getcert.c:789 src/getcert.c:1866
 msgid "use the specified CA configuration rather than the default"
@@ -452,11 +455,11 @@ msgstr ""
 
 #: src/getcert.c:794 src/getcert.c:2524
 msgid "set requested key usage value"
-msgstr ""
+msgstr "définir la valeur d'utilisation de la clé demandée"
 
 #: src/getcert.c:795 src/getcert.c:2525
 msgid "set requested extended key usage OID"
-msgstr ""
+msgstr "définir l'OID d'utilisation de la clé étendue demandée"
 
 #: src/getcert.c:796 src/getcert.c:2526
 msgid "set requested principal name"
@@ -468,11 +471,11 @@ msgstr ""
 
 #: src/getcert.c:798 src/getcert.c:2528
 msgid "set requested email address"
-msgstr ""
+msgstr "définir l'adresse e-mail demandée"
 
 #: src/getcert.c:799 src/getcert.c:2529
 msgid "set requested IP address"
-msgstr ""
+msgstr "définir l'adresse IP demandée"
 
 #: src/getcert.c:800 src/getcert.c:1876 src/getcert.c:2530
 msgid "file which holds an optional challenge password value"
