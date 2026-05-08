@@ -6,13 +6,15 @@
 # Mario Santagiuliana <fedora at marionline.it>, 2012
 # Silvio Pierro <perplesso82@gmail.com>, 2012
 # Salvatore Cocuzza <info@salvatorecocuzza.it>, 2025.
+# Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
 "PO-Revision-Date: 2025-01-04 20:38+0000\n"
-"Last-Translator: Salvatore Cocuzza <info@salvatorecocuzza.it>\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Italian <https://translate.fedoraproject.org/projects/"
 "certmonger/master/it/>\n"
 "Language: it\n"
@@ -172,7 +174,7 @@ msgstr "MODALITÀ"
 
 #: src/getcert.c:72
 msgid "NAME"
-msgstr ""
+msgstr "NOME"
 
 #: src/getcert.c:73
 msgid "PRINCIPAL"
