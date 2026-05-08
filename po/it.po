@@ -12,9 +12,8 @@ msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2025-01-04 20:38+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-25 14:09+0000\n"
+"Last-Translator: Salvatore Cocuzza <info@salvatorecocuzza.it>\n"
 "Language-Team: Italian <https://translate.fedoraproject.org/projects/"
 "certmonger/master/it/>\n"
 "Language: it\n"
@@ -22,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.11\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -190,7 +189,7 @@ msgstr "URL"
 
 #: src/getcert.c:76
 msgid "USERNAME[:GROUPNAME]"
-msgstr ""
+msgstr "NOMEUTENTE[:NOMEGRUPPO]"
 
 #: src/getcert.c:115
 #, c-format
@@ -504,7 +503,7 @@ msgstr "connettersi al servizio certimonger sul bus di sessione"
 #: src/getcert.c:3361 src/getcert.c:3881 src/getcert.c:4039 src/getcert.c:4271
 #: src/getcert.c:4367 src/getcert.c:4464 src/getcert.c:4592 src/getcert.c:4680
 msgid "connect to the certmonger service on the system bus"
-msgstr ""
+msgstr "connettersi al servizio certmonger sul bus di sistema"
 
 #: src/getcert.c:825 src/getcert.c:1893 src/getcert.c:2547
 #, c-format
@@ -514,17 +513,17 @@ msgstr "Errore nell'inizializzazione della libreria Kerberos: %s.\n"
 #: src/getcert.c:889 src/getcert.c:2619
 #, c-format
 msgid "No support for generating \"%s\" keys.\n"
-msgstr ""
+msgstr "Nessun supporto per la generazione di chiavi \"%s\".\n"
 
 #: src/getcert.c:891 src/getcert.c:2621
 #, c-format
 msgid "Known key types include:"
-msgstr ""
+msgstr "I tipi di chiavi noti includono:"
 
 #: src/getcert.c:931 src/getcert.c:1983 src/getcert.c:2643
 #, c-format
 msgid "Unrecognized keyUsage \"%s\".\n"
-msgstr ""
+msgstr "Utilizzo chiave non riconosciuto \"%s\".\n"
 
 #: src/getcert.c:941 src/getcert.c:1993 src/getcert.c:2653
 #, c-format
@@ -544,7 +543,7 @@ msgstr "Errore non analizzato nome principale Kerberos \"%s\": %s.\n"
 #: src/getcert.c:1016 src/getcert.c:2068 src/getcert.c:2728
 #, c-format
 msgid "%s: invalid value -- '%s'\n"
-msgstr ""
+msgstr "%s: valore non valido -- '%s'\n"
 
 #: src/getcert.c:1039 src/getcert.c:2096 src/getcert.c:2751 src/getcert.c:3176
 #: src/getcert.c:3422 src/getcert.c:4073
@@ -596,14 +595,15 @@ msgstr ""
 "file.\n"
 
 #: src/getcert.c:1114
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The IPA backend requires the use of the -K option (principal name) when any "
 "of the -N (subject name), -E (email address), -A (IP address), -D (DNS "
 "name), or -U (extendedKeyUsage) options is used.\n"
 msgstr ""
-"Il backend IPA richiede l'uso dell'opzione -K (nome principale) quando si "
-"usa l'opzione -N (nome soggetto).\n"
+"Il backend IPA richiede l'uso dell'opzione -K (nome principale) quando viene "
+"utilizzata una qualsiasi delle opzioni -N (nome soggetto), -E (indirizzo "
+"e-mail), -A (indirizzo IP), -D (nome DNS) o -U (extendedKeyUsage).\n"
 
 #: src/getcert.c:1296 src/getcert.c:1762 src/getcert.c:2272 src/getcert.c:2867
 #: src/getcert.c:3208 src/getcert.c:3447 src/getcert.c:4731
@@ -640,44 +640,44 @@ msgstr "La nuova richiesta di tracking non può essere aggiunta.\n"
 
 #: src/getcert.c:1849
 msgid "PEM file for private key (only valid with -f)"
-msgstr ""
+msgstr "File PEM per la chiave privata (valido solo con -f)"
 
 #: src/getcert.c:1850 src/getcert.c:2503 src/getcert.c:3103 src/getcert.c:3357
 #: src/getcert.c:3878
 msgid "PEM file for certificate"
-msgstr ""
+msgstr "File PEM per il certificato"
 
 #: src/getcert.c:1861
 msgid "nickname of an existing request"
-msgstr ""
+msgstr "soprannome di una richiesta esistente"
 
 #: src/getcert.c:1862
 msgid "nickname to give to tracking request"
-msgstr ""
+msgstr "soprannome da dare alla richiesta di tracciamento"
 
 #: src/getcert.c:1870
 msgid "override requested key usage value"
-msgstr ""
+msgstr "sovrascrivi il valore di utilizzo della chiave richiesta"
 
 #: src/getcert.c:1871
 msgid "override requested extended key usage OID"
-msgstr ""
+msgstr "sovrascrivi l'OID di utilizzo della chiave estesa richiesto"
 
 #: src/getcert.c:1872
 msgid "override requested principal name"
-msgstr ""
+msgstr "sostituisci il nome principale richiesto"
 
 #: src/getcert.c:1873
 msgid "override requested DNS name"
-msgstr ""
+msgstr "sovrascrivi il nome DNS richiesto"
 
 #: src/getcert.c:1874
 msgid "override requested email address"
-msgstr ""
+msgstr "sovrascrivi l'indirizzo email richiesto"
 
 #: src/getcert.c:1875
 msgid "override requested IP address"
-msgstr ""
+msgstr "sovrascrivi l'indirizzo IP richiesto"
 
 #: src/getcert.c:2136 src/getcert.c:3194
 #, c-format
@@ -720,23 +720,23 @@ msgstr "La richiesta \"%s\" non può essere rimossa.\n"
 
 #: src/getcert.c:2504 src/getcert.c:3104 src/getcert.c:3358 src/getcert.c:3879
 msgid "nickname for tracking request"
-msgstr ""
+msgstr "nickname per la richiesta di tracciamento"
 
 #: src/getcert.c:2505
 msgid "new nickname to give to tracking request"
-msgstr ""
+msgstr "nuovo soprannome da dare alla richiesta di tracciamento"
 
 #: src/getcert.c:2506
 msgid "type of new key to be generated"
-msgstr ""
+msgstr "tipo di nuova chiave da generare"
 
 #: src/getcert.c:2507
 msgid "size of new key to be generated"
-msgstr ""
+msgstr "dimensione della nuova chiave da generare"
 
 #: src/getcert.c:2519
 msgid "use the specified CA configuration rather than the current one"
-msgstr ""
+msgstr "utilizzare la configurazione CA specificata anziché quella corrente"
 
 #: src/getcert.c:3029
 #, c-format
@@ -765,38 +765,41 @@ msgstr "Errore nel tentativo di sottomettere \"%s\".\n"
 
 #: src/getcert.c:3096
 msgid "refresh information about all outstanding requests"
-msgstr ""
+msgstr "aggiorna le informazioni su tutte le richieste in sospeso"
 
 #: src/getcert.c:3098
 msgid ""
 "refresh information only for requests using the specified CA configuration"
 msgstr ""
+"aggiorna le informazioni solo per le richieste che utilizzano la "
+"configurazione CA specificata"
 
 #: src/getcert.c:3290
 #, c-format
 msgid "Request ID '%s' being refreshed.\n"
-msgstr ""
+msgstr "ID richiesta '%s' in fase di aggiornamento.\n"
 
 #: src/getcert.c:3292
 #, c-format
 msgid "Request ID '%s' NOT being refreshed.\n"
-msgstr ""
+msgstr "ID richiesta '%s' NON aggiornato.\n"
 
 #: src/getcert.c:3349
 msgid "list only information about outstanding requests"
-msgstr ""
+msgstr "elenca solo le informazioni sulle richieste in sospeso"
 
 #: src/getcert.c:3350
 msgid "list only information about tracked certificates"
-msgstr ""
+msgstr "elenca solo le informazioni sui certificati tracciati"
 
 #: src/getcert.c:3352
 msgid "list only requests and certs associated with this CA configuration"
 msgstr ""
+"elenca solo le richieste e i certificati associati a questa configurazione CA"
 
 #: src/getcert.c:3359
 msgid "display times in UTC instead of local time"
-msgstr ""
+msgstr "visualizza gli orari in UTC anziché in ora locale"
 
 #: src/getcert.c:3476
 #, c-format
@@ -850,7 +853,7 @@ msgstr ",token='%s'"
 #: src/getcert.c:3663
 #, c-format
 msgid ",pin set"
-msgstr ""
+msgstr ",pin set"
 
 #: src/getcert.c:3666
 #, c-format
@@ -865,12 +868,12 @@ msgstr "\tcertificato: tipo=%s,posizione='%s'"
 #: src/getcert.c:3693
 #, c-format
 msgid "\tsigning request thumbprint (MD5): %s\n"
-msgstr ""
+msgstr "\timpronta digitale della richiesta di firma (MD5): %s\n"
 
 #: src/getcert.c:3698
 #, c-format
 msgid "\tsigning request thumbprint (SHA1): %s\n"
-msgstr ""
+msgstr "\timpronta digitale della richiesta di firma (SHA1): %s\n"
 
 #: src/getcert.c:3715
 #, c-format
@@ -898,7 +901,7 @@ msgstr "\tscadenza: %s\n"
 
 #: src/getcert.c:3736
 msgid "\temail: "
-msgstr "\temail:"
+msgstr "\temail: "
 
 #: src/getcert.c:3742
 msgid "\tdns: "
@@ -906,16 +909,16 @@ msgstr "\tdns: "
 
 #: src/getcert.c:3748
 msgid "\tprincipal name: "
-msgstr "\tnome principale:"
+msgstr "\tnome principale: "
 
 #: src/getcert.c:3756
 msgid "\tIP address: "
-msgstr ""
+msgstr "\tIndirizzo IP: "
 
 #: src/getcert.c:3775
 #, c-format
 msgid "\tkey usage: %s\n"
-msgstr ""
+msgstr "\tutilizzo chiave: %s\n"
 
 #: src/getcert.c:3779
 msgid "\teku: "
@@ -924,47 +927,47 @@ msgstr "\teku: "
 #: src/getcert.c:3787
 #, c-format
 msgid "\tcertificate template/profile: %s\n"
-msgstr ""
+msgstr "\tmodello/profilo certificato: %s\n"
 
 #: src/getcert.c:3793 src/getcert.c:4154
 #, c-format
 msgid "\troot certificates saved to files:\n"
-msgstr ""
+msgstr "\tcertificati radice salvati su file:\n"
 
 #: src/getcert.c:3802 src/getcert.c:4163
 #, c-format
 msgid "\tother root certificates saved to files:\n"
-msgstr ""
+msgstr "\taltri certificati radice salvati su file:\n"
 
 #: src/getcert.c:3811 src/getcert.c:4172
 #, c-format
 msgid "\tother certificates saved to files:\n"
-msgstr ""
+msgstr "\taltri certificati salvati su file:\n"
 
 #: src/getcert.c:3820 src/getcert.c:4181
 #, c-format
 msgid "\troot certificates saved to databases:\n"
-msgstr ""
+msgstr "\tcertificati radice salvati nei database:\n"
 
 #: src/getcert.c:3829 src/getcert.c:4190
 #, c-format
 msgid "\tother root certificates saved to databases:\n"
-msgstr ""
+msgstr "\taltri certificati radice salvati nei database:\n"
 
 #: src/getcert.c:3838 src/getcert.c:4199
 #, c-format
 msgid "\tother certificates saved to databases:\n"
-msgstr ""
+msgstr "\taltri certificati salvati nei database:\n"
 
 #: src/getcert.c:3843 src/getcert.c:4245
 #, c-format
 msgid "\tpre-save command: %s\n"
-msgstr ""
+msgstr "\tcomando pre-salvataggio: %s\n"
 
 #: src/getcert.c:3846 src/getcert.c:4251
 #, c-format
 msgid "\tpost-save command: %s\n"
-msgstr ""
+msgstr "\tcomando post-salvataggio: %s\n"
 
 #: src/getcert.c:3849
 #, c-format
@@ -982,10 +985,12 @@ msgid ""
 "None of ID or database directory and and nickname or certificate file "
 "specified.\n"
 msgstr ""
+"Non è stato specificato alcun ID o directory del database e file del "
+"nickname o del certificato.\n"
 
 #: src/getcert.c:4036
 msgid "list only the specified CA configuration"
-msgstr ""
+msgstr "elenca solo la configurazione CA specificata"
 
 #: src/getcert.c:4104
 #, c-format
@@ -995,7 +1000,7 @@ msgstr "CA '%s':\n"
 #: src/getcert.c:4110
 #, c-format
 msgid "\tself-identifies as: %s\n"
-msgstr ""
+msgstr "\tsi auto-identifica come: %s\n"
 
 #: src/getcert.c:4119
 #, c-format
@@ -1020,159 +1025,159 @@ msgstr "\tnomi-emittente-noti:\n"
 #: src/getcert.c:4145
 #, c-format
 msgid "\tknown profiles/templates/certtypes:\n"
-msgstr ""
+msgstr "\tprofili/modelli/tipi di certificato noti:\n"
 
 #: src/getcert.c:4208
 #, c-format
 msgid "\tdefault profile/template/certtype: %s\n"
-msgstr ""
+msgstr "\tprofilo/modello/tipo di certificato predefinito: %s\n"
 
 #: src/getcert.c:4216
 #, c-format
 msgid "\tSCEP CA identifier: %s\n"
-msgstr ""
+msgstr "\tidentificatore CA SCEP: %s\n"
 
 #: src/getcert.c:4229
 #, c-format
 msgid "\tSCEP CA certificate thumbprint (MD5): %s\n"
-msgstr ""
+msgstr "\timpronta certificato CA SCEP (MD5): %s\n"
 
 #: src/getcert.c:4235
 #, c-format
 msgid "\tSCEP CA certificate thumbprint (SHA1): %s\n"
-msgstr ""
+msgstr "\timpronta certificato CA SCEP (SHA1): %s\n"
 
 #: src/getcert.c:4267
 msgid "refresh information about the CA configuration with this name"
-msgstr ""
+msgstr "aggiorna le informazioni sulla configurazione della CA con questo nome"
 
 #: src/getcert.c:4269
 msgid "refresh information about all known CAs"
-msgstr ""
+msgstr "aggiorna le informazioni su tutte le CA note"
 
 #: src/getcert.c:4316
 #, c-format
 msgid "Neither CA nickname nor -a flag specified.\n"
-msgstr ""
+msgstr "Non è stato specificato né il nickname CA né il flag -a.\n"
 
 #: src/getcert.c:4342
 #, c-format
 msgid "Data for CA '%s' being refreshed.\n"
-msgstr ""
+msgstr "Dati per CA '%s' in fase di aggiornamento.\n"
 
 #: src/getcert.c:4344
 #, c-format
 msgid "Data for unnamed CA being refreshed.\n"
-msgstr ""
+msgstr "I dati per la CA senza nome vengono aggiornati.\n"
 
 #: src/getcert.c:4347
 #, c-format
 msgid "\terror refreshing CA data\n"
-msgstr ""
+msgstr "\terrore durante l'aggiornamento dei dati CA\n"
 
 #: src/getcert.c:4364 src/getcert.c:4456
 msgid "nickname to give to the new CA configuration"
-msgstr ""
+msgstr "soprannome da dare alla nuova configurazione CA"
 
 #: src/getcert.c:4365
 msgid "helper command to run to communicate with CA"
-msgstr ""
+msgstr "comando helper da eseguire per comunicare con CA"
 
 #: src/getcert.c:4406 src/getcert.c:4503 src/getcert.c:4631 src/getcert.c:4719
 #, c-format
 msgid "CA nickname not specified.\n"
-msgstr ""
+msgstr "Soprannome CA non specificato.\n"
 
 #: src/getcert.c:4411 src/getcert.c:4636
 #, c-format
 msgid "CA helper command not specified.\n"
-msgstr ""
+msgstr "Comando helper CA non specificato.\n"
 
 #: src/getcert.c:4435 src/getcert.c:4553
 #, c-format
 msgid "New CA \"%s\" added.\n"
-msgstr ""
+msgstr "Aggiunta nuova CA \"%s\".\n"
 
 #: src/getcert.c:4438 src/getcert.c:4573
 #, c-format
 msgid "New CA could not be added.\n"
-msgstr ""
+msgstr "Non è stato possibile aggiungere una nuova CA.\n"
 
 #: src/getcert.c:4457
 msgid "location of SCEP server"
-msgstr ""
+msgstr "posizione del server SCEP"
 
 #: src/getcert.c:4458
 msgid "CA identifier"
-msgstr ""
+msgstr "Identificatore CA"
 
 #: src/getcert.c:4459
 msgid "file containing CA's certificate"
-msgstr ""
+msgstr "file contenente il certificato della CA"
 
 #: src/getcert.c:4460
 msgid "file containing RA's certificate"
-msgstr ""
+msgstr "file contenente il certificato dell'RA"
 
 #: src/getcert.c:4461
 msgid "file containing certificates in RA's certifying chain"
-msgstr ""
+msgstr "file contenente i certificati nella catena di certificazione della RA"
 
 #: src/getcert.c:4462
 msgid "prefer to not use the SCEP Renewal feature"
-msgstr ""
+msgstr "preferisco non utilizzare la funzione di rinnovo SCEP"
 
 #: src/getcert.c:4508
 #, c-format
 msgid "server URL not specified.\n"
-msgstr ""
+msgstr "URL del server non specificato.\n"
 
 #: src/getcert.c:4513
 #, c-format
 msgid "HTTPS requires a CA certificate.\n"
-msgstr ""
+msgstr "HTTPS richiede un certificato CA.\n"
 
 #: src/getcert.c:4535
 #, c-format
 msgid "Error building command line.\n"
-msgstr ""
+msgstr "Errore durante la creazione della riga di comando.\n"
 
 #: src/getcert.c:4567
 #, c-format
 msgid "Error setting CA identifier.\n"
-msgstr ""
+msgstr "Errore durante l'impostazione dell'identificatore CA.\n"
 
 #: src/getcert.c:4589
 msgid "nickname of the CA configuration"
-msgstr ""
+msgstr "soprannome della configurazione CA"
 
 #: src/getcert.c:4590
 msgid "updated helper command to run to communicate with CA"
-msgstr ""
+msgstr "comando helper aggiornato da eseguire per comunicare con CA"
 
 #: src/getcert.c:4658
 #, c-format
 msgid "CA \"%s\" modified.\n"
-msgstr ""
+msgstr "CA \"%s\" modificato.\n"
 
 #: src/getcert.c:4661
 #, c-format
 msgid "CA could not be modified.\n"
-msgstr ""
+msgstr "Non è stato possibile modificare CA.\n"
 
 #: src/getcert.c:4678
 msgid "nickname of CA configuration to remove"
-msgstr ""
+msgstr "soprannome della configurazione CA da rimuovere"
 
 #: src/getcert.c:4747
 #, c-format
 msgid "CA \"%s\" removed.\n"
-msgstr ""
+msgstr "CA \"%s\" rimossa.\n"
 
 #: src/getcert.c:4749
 #, c-format
 msgid "CA could not be removed.\n"
-msgstr ""
+msgstr "Non è stato possibile rimuovere CA.\n"
 
 #: src/getcert.c:4787
 #, c-format
@@ -1255,7 +1260,7 @@ msgstr "  -I NOME\tnickname da assegnare alla richiesta\n"
 
 #: src/getcert.c:4808
 msgid "  -G TYPE\ttype of key to be generated if one is not already in place\n"
-msgstr ""
+msgstr "  -G TIPO\ttipo di chiave da generare se non ne è già presente una\n"
 
 #: src/getcert.c:4809
 msgid "  -g SIZE\tsize of key to be generated if one is not already in place\n"
@@ -1284,10 +1289,14 @@ msgid ""
 "  -T PROFILE\task the CA to process the request using the named profile or "
 "template\n"
 msgstr ""
+"  -T PROFILO\tchiedere alla CA di elaborare la richiesta utilizzando il "
+"profilo o modello specificato\n"
 
 #: src/getcert.c:4816 src/getcert.c:4865 src/getcert.c:4944 src/getcert.c:4992
 msgid "  -X ISSUER\task the CA to process the request using the named issuer\n"
 msgstr ""
+"  -X EMITTENTE\tchiedere alla CA di elaborare la richiesta utilizzando "
+"l'emittente specificato\n"
 
 #: src/getcert.c:4817
 msgid "* Parameters for the signing request:\n"
@@ -1303,7 +1312,7 @@ msgstr "  -U USOEXT\timposta l'utilizzo OID della chiave estesa richiesta\n"
 
 #: src/getcert.c:4820 src/getcert.c:4868 src/getcert.c:4929 src/getcert.c:4977
 msgid "  -u KEYUSAGE\tset requested key usage value\n"
-msgstr ""
+msgstr "  -u UTILIZZO_CHIAVE\timposta il valore di utilizzo chiave richiesto\n"
 
 #: src/getcert.c:4821 src/getcert.c:4930 src/getcert.c:4978
 msgid "  -K NAME\tset requested principal name\n"
@@ -1319,15 +1328,15 @@ msgstr "  -E EMAIL\timposta l'indirizzo email richiesto\n"
 
 #: src/getcert.c:4824 src/getcert.c:4933 src/getcert.c:4981
 msgid "  -A ADDRESS\tset requested IP address\n"
-msgstr ""
+msgstr "  -A INDIRIZZO\timposta l'indirizzo IP richiesto\n"
 
 #: src/getcert.c:4825 src/getcert.c:4873 src/getcert.c:4934 src/getcert.c:4982
 msgid "  -l FILE\tfile which holds an optional challenge password\n"
-msgstr ""
+msgstr "  -l FILE\tfile che contiene una password di sfida opzionale\n"
 
 #: src/getcert.c:4826 src/getcert.c:4874 src/getcert.c:4935 src/getcert.c:4983
 msgid "  -L PASSWORD\tan optional challenge password value\n"
-msgstr ""
+msgstr "  -L PASSWORD\tun valore di password di sfida opzionale\n"
 
 #: src/getcert.c:4827 src/getcert.c:4875 src/getcert.c:4902 src/getcert.c:4945
 #: src/getcert.c:4995 src/getcert.c:5025 src/getcert.c:5049 src/getcert.c:5066
@@ -1355,23 +1364,23 @@ msgstr "* Altre opzioni:\n"
 
 #: src/getcert.c:4831 src/getcert.c:4879 src/getcert.c:4949 src/getcert.c:4999
 msgid "  -B\tcommand to run before saving the certificate\n"
-msgstr ""
+msgstr "  -B\tcomando da eseguire prima di salvare il certificato\n"
 
 #: src/getcert.c:4832 src/getcert.c:4880 src/getcert.c:4950 src/getcert.c:5000
 msgid "  -C\tcommand to run after saving the certificate\n"
-msgstr ""
+msgstr "  -C\tcomando da eseguire dopo aver salvato il certificato\n"
 
 #: src/getcert.c:4833 src/getcert.c:4881 src/getcert.c:4951 src/getcert.c:5001
 msgid "  -F\tfile in which to store the CA's certificates\n"
-msgstr ""
+msgstr "  -F\tfile in cui archiviare i certificati della CA\n"
 
 #: src/getcert.c:4834 src/getcert.c:4882 src/getcert.c:4952 src/getcert.c:5002
 msgid "  -a\tNSS database in which to store the CA's certificates\n"
-msgstr ""
+msgstr "  -a\tdatabase NSS in cui archiviare i certificati della CA\n"
 
 #: src/getcert.c:4835 src/getcert.c:4883 src/getcert.c:4953 src/getcert.c:5003
 msgid "  -w\ttry to wait for the certificate to be issued\n"
-msgstr ""
+msgstr "  -w\tprova ad attendere l'emissione del certificato\n"
 
 #: src/getcert.c:4836 src/getcert.c:4884 src/getcert.c:4906 src/getcert.c:4954
 #: src/getcert.c:5004 src/getcert.c:5029 src/getcert.c:5052 src/getcert.c:5070
@@ -1424,7 +1433,7 @@ msgstr "  -E EMAIL\tsovrascrive l'indirizzo email richiesto\n"
 
 #: src/getcert.c:4872
 msgid "  -A ADDRESS\toverride requested IP address\n"
-msgstr ""
+msgstr "  -A INDIRIZZO\tsovrascrive l'indirizzo IP richiesto\n"
 
 #: src/getcert.c:4888
 #, c-format
@@ -1464,15 +1473,15 @@ msgstr "  -c CA\t\tusa il CA specificato piuttosto che l'attuale\n"
 #: src/getcert.c:4958
 #, c-format
 msgid "Usage: %s rekey [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s rekey [opzioni]\n"
 
 #: src/getcert.c:4993
 msgid "  -G TYPE\ttype of new key to be generated\n"
-msgstr ""
+msgstr "  -G TIPO\ttipo della nuova chiave da generare\n"
 
 #: src/getcert.c:4994
 msgid "  -g SIZE\tsize of new key to be generated\n"
-msgstr ""
+msgstr "  -g DIMENSIONE\tdimensione della nuova chiave da generare\n"
 
 #: src/getcert.c:5008
 #, c-format
@@ -1499,7 +1508,7 @@ msgstr "  -t\telenca solo le informazioni sui certificati tracciati\n"
 
 #: src/getcert.c:5017
 msgid "  -u\tdisplay times in UTC instead of local time\n"
-msgstr ""
+msgstr "  -u\tvisualizza gli orari in UTC invece dell'ora locale\n"
 
 #: src/getcert.c:5018
 msgid "* If selecting a specific request:\n"
@@ -1536,40 +1545,44 @@ msgstr "  -s\tconnettersi al servizio certmonger sul bus di sessione\n"
 #: src/getcert.c:5033
 #, c-format
 msgid "Usage: %s refresh [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s refresh [opzioni]\n"
 
 #: src/getcert.c:5036
 msgid "  -a\trefresh information about all outstanding requests\n"
-msgstr ""
+msgstr "  -a\taggiorna le informazioni su tutte le richieste in sospeso\n"
 
 #: src/getcert.c:5056
 #, c-format
 msgid "Usage: %s status [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s stato [opzioni]\n"
 
 #: src/getcert.c:5059
 msgid "* Selecting a specific request:\n"
-msgstr ""
+msgstr "* Selezionando una richiesta specifica:\n"
 
 #: src/getcert.c:5061
 msgid "* When using an NSS database for storage:\n"
-msgstr ""
+msgstr "* Quando si utilizza un database NSS per l'archiviazione:\n"
 
 #: src/getcert.c:5062
 msgid "  -d DIR\treturn status for the request in this NSS database\n"
-msgstr ""
+msgstr "  -d DIR\trestituisce lo stato della richiesta in questo database NSS\n"
 
 #: src/getcert.c:5063
 msgid "  -n NAME\treturn status for cert which uses this nickname\n"
 msgstr ""
+"  -n NOME\trestituisce lo stato del certificato che utilizza questo "
+"nickname\n"
 
 #: src/getcert.c:5064
 msgid "* When using files for storage:\n"
-msgstr ""
+msgstr "* Quando si utilizzano file per l'archiviazione:\n"
 
 #: src/getcert.c:5065
 msgid "  -f FILE\treturn status for cert stored in this PEM file\n"
 msgstr ""
+"  -f FILE\trestituisce lo stato del certificato archiviato in questo file "
+"PEM\n"
 
 #: src/getcert.c:5074
 #, c-format
@@ -1583,140 +1596,145 @@ msgstr "  -c CA\telenca solo informazioni sulla CA con questo nome\n"
 #: src/getcert.c:5089
 #, c-format
 msgid "Usage: %s refresh-ca [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s refresh-ca [opzioni]\n"
 
 #: src/getcert.c:5094
 msgid "  -c CA\trefresh information about the CA with this name\n"
-msgstr ""
+msgstr "  -c CA\taggiorna le informazioni sulla CA con questo nome\n"
 
 #: src/getcert.c:5095
 msgid "  -a\trefresh information about all known CAs\n"
-msgstr ""
+msgstr "  -a\taggiorna le informazioni su tutte le CA note\n"
 
 #: src/getcert.c:5106
 #, c-format
 msgid "Usage: %s add-ca [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s add-ca [opzioni]\n"
 
 #: src/getcert.c:5110 src/getcert.c:5124
 msgid "  -c CA\t\tnickname to give to the new CA configuration\n"
-msgstr ""
+msgstr "  -c CA\t\tnickname da assegnare alla nuova configurazione CA\n"
 
 #: src/getcert.c:5111
 msgid "  -e CMD\thelper command to run to communicate with CA\n"
-msgstr ""
+msgstr "  -e CMD\tcomando helper da eseguire per comunicare con la CA\n"
 
 #: src/getcert.c:5120
 #, c-format
 msgid "Usage: %s add-scep-ca [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s add-scep-ca [opzioni]\n"
 
 #: src/getcert.c:5125
 msgid "  -u URL\tlocation of SCEP server\n"
-msgstr ""
+msgstr "  -u URL\tposizione del server SCEP\n"
 
 #: src/getcert.c:5126
 msgid "  -i ID\t\tCA identifier\n"
-msgstr ""
+msgstr "  -i ID\t\tidentificatore CA\n"
 
 #: src/getcert.c:5127
 msgid "  -R FILE\tfile containing CA's certificate\n"
-msgstr ""
+msgstr "  -R FILE\tfile contenente il certificato della CA\n"
 
 #: src/getcert.c:5128
 msgid "  -r FILE\tfile containing RA's certificate\n"
-msgstr ""
+msgstr "  -r FILE\tfile contenente il certificato della RA\n"
 
 #: src/getcert.c:5129
 msgid "  -I FILE\tfile containing certificates in RA's certifying chain\n"
 msgstr ""
+"  -I FILE\tfile contenente i certificati nella catena di certificazione "
+"della RA\n"
 
 #: src/getcert.c:5130
 msgid "  -n\tprefer not to use the SCEP Renewal feature\n"
-msgstr ""
+msgstr "  -n\tpreferisci non usare la funzione di Rinnovo SCEP\n"
 
 #: src/getcert.c:5139
 #, c-format
 msgid "Usage: %s modify-ca [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s modify-ca [opzioni]\n"
 
 #: src/getcert.c:5143
 msgid "  -c CA\t\tnickname of the CA configuration\n"
-msgstr ""
+msgstr "  -c CA\t\tnickname della configurazione CA\n"
 
 #: src/getcert.c:5144
 msgid "  -e CMD\tupdated helper command to run to communicate with CA\n"
 msgstr ""
+"  -e CMD\tcomando helper aggiornato da eseguire per comunicare con la CA\n"
 
 #: src/getcert.c:5153
 #, c-format
 msgid "Usage: %s remove-ca [options]\n"
-msgstr ""
+msgstr "Utilizzo: %s remove-ca [opzioni]\n"
 
 #: src/getcert.c:5157
 msgid "  -c CA\tnickname of CA configuration to remove\n"
-msgstr ""
+msgstr "  -c CA\tnickname della configurazione CA da rimuovere\n"
 
 #: src/getcert.c:5172
 #, c-format
 msgid "Usage: %s command [options]\n"
-msgstr ""
+msgstr "Utilizzo: comando %s [opzioni]\n"
 
 #: src/getcert.c:5174
 msgid "request a new certificate from a CA\n"
-msgstr ""
+msgstr "richiedere un nuovo certificato da una CA\n"
 
 #: src/getcert.c:5176
 msgid "begin monitoring an already-issued certificate\n"
-msgstr ""
+msgstr "iniziare a monitorare un certificato già emesso\n"
 
 #: src/getcert.c:5178
 msgid "stop monitoring a certificate\n"
-msgstr ""
+msgstr "interrompere il monitoraggio di un certificato\n"
 
 #: src/getcert.c:5180
 msgid "resubmit an in-progress enrollment request, or start a new one\n"
 msgstr ""
+"inviare nuovamente una richiesta di iscrizione in corso o avviarne una "
+"nuova\n"
 
 #: src/getcert.c:5182
 msgid "generate a new private key and replace a certificate\n"
-msgstr ""
+msgstr "generare una nuova chiave privata e sostituire un certificato\n"
 
 #: src/getcert.c:5184
 msgid "check on the status of an in-progress enrollment request\n"
-msgstr ""
+msgstr "verificare lo stato di una richiesta di iscrizione in corso\n"
 
 #: src/getcert.c:5186
 msgid "list certificates being monitored and requested\n"
-msgstr ""
+msgstr "elenca i certificati monitorati e richiesti\n"
 
 #: src/getcert.c:5188
 msgid "check the status of a certificate being monitored or requested\n"
-msgstr ""
+msgstr "verificare lo stato di un certificato monitorato o richiesto\n"
 
 #: src/getcert.c:5191
 msgid "add a CA configuration\n"
-msgstr ""
+msgstr "aggiungere una configurazione CA\n"
 
 #: src/getcert.c:5193
 msgid "add an SCEP CA configuration\n"
-msgstr ""
+msgstr "aggiungi una configurazione CA SCEP\n"
 
 #: src/getcert.c:5196
 msgid "list known CA configurations\n"
-msgstr ""
+msgstr "elenca le configurazioni CA note\n"
 
 #: src/getcert.c:5199
 msgid "modify a CA configuration\n"
-msgstr ""
+msgstr "modifica una configurazione CA\n"
 
 #: src/getcert.c:5202
 msgid "refresh cache of all information obtained from a CA\n"
-msgstr ""
+msgstr "aggiorna la cache di tutte le informazioni ottenute da una CA\n"
 
 #: src/getcert.c:5205
 msgid "remove a CA configuration\n"
-msgstr ""
+msgstr "rimuovi una configurazione CA\n"
 
 #: src/getcert.c:5273
 #, c-format
@@ -1726,22 +1744,24 @@ msgstr "%s: comando non riconosciuto\n"
 #: src/ipa.c:144
 #, c-format
 msgid "Unable to determine location of IPA LDAP server.\n"
-msgstr ""
+msgstr "Impossibile determinare la posizione del server LDAP IPA.\n"
 
 #: src/ipa.c:149
 #, c-format
 msgid "Unable to contact an IPA LDAP server.\n"
-msgstr ""
+msgstr "Impossibile contattare un server LDAP IPA.\n"
 
 #: src/ipa.c:233 src/ipa.c:533
 #, c-format
 msgid "Unable to determine base DN of domain information on IPA server.\n"
 msgstr ""
+"Impossibile determinare il DN di base delle informazioni di dominio sul "
+"server IPA.\n"
 
 #: src/ipa.c:369
 #, c-format
 msgid "Error setting up for XMLRPC on the client.\n"
-msgstr ""
+msgstr "Errore durante l'impostazione di XMLRPC sul client.\n"
 
 #: src/ipa.c:658
 #, c-format
@@ -1769,7 +1789,7 @@ msgstr ""
 #: src/ipa.c:831
 #, c-format
 msgid "No IPA domain configured, and none specified.\n"
-msgstr ""
+msgstr "Nessun dominio IPA configurato e nessuno specificato.\n"
 
 #: src/ipa.c:868
 #, c-format
@@ -1777,12 +1797,16 @@ msgid ""
 "Error setting up ccache for \"host\" service on client using default keytab: "
 "%s.\n"
 msgstr ""
+"Errore durante l'impostazione della ccache per il servizio \"host\" sul "
+"client utilizzando il keytab predefinito: %s.\n"
 
 #: src/ipa.c:872
 #, c-format
 msgid ""
 "Error setting up ccache for \"%s\" on client using default keytab: %s.\n"
 msgstr ""
+"Errore durante l'impostazione della ccache per \"%s\" sul client utilizzando "
+"il keytab predefinito: %s.\n"
 
 #: src/ipa.c:879
 #, c-format
@@ -1790,11 +1814,15 @@ msgid ""
 "Error setting up ccache for \"host\" service on client using keytab \"%s\": "
 "%s.\n"
 msgstr ""
+"Errore durante l'impostazione della ccache per il servizio \"host\" sul "
+"client utilizzando il keytab \"%s\": %s.\n"
 
 #: src/ipa.c:883
 #, c-format
 msgid "Error setting up ccache for \"%s\" on client using keytab \"%s\": %s.\n"
 msgstr ""
+"Errore durante l'impostazione della ccache per \"%s\" sul client utilizzando "
+"il keytab \"%s\": %s.\n"
 
 #: src/local.c:556
 #, c-format
@@ -1803,76 +1831,76 @@ msgstr "Impossibile leggere la richiesta di firma.\n"
 
 #: src/main.c:74
 msgid "use session bus"
-msgstr ""
+msgstr "usa bus di sessione"
 
 #: src/main.c:75
 msgid "use system bus"
-msgstr ""
+msgstr "usa bus di sistema"
 
 #: src/main.c:76
 msgid "start a dedicated listening socket"
-msgstr ""
+msgstr "avvia un socket di ascolto dedicato"
 
 #: src/main.c:77
 msgid "only use a dedicated listening socket"
-msgstr ""
+msgstr "usa solo un socket di ascolto dedicato"
 
 #: src/main.c:78
 msgid "specify the dedicated listening socket"
-msgstr ""
+msgstr "specifica il socket di ascolto dedicato"
 
 #: src/main.c:78
 msgid "PATHNAME"
-msgstr ""
+msgstr "NOMEPERCORSO"
 
 #: src/main.c:79
 msgid "don't become a daemon"
-msgstr ""
+msgstr "non diventare un demone"
 
 #: src/main.c:80
 msgid "do become a daemon"
-msgstr ""
+msgstr "diventa un demone"
 
 #: src/main.c:81
 msgid "bus-activated, idle timeout"
-msgstr ""
+msgstr "attivato da bus, timeout di inattività"
 
 #: src/main.c:81
 msgid "SECONDS"
-msgstr ""
+msgstr "SECONDI"
 
 #: src/main.c:82
 msgid "don't use an idle timeout"
-msgstr ""
+msgstr "non usare un timeout di inattività"
 
 #: src/main.c:83
 msgid "set debugging level (implies -n)"
-msgstr ""
+msgstr "imposta il livello di debug (implica -n)"
 
 #: src/main.c:83
 msgid "NUMBER"
-msgstr ""
+msgstr "NUMERO"
 
 #: src/main.c:84 src/main.c:86
 msgid "start COMMAND and exit when it does"
-msgstr ""
+msgstr "avvia COMANDO ed esci quando termina"
 
 #: src/main.c:87
 msgid "write service PID to file"
-msgstr ""
+msgstr "scrivi il PID del servizio su file"
 
 #: src/main.c:88
 msgid "force NSS into FIPS mode"
-msgstr ""
+msgstr "forza NSS in modalità FIPS"
 
 #: src/main.c:90
 msgid "print version information"
-msgstr ""
+msgstr "stampa informazioni sulla versione"
 
 #: src/main.c:174
 #, c-format
 msgid "Usage: %s [-s|-S] [-n|-f] [-d LEVEL] [-p FILE] [-F] [-v]\n"
-msgstr ""
+msgstr "Utilizzo: %s [-s|-S] [-n|-f] [-d LIVELLO] [-p FILE] [-F] [-v]\n"
 
 #: src/main.c:177
 msgid "\t-s         use session bus\n"
@@ -1884,15 +1912,15 @@ msgstr "\t-s         usa bus di sistema\n"
 
 #: src/main.c:179
 msgid "\t-l         start a dedicated listening socket\n"
-msgstr ""
+msgstr "\t-l         avvia un socket di ascolto dedicato\n"
 
 #: src/main.c:180
 msgid "\t-L         only use a dedicated listening socket\n"
-msgstr ""
+msgstr "\t-L         usa solo un socket di ascolto dedicato\n"
 
 #: src/main.c:181
 msgid "\t-P PATH    specify the dedicated listening socket\n"
-msgstr ""
+msgstr "\t-P PERCORSO    specifica il socket di ascolto dedicato\n"
 
 #: src/main.c:182
 msgid "\t-n         don't become a daemon\n"
@@ -1916,7 +1944,7 @@ msgstr "\t-d LEVEL   imposta il livello di debugging (implica -n)\n"
 
 #: src/main.c:187
 msgid "\t-c COMMAND start COMMAND and exit when it does\n"
-msgstr ""
+msgstr "\t-c COMANDO avvia COMANDO ed esci quando termina\n"
 
 #: src/main.c:188
 msgid "\t-p FILE    write service PID to file\n"
@@ -1924,26 +1952,27 @@ msgstr "\t-p FILE    scrive il PID di servizio su file\n"
 
 #: src/main.c:189
 msgid "\t-F         force NSS into FIPS mode\n"
-msgstr ""
+msgstr "\t-F         forza NSS in modalità FIPS\n"
 
 #: src/main.c:190
 msgid "\t-v         print version information and exit\n"
-msgstr ""
+msgstr "\t-v         stampa informazioni sulla versione ed esci\n"
 
 #: src/scep.c:352
 #, c-format
 msgid "No SCEP URL (-u) given, and no default known.\n"
-msgstr ""
+msgstr "Nessun URL SCEP (-u) fornito e nessun predefinito noto.\n"
 
 #: src/scep.c:356
 #, c-format
 msgid "No SCEP operation (-c/-C/-g/-p) given, and no default known.\n"
 msgstr ""
+"Nessuna operazione SCEP (-c/-C/-g/-p) fornita e nessuna predefinita nota.\n"
 
 #: src/scep.c:376 src/scep.c:395
 #, c-format
 msgid "No RA certificate (-r) given, and no default known.\n"
-msgstr ""
+msgstr "Nessun certificato RA (-r) fornito e nessun predefinito noto.\n"
 
 #: src/scep.c:386 src/scep.c:540
 #, c-format
@@ -1951,6 +1980,8 @@ msgid ""
 "Error reading request.  Expected PKCS7 data containing a GetInitialCert "
 "pkiMessage, got nothing.\n"
 msgstr ""
+"Errore durante la lettura della richiesta. Attesi dati PKCS7 contenenti un "
+"messaggio pki GetInitialCert, non è stato ricevuto nulla.\n"
 
 #: src/scep.c:405 src/scep.c:565
 #, c-format
@@ -1958,11 +1989,14 @@ msgid ""
 "Error reading request.  Expected PKCS7 data containing a PKCSReq pkiMessage, "
 "got nothing.\n"
 msgstr ""
+"Errore durante la lettura della richiesta. Attesi dati PKCS7 contenenti un "
+"messaggio pki PKCSReq, non è stato ricevuto nulla.\n"
 
 #: src/scep.c:433 src/scep.c:459
 #, c-format
 msgid "Warning: request is neither a PKCSReq nor a GetInitialCert request.\n"
 msgstr ""
+"Attenzione: la richiesta non è né una richiesta PKCSReq né GetInitialCert.\n"
 
 #: src/scep.c:437 src/scep.c:463
 #, c-format
@@ -1970,156 +2004,160 @@ msgid ""
 "Warning: request type \"%s\"is neither a PKCSReq nor a GetInitialCert "
 "request.\n"
 msgstr ""
+"Attenzione: il tipo di richiesta \"%s\" non è né una richiesta PKCSReq né "
+"GetInitialCert.\n"
 
 #: src/scep.c:470
 #, c-format
 msgid "Warning: request is missing transactionId.\n"
-msgstr ""
+msgstr "Attenzione: manca l'ID transazione nella richiesta.\n"
 
 #: src/scep.c:474
 #, c-format
 msgid "Warning: request is missing senderNonce.\n"
-msgstr ""
+msgstr "Attenzione: manca il nonce del mittente nella richiesta.\n"
 
 #: src/scep.c:637
-#, fuzzy, c-format
+#, c-format
 msgid "Got response code %d from %s, not 200.\n"
-msgstr "Nessuna risposta ricevuta dal servizio %s.\n"
+msgstr "Ho ricevuto il codice di risposta %d da %s, non 200.\n"
 
 #: src/scep.c:685 src/scep.c:1121
 #, c-format
 msgid "Server reply was of unexpected MIME type \"%s\".\n"
-msgstr ""
+msgstr "La risposta del server era di un tipo MIME inatteso \"%s\".\n"
 
 #: src/scep.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "Error: failed to verify signature on server response.\n"
-msgstr "Errore di analisi della risposta del server.\n"
+msgstr "Errore: impossibile verificare la firma sulla risposta del server.\n"
 
 #: src/scep.c:946
 #, c-format
 msgid "Error: reply was not a CertRep (%s).\n"
-msgstr ""
+msgstr "Errore: la risposta non era una CertRep (%s).\n"
 
 #: src/scep.c:951
 #, c-format
 msgid "Error: reply is missing transactionId.\n"
-msgstr ""
+msgstr "Errore: manca l'ID transazione nella risposta.\n"
 
 #: src/scep.c:956
 #, c-format
 msgid "Error: reply contains a different transactionId.\n"
-msgstr ""
+msgstr "Errore: la risposta contiene un ID transazione differente.\n"
 
 #: src/scep.c:962
 #, c-format
 msgid "Error: reply is missing pkiStatus.\n"
-msgstr ""
+msgstr "Errore: manca lo stato pki nella risposta.\n"
 
 #: src/scep.c:966
 #, c-format
 msgid "Error: reply is missing recipientNonce.\n"
-msgstr ""
+msgstr "Errore: manca il nonce del destinatario nella risposta.\n"
 
 #: src/scep.c:972
 #, c-format
 msgid "Error: reply nonce doesn't match request.\n"
-msgstr ""
+msgstr "Errore: il nonce della risposta non corrisponde alla richiesta.\n"
 
 #: src/scep.c:976
-#, fuzzy, c-format
+#, c-format
 msgid "Error: reply is missing senderNonce.\n"
-msgstr "Errore di analisi della risposta del server.\n"
+msgstr "Errore: manca il nonce del mittente nella risposta.\n"
 
 #: src/scep.c:994
 #, c-format
 msgid "Unspecified failure at server.\n"
-msgstr ""
+msgstr "Errore non specificato sul server.\n"
 
 #: src/scep.c:997
 #, c-format
 msgid "Unrecognized or unsupported algorithm identifier in client request.\n"
 msgstr ""
+"Identificatore algoritmo non riconosciuto o non supportato nella richiesta "
+"client.\n"
 
 #: src/scep.c:1000
 #, c-format
 msgid "Integrity check of client request failed at server.\n"
-msgstr ""
+msgstr "Controllo di integrità della richiesta client fallito sul server.\n"
 
 #: src/scep.c:1003
 #, c-format
 msgid "Transaction either is not permitted or is not supported by server.\n"
-msgstr ""
+msgstr "La transazione non è permessa o non è supportata dal server.\n"
 
 #: src/scep.c:1006
 #, c-format
 msgid "Clock skew too great.\n"
-msgstr ""
+msgstr "Sfasamento dell'orologio troppo grande.\n"
 
 #: src/scep.c:1009
 #, c-format
 msgid "Unsupported extension.\n"
-msgstr ""
+msgstr "Estensione non supportata.\n"
 
 #: src/scep.c:1012
 #, c-format
 msgid "Must archive keys.\n"
-msgstr ""
+msgstr "È necessario archiviare le chiavi.\n"
 
 #: src/scep.c:1015
 #, c-format
 msgid "Bad identity.\n"
-msgstr ""
+msgstr "Identità non valida.\n"
 
 #: src/scep.c:1018
 #, c-format
 msgid "Proof of possession required.\n"
-msgstr ""
+msgstr "Prova di possesso richiesta.\n"
 
 #: src/scep.c:1021
 #, c-format
 msgid "Proof of possession failed.\n"
-msgstr ""
+msgstr "Prova di possesso fallita.\n"
 
 #: src/scep.c:1024
 #, c-format
 msgid "No key reuse.\n"
-msgstr ""
+msgstr "Nessun riutilizzo della chiave.\n"
 
 #: src/scep.c:1027
-#, fuzzy, c-format
+#, c-format
 msgid "Internal CA error.\n"
-msgstr "Errore server.\n"
+msgstr "Errore interno della CA.\n"
 
 #: src/scep.c:1030
 #, c-format
 msgid "Try later.\n"
-msgstr ""
+msgstr "Riprova più tardi.\n"
 
 #: src/scep.c:1032
 #, c-format
 msgid "Server returned failure code \"%s\".\n"
-msgstr ""
+msgstr "Il server ha restituito il codice di errore \"%s\".\n"
 
 #: src/scep.c:1044
 #, c-format
 msgid "Error: couldn't parse signed-data.\n"
-msgstr ""
+msgstr "Errore: impossibile analizzare i dati firmati (signed-data).\n"
 
 #: src/scep.c:1059 src/scep.c:1074
 #, c-format
 msgid "Error: signed-data payload is not enveloped-data.\n"
-msgstr ""
+msgstr "Errore: il payload dei dati firmati non è di tipo enveloped-data.\n"
 
 #: src/scep.c:1092
 #, c-format
 msgid "Error: enveloped-data payload is not data.\n"
-msgstr ""
+msgstr "Errore: il payload dei dati enveloped-data non è di tipo data.\n"
 
 #: src/scep.c:1116
 #, c-format
 msgid "Error: pkiStatus \"%s\" not recognized.\n"
-msgstr ""
+msgstr "Errore: stato pki \"%s\" non riconosciuto.\n"
 
 #: src/tdbush.c:119 src/tdbush.c:1944 src/tdbush.c:2351
 msgid "An internal error has occurred."
@@ -2162,6 +2200,8 @@ msgid ""
 "The parent of location \"%s\" could not be accessed due to insufficient "
 "permissions."
 msgstr ""
+"Impossibile accedere al genitore della posizione \"%s\" a causa di permessi "
+"insufficienti."
 
 #: src/tdbush.c:542 src/tdbush.c:786 src/tdbush.c:993 src/tdbush.c:1093
 #: src/tdbush.c:1193
@@ -2182,6 +2222,7 @@ msgstr "La posizione \"%s\" deve essere un file."
 msgid ""
 "The location \"%s\" could not be accessed due to insufficient permissions."
 msgstr ""
+"Impossibile accedere alla posizione \"%s\" a causa di permessi insufficienti."
 
 #: src/tdbush.c:601 src/tdbush.c:834 src/tdbush.c:948 src/tdbush.c:1048
 #: src/tdbush.c:1148
@@ -2229,7 +2270,7 @@ msgstr ""
 #: src/tdbush.c:1313 src/tdbush.c:3102
 #, c-format
 msgid "No support for key type \"%s\"."
-msgstr ""
+msgstr "Nessun supporto per il tipo di chiave \"%s\"."
 
 #: src/tdbush.c:1400
 msgid "No such CA."
@@ -2246,20 +2287,20 @@ msgstr "Parametro non riconosciuto o tipo di valore errato."
 
 #: src/tdbush.c:5070
 msgid "Error parsing arguments."
-msgstr ""
+msgstr "Errore nell'analisi degli argomenti."
 
 #: src/tdbush.c:5124
 msgid "Unrecognized property name."
-msgstr ""
+msgstr "Nome proprietà non riconosciuto."
 
 #: src/tdbusm.c:2156
 msgid "Insufficient access.  Please retry operation as root.\n"
-msgstr ""
+msgstr "Accesso insufficiente. Riprovare l'operazione come root.\n"
 
 #: src/tdbusm.c:2160
 msgid "Please verify that the certmonger service has been started.\n"
-msgstr ""
+msgstr "Verificare che il servizio certmonger sia stato avviato.\n"
 
 #: src/tdbusm.c:2163
 msgid "Please verify that the certmonger service is still running.\n"
-msgstr ""
+msgstr "Verificare che il servizio certmonger sia ancora in esecuzione.\n"
