@@ -5,29 +5,28 @@
 # Translators:
 # Cheng-Chia Tseng <pswo10680@gmail.com>, 2011
 # Walter Cheuk <wwycheuk@gmail.com>, 2012
+# hsu zangmen <chzang55@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2015-01-05 05:52-0500\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
-"Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/"
-"certmonger/language/zh_TW/)\n"
-"Language: zh-TW\n"
+"PO-Revision-Date: 2025-04-26 06:37+0000\n"
+"Last-Translator: hsu zangmen <chzang55@gmail.com>\n"
+"Language-Team: Chinese (Traditional) <https://translate.fedoraproject.org/"
+"projects/certmonger/master/zh_TW/>\n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Zanata 3.9.6\n"
+"X-Generator: Weblate 5.11\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
 #, c-format
 msgid "Out of memory.\n"
-msgstr ""
-"記憶體不足。\n"
-"\n"
+msgstr "記憶體不足。\n"
 
 #: src/certmaster.c:136
 #, c-format
@@ -35,14 +34,14 @@ msgid "Unable to determine hostname of CA.\n"
 msgstr "無法判斷 CA 的主機名稱。\n"
 
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr "無法讀取簽署請求。\n"
+msgstr "無法從檔案 \"%s\" 讀取簽章請求。\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr "無法讀取簽署請求。\n"
+msgstr "無法從環境變數 \"%s\" 讀取簽章請求。\n"
 
 #: src/certmaster.c:184
 #, c-format
@@ -131,11 +130,11 @@ msgstr ""
 
 #: src/getcert.c:61 src/main.c:84 src/main.c:86
 msgid "COMMAND"
-msgstr ""
+msgstr "指令"
 
 #: src/getcert.c:62
 msgid "DIRECTORY"
-msgstr ""
+msgstr "目錄"
 
 #: src/getcert.c:63 src/getcert.c:70
 msgid "LIST"
@@ -143,7 +142,7 @@ msgstr ""
 
 #: src/getcert.c:64 src/getcert.c:68
 msgid "ADDRESS"
-msgstr ""
+msgstr "地址"
 
 #: src/getcert.c:65 src/main.c:87
 msgid "FILENAME"
@@ -155,7 +154,7 @@ msgstr ""
 
 #: src/getcert.c:67
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/getcert.c:69
 msgid "BITS"
@@ -167,7 +166,7 @@ msgstr ""
 
 #: src/getcert.c:72
 msgid "NAME"
-msgstr ""
+msgstr "名稱"
 
 #: src/getcert.c:73
 msgid "PRINCIPAL"
@@ -179,7 +178,7 @@ msgstr ""
 
 #: src/getcert.c:75
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/getcert.c:76
 msgid "USERNAME[:GROUPNAME]"
@@ -253,23 +252,21 @@ msgid "missing argument for %s"
 msgstr ""
 
 #: src/getcert.c:398
-#, fuzzy
 msgid "missing argument"
-msgstr "可有可無的引數：\n"
+msgstr "缺少引數"
 
 #: src/getcert.c:401
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized option %s"
-msgstr "%s：指令無法辨識\n"
+msgstr "未識別的選項 %s"
 
 #: src/getcert.c:406
-#, fuzzy
 msgid "unrecognized option"
-msgstr "%s：指令無法辨識\n"
+msgstr "不承認選擇"
 
 #: src/getcert.c:409
 msgid "aliases nested too deeply"
-msgstr ""
+msgstr "巢狀別名太深"
 
 #: src/getcert.c:412
 msgid "bad parameter quoting"
@@ -277,27 +274,23 @@ msgstr ""
 
 #: src/getcert.c:418
 msgid "invalid numeric value"
-msgstr ""
+msgstr "不正確的數值"
 
 #: src/getcert.c:421
 msgid "number too large or too small"
-msgstr ""
+msgstr "數字太大或太小"
 
 #: src/getcert.c:424
 msgid "bad operation"
 msgstr ""
 
 #: src/getcert.c:427
-#, fuzzy
 msgid "internal error"
-msgstr "發生內部錯誤。"
+msgstr "內部錯誤"
 
 #: src/getcert.c:430
-#, fuzzy
 msgid "out of memory"
-msgstr ""
-"記憶體不足。\n"
-"\n"
+msgstr "記憶體不足"
 
 #: src/getcert.c:434
 msgid "error in popt configuration file"
@@ -341,12 +334,12 @@ msgstr ""
 #: src/getcert.c:769 src/getcert.c:1847 src/getcert.c:2501 src/getcert.c:3101
 #: src/getcert.c:3355 src/getcert.c:3876
 msgid "nickname for NSS-based storage (only valid with -d)"
-msgstr ""
+msgstr "基於 NSS 儲存的暱稱（僅對 -d 有效）"
 
 #: src/getcert.c:770 src/getcert.c:1848 src/getcert.c:2502 src/getcert.c:3102
 #: src/getcert.c:3356 src/getcert.c:3877
 msgid "optional token name for NSS-based storage (only valid with -d)"
-msgstr ""
+msgstr "基於 NSS 儲存的可選識別名稱 (僅在使用 -d 時有效)"
 
 #: src/getcert.c:771
 msgid "PEM file for private key"
@@ -354,7 +347,7 @@ msgstr ""
 
 #: src/getcert.c:772
 msgid "PEM file for certificate (only valid with -k)"
-msgstr ""
+msgstr "證書的 PEM 檔案 (僅對 -k 有效)"
 
 #: src/getcert.c:773 src/getcert.c:1851 src/getcert.c:2508
 msgid "file which holds the private key encryption PIN"
@@ -880,19 +873,19 @@ msgstr "\t失效日期：%s\n"
 
 #: src/getcert.c:3736
 msgid "\temail: "
-msgstr "\t電郵："
+msgstr "\t電郵： "
 
 #: src/getcert.c:3742
 msgid "\tdns: "
-msgstr "\tdns："
+msgstr "\tdns： "
 
 #: src/getcert.c:3748
 msgid "\tprincipal name: "
-msgstr "\tprincipal 名稱："
+msgstr "\tprincipal 名稱： "
 
 #: src/getcert.c:3756
 msgid "\tIP address: "
-msgstr ""
+msgstr "\tIP 位址： "
 
 #: src/getcert.c:3775
 #, c-format
@@ -901,7 +894,7 @@ msgstr ""
 
 #: src/getcert.c:3779
 msgid "\teku: "
-msgstr "\teku："
+msgstr "\teku： "
 
 #: src/getcert.c:3787
 #, c-format
@@ -1063,7 +1056,7 @@ msgstr ""
 #: src/getcert.c:4406 src/getcert.c:4503 src/getcert.c:4631 src/getcert.c:4719
 #, c-format
 msgid "CA nickname not specified.\n"
-msgstr ""
+msgstr "未指定 CA 暱稱。\n"
 
 #: src/getcert.c:4411 src/getcert.c:4636
 #, c-format
@@ -1439,7 +1432,7 @@ msgstr ""
 #: src/getcert.c:4958
 #, c-format
 msgid "Usage: %s rekey [options]\n"
-msgstr ""
+msgstr "使用方式： %s rekey [選項］\n"
 
 #: src/getcert.c:4993
 msgid "  -G TYPE\ttype of new key to be generated\n"
@@ -1504,7 +1497,7 @@ msgstr ""
 #: src/getcert.c:5033
 #, c-format
 msgid "Usage: %s refresh [options]\n"
-msgstr ""
+msgstr "使用方式： %s 更新 [選項］\n"
 
 #: src/getcert.c:5036
 msgid "  -a\trefresh information about all outstanding requests\n"
@@ -1513,7 +1506,7 @@ msgstr ""
 #: src/getcert.c:5056
 #, c-format
 msgid "Usage: %s status [options]\n"
-msgstr ""
+msgstr "使用方式： %s 狀態 [選項］\n"
 
 #: src/getcert.c:5059
 msgid "* Selecting a specific request:\n"
@@ -1521,7 +1514,7 @@ msgstr ""
 
 #: src/getcert.c:5061
 msgid "* When using an NSS database for storage:\n"
-msgstr ""
+msgstr "* 使用 NSS 資料庫儲存時：\n"
 
 #: src/getcert.c:5062
 msgid "  -d DIR\treturn status for the request in this NSS database\n"
@@ -1533,7 +1526,7 @@ msgstr ""
 
 #: src/getcert.c:5064
 msgid "* When using files for storage:\n"
-msgstr ""
+msgstr "* 使用檔案儲存時：\n"
 
 #: src/getcert.c:5065
 msgid "  -f FILE\treturn status for cert stored in this PEM file\n"
@@ -1947,9 +1940,9 @@ msgid "Warning: request is missing senderNonce.\n"
 msgstr ""
 
 #: src/scep.c:637
-#, fuzzy, c-format
+#, c-format
 msgid "Got response code %d from %s, not 200.\n"
-msgstr "沒有從 %s 服務接收到回應。\n"
+msgstr "收到來自 %2$s 的回應代碼 %1$d，而非 200。\n"
 
 #: src/scep.c:685 src/scep.c:1121
 #, c-format
@@ -1957,9 +1950,9 @@ msgid "Server reply was of unexpected MIME type \"%s\".\n"
 msgstr ""
 
 #: src/scep.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "Error: failed to verify signature on server response.\n"
-msgstr "解析伺服器回應時發生錯誤。\n"
+msgstr "錯誤：未能驗證伺服器回應的簽章。\n"
 
 #: src/scep.c:946
 #, c-format
@@ -1992,9 +1985,9 @@ msgid "Error: reply nonce doesn't match request.\n"
 msgstr ""
 
 #: src/scep.c:976
-#, fuzzy, c-format
+#, c-format
 msgid "Error: reply is missing senderNonce.\n"
-msgstr "解析伺服器回應時發生錯誤。\n"
+msgstr "錯誤：缺少回覆 senderNonce\n"
 
 #: src/scep.c:994
 #, c-format
@@ -2052,9 +2045,9 @@ msgid "No key reuse.\n"
 msgstr ""
 
 #: src/scep.c:1027
-#, fuzzy, c-format
+#, c-format
 msgid "Internal CA error.\n"
-msgstr "伺服器錯誤。\n"
+msgstr "內部 CA 錯誤。\n"
 
 #: src/scep.c:1030
 #, c-format
