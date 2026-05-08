@@ -7,13 +7,14 @@
 # Zoltan Hoppár <zoltanh721@fedoraproject.org>, 2012-2013
 # Porcsin László <dzsolly85@gmail.com>, 2015. #zanata
 # Dankaházi (ifj.) István <dankahazi.istvan@gmail.com>, 2021, 2023.
+# Nimrod Turi <nimrodturi@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2023-05-12 19:21+0000\n"
-"Last-Translator: Dankaházi (ifj.) István <dankahazi.istvan@gmail.com>\n"
+"PO-Revision-Date: 2025-12-03 16:13+0000\n"
+"Last-Translator: Nimrod Turi <nimrodturi@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.fedoraproject.org/projects/"
 "certmonger/master/hu/>\n"
 "Language: hu\n"
@@ -21,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -134,7 +135,7 @@ msgstr "Belső hiba: nincs válasz erre - \"%s?%s\".\n"
 
 #: src/getcert.c:61 src/main.c:84 src/main.c:86
 msgid "COMMAND"
-msgstr ""
+msgstr "PARANCS"
 
 #: src/getcert.c:62
 msgid "DIRECTORY"
@@ -142,15 +143,15 @@ msgstr ""
 
 #: src/getcert.c:63 src/getcert.c:70
 msgid "LIST"
-msgstr ""
+msgstr "LISTA"
 
 #: src/getcert.c:64 src/getcert.c:68
 msgid "ADDRESS"
-msgstr ""
+msgstr "CÍM"
 
 #: src/getcert.c:65 src/main.c:87
 msgid "FILENAME"
-msgstr ""
+msgstr "FÁJLNÉV"
 
 #: src/getcert.c:66
 msgid "HOSTNAME"
@@ -170,7 +171,7 @@ msgstr ""
 
 #: src/getcert.c:72
 msgid "NAME"
-msgstr ""
+msgstr "NÉV"
 
 #: src/getcert.c:73
 msgid "PRINCIPAL"
