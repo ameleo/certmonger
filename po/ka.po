@@ -1,16 +1,15 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Red Hat, Inc.
 # This file is distributed under the same license as the certmonger package.
-# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022, 2023.
+# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022, 2023, 2024, 2025, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.79\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2023-12-12 05:27+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2026-03-08 02:58+0000\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "certmonger/master/ka/>\n"
 "Language: ka\n"
@@ -18,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.2.1\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -29,17 +28,17 @@ msgstr "არასაკმარისი მეხსიერება.\n"
 #: src/certmaster.c:136
 #, c-format
 msgid "Unable to determine hostname of CA.\n"
-msgstr ""
+msgstr "CA-ის ჰოსტის სახელის დადგენა შეუძლებელია.\n"
 
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
 #, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr ""
+msgstr "შეუძლებელია ხელმოწერის მოთხოვნის წაკითხვა ფაილიდან \"%s\".\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
 #, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr ""
+msgstr "ვერ წავიკითხე ხელმოწერის მოთხოვნა გარემოს ცვლადიდან '%s'.\n"
 
 #: src/certmaster.c:184
 #, c-format
@@ -357,11 +356,11 @@ msgstr "პირადი გასაღბის დაშიფვრის 
 
 #: src/getcert.c:775 src/getcert.c:1853 src/getcert.c:2510
 msgid "owner information for private key"
-msgstr ""
+msgstr "მფლობელის ინფორმაცია პირადი გასაღებისთვის"
 
 #: src/getcert.c:776 src/getcert.c:1854 src/getcert.c:2511
 msgid "file permissions for private key"
-msgstr ""
+msgstr "ფაილის წვდომები პირადი გასაღებისთვის"
 
 #: src/getcert.c:777 src/getcert.c:1855 src/getcert.c:2512
 msgid "owner information for certificate"
@@ -640,19 +639,19 @@ msgstr ""
 
 #: src/getcert.c:1872
 msgid "override requested principal name"
-msgstr ""
+msgstr "მოთხოვნილი პრინციპალის სახელის გადაფარვა"
 
 #: src/getcert.c:1873
 msgid "override requested DNS name"
-msgstr ""
+msgstr "მოთხოვნილი DNS სახელის გადაფარვა"
 
 #: src/getcert.c:1874
 msgid "override requested email address"
-msgstr ""
+msgstr "მოთხოვნილი ელფოსტის მისამართის გადაფარვა"
 
 #: src/getcert.c:1875
 msgid "override requested IP address"
-msgstr ""
+msgstr "მოთხოვნილი IP მისამართის გადაფარვა"
 
 #: src/getcert.c:2136 src/getcert.c:3194
 #, c-format
@@ -719,7 +718,7 @@ msgstr "\"%s\"-ის ჩასწორების შეცდომა.\n"
 #: src/getcert.c:3045
 #, c-format
 msgid "Resubmitting \"%s\" to \"%s\".\n"
-msgstr ""
+msgstr "\"%s\"-ის თავიდან გაგზავნა \"%s\"-ისთან.\n"
 
 #: src/getcert.c:3048
 #, c-format
@@ -1103,7 +1102,7 @@ msgstr ""
 #: src/getcert.c:4513
 #, c-format
 msgid "HTTPS requires a CA certificate.\n"
-msgstr ""
+msgstr "HTTPS-ს CA სერტიფიკატი სჭირდება.\n"
 
 #: src/getcert.c:4535
 #, c-format
@@ -1190,7 +1189,7 @@ msgstr ""
 
 #: src/getcert.c:4799 src/getcert.c:4850 src/getcert.c:4898
 msgid "  -k FILE\tPEM file for private key\n"
-msgstr ""
+msgstr "  -k ფაილი\tPEM ფაილი პირადი გასაღებისთვის\n"
 
 #: src/getcert.c:4800 src/getcert.c:4851 src/getcert.c:4899
 msgid "  -f FILE\tPEM file for certificate (only valid with -k)\n"
@@ -1272,7 +1271,7 @@ msgstr ""
 
 #: src/getcert.c:4821 src/getcert.c:4930 src/getcert.c:4978
 msgid "  -K NAME\tset requested principal name\n"
-msgstr ""
+msgstr "  -K სახელი\tმოთხოვნილი პრინციპალის სახელის დაყენება\n"
 
 #: src/getcert.c:4822 src/getcert.c:4931 src/getcert.c:4979
 msgid "  -D DNSNAME\tset requested DNS name\n"
@@ -1280,7 +1279,7 @@ msgstr ""
 
 #: src/getcert.c:4823 src/getcert.c:4932 src/getcert.c:4980
 msgid "  -E EMAIL\tset requested email address\n"
-msgstr ""
+msgstr "  -E ელფოსტა\tმოთხოვნილი ელფოსტის მისამართის დაყენება\n"
 
 #: src/getcert.c:4824 src/getcert.c:4933 src/getcert.c:4981
 msgid "  -A ADDRESS\tset requested IP address\n"
@@ -1376,15 +1375,15 @@ msgstr ""
 
 #: src/getcert.c:4869
 msgid "  -K NAME\toverride requested principal name\n"
-msgstr ""
+msgstr "  -K სახელი\tმოთხოვნილი პრინციპალის სახელის გადაფარვა\n"
 
 #: src/getcert.c:4870
 msgid "  -D DNSNAME\toverride requested DNS name\n"
-msgstr ""
+msgstr "  -D DNSNAME\tმოთხოვნილი DNS სახელის გადაფარვა\n"
 
 #: src/getcert.c:4871
 msgid "  -E EMAIL\toverride requested email address\n"
-msgstr ""
+msgstr "  -E EMAIL\tმოთხოვნილი ელფოსტის მისამართის გადაფარვ\n"
 
 #: src/getcert.c:4872
 msgid "  -A ADDRESS\toverride requested IP address\n"
@@ -1411,7 +1410,7 @@ msgstr ""
 
 #: src/getcert.c:4920 src/getcert.c:4968 src/getcert.c:5046
 msgid "  -f FILE\tPEM file for certificate\n"
-msgstr ""
+msgstr "  -f ფაილი\tPEM ფაილი სერტიფიკატისთვის\n"
 
 #: src/getcert.c:4926 src/getcert.c:4974
 msgid "* New parameter values for the signing request:\n"
@@ -1858,7 +1857,7 @@ msgstr ""
 
 #: src/main.c:184
 msgid "\t-b TIMEOUT bus-activated, idle timeout\n"
-msgstr ""
+msgstr "\t-b მოლოდინისვადა სალტით-გააქტიურებული, უქმეობის მოლოდინის ვადა\n"
 
 #: src/main.c:185
 msgid "\t-B         don't use an idle timeout\n"
@@ -2077,7 +2076,7 @@ msgstr ""
 
 #: src/tdbush.c:119 src/tdbush.c:1944 src/tdbush.c:2351
 msgid "An internal error has occurred."
-msgstr ""
+msgstr "აღმოჩენილია შიდა შეცდომა."
 
 #: src/tdbush.c:183
 msgid "No matching entry found.\n"
@@ -2167,7 +2166,7 @@ msgstr ""
 
 #: src/tdbush.c:853
 msgid "Key nickname not specified."
-msgstr ""
+msgstr "გასაღების მეტსახელი მითითებული არაა."
 
 #: src/tdbush.c:909
 #, c-format
