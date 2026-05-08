@@ -13,13 +13,14 @@
 # Charles Lee <lchopn@gmail.com>, 2021.
 # Serena She <sheyueming@gmail.com>, 2021.
 # Jingge Chen <mariocanfly@hotmail.com>, 2023.
+# 耗子 <haozi@loli.email>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2023-12-11 11:43+0000\n"
-"Last-Translator: Jingge Chen <mariocanfly@hotmail.com>\n"
+"PO-Revision-Date: 2026-04-02 23:59+0000\n"
+"Last-Translator: 耗子 <haozi@loli.email>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/certmonger/master/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -27,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.2.1\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -386,7 +387,7 @@ msgstr "存储 CA 证书的 NSS 数据库"
 
 #: src/getcert.c:780 src/getcert.c:1858 src/getcert.c:2515
 msgid "file in which to store the CA's certificates"
-msgstr ""
+msgstr "存储 CA 证书的文件"
 
 #: src/getcert.c:781 src/getcert.c:1859 src/getcert.c:2516
 msgid "command to run before saving the certificate"
@@ -402,11 +403,11 @@ msgstr "分配给请求的昵称"
 
 #: src/getcert.c:784
 msgid "type of key to be generated if one is not already in place"
-msgstr ""
+msgstr "如果尚不存在，要生成的密钥类型"
 
 #: src/getcert.c:785
 msgid "size of key to be generated if one is not already in place"
-msgstr ""
+msgstr "如果尚不存在，要生成的密钥大小"
 
 #: src/getcert.c:786 src/getcert.c:1863
 msgid "attempt to renew the certificate when expiration nears (default)"
@@ -418,11 +419,11 @@ msgstr "证书到期时，不尝试更新证书"
 
 #: src/getcert.c:789 src/getcert.c:1866
 msgid "use the specified CA configuration rather than the default"
-msgstr ""
+msgstr "使用指定的 CA 配置而非默认配置"
 
 #: src/getcert.c:791 src/getcert.c:1868 src/getcert.c:2521
 msgid "ask the CA to process the request using the named profile or template"
-msgstr ""
+msgstr "要求 CA 使用指定的配置文件或模板处理请求"
 
 #: src/getcert.c:792 src/getcert.c:1869 src/getcert.c:2522
 msgid "ask the CA to process the request using the named issuer"
@@ -430,55 +431,55 @@ msgstr "要求 CA 使用指名的签署者处理请求"
 
 #: src/getcert.c:793 src/getcert.c:2523
 msgid "set requested subject name (default: CN=<hostname>)"
-msgstr ""
+msgstr "设置请求的主题名（默认：CN=<主机名>）"
 
 #: src/getcert.c:794 src/getcert.c:2524
 msgid "set requested key usage value"
-msgstr ""
+msgstr "设置请求的密钥用途值"
 
 #: src/getcert.c:795 src/getcert.c:2525
 msgid "set requested extended key usage OID"
-msgstr ""
+msgstr "设置请求的扩展密钥用途 OID"
 
 #: src/getcert.c:796 src/getcert.c:2526
 msgid "set requested principal name"
-msgstr ""
+msgstr "设置请求的主体名称"
 
 #: src/getcert.c:797 src/getcert.c:2527
 msgid "set requested DNS name"
-msgstr ""
+msgstr "设置请求的 DNS 名称"
 
 #: src/getcert.c:798 src/getcert.c:2528
 msgid "set requested email address"
-msgstr ""
+msgstr "设置请求的电子邮件地址"
 
 #: src/getcert.c:799 src/getcert.c:2529
 msgid "set requested IP address"
-msgstr ""
+msgstr "设置请求的 IP 地址"
 
 #: src/getcert.c:800 src/getcert.c:1876 src/getcert.c:2530
 msgid "file which holds an optional challenge password value"
-msgstr ""
+msgstr "保存可选质询密码值的文件"
 
 #: src/getcert.c:801 src/getcert.c:1877 src/getcert.c:2531
 msgid "an optional challenge password value"
-msgstr ""
+msgstr "可选的质询密码值"
 
 #: src/getcert.c:802 src/getcert.c:1878 src/getcert.c:2532
 msgid "request a CA certificate"
-msgstr ""
+msgstr "请求 CA 证书"
 
 #: src/getcert.c:803 src/getcert.c:1879 src/getcert.c:2533
 msgid "request a non-CA certificate"
-msgstr ""
+msgstr "请求非 CA 证书"
 
 #: src/getcert.c:804 src/getcert.c:1880 src/getcert.c:2534
 msgid "path length for CA certificate"
-msgstr ""
+msgstr "CA 证书的路径长度"
 
 #: src/getcert.c:805 src/getcert.c:1881 src/getcert.c:2535
 msgid "try to wait for the certificate to be issued"
-msgstr ""
+msgstr "尝试等待证书签发"
 
 #: src/getcert.c:806 src/getcert.c:1882 src/getcert.c:2536
 msgid "maximum time to wait for the certificate to be issued"
@@ -488,13 +489,13 @@ msgstr "等待证书发行的最大时间"
 #: src/getcert.c:3360 src/getcert.c:3880 src/getcert.c:4038 src/getcert.c:4270
 #: src/getcert.c:4366 src/getcert.c:4463 src/getcert.c:4591 src/getcert.c:4679
 msgid "connect to the certmonger service on the session bus"
-msgstr ""
+msgstr "连接到会话总线上的 certmonger 服务"
 
 #: src/getcert.c:808 src/getcert.c:1884 src/getcert.c:2538 src/getcert.c:3106
 #: src/getcert.c:3361 src/getcert.c:3881 src/getcert.c:4039 src/getcert.c:4271
 #: src/getcert.c:4367 src/getcert.c:4464 src/getcert.c:4592 src/getcert.c:4680
 msgid "connect to the certmonger service on the system bus"
-msgstr ""
+msgstr "连接到系统总线上的 certmonger 服务"
 
 #: src/getcert.c:825 src/getcert.c:1893 src/getcert.c:2547
 #, c-format
@@ -504,7 +505,7 @@ msgstr "初始化 Kerberos 库时出错：%s\n"
 #: src/getcert.c:889 src/getcert.c:2619
 #, c-format
 msgid "No support for generating \"%s\" keys.\n"
-msgstr ""
+msgstr "不支持生成 \"%s\" 类型的密钥。\n"
 
 #: src/getcert.c:891 src/getcert.c:2621
 #, c-format
@@ -626,7 +627,7 @@ msgstr "新的跟踪请求无法添加。\n"
 
 #: src/getcert.c:1849
 msgid "PEM file for private key (only valid with -f)"
-msgstr ""
+msgstr "私钥的 PEM 文件（仅与 -f 一起使用时有效）"
 
 #: src/getcert.c:1850 src/getcert.c:2503 src/getcert.c:3103 src/getcert.c:3357
 #: src/getcert.c:3878
@@ -639,31 +640,31 @@ msgstr "现有请求的昵称"
 
 #: src/getcert.c:1862
 msgid "nickname to give to tracking request"
-msgstr ""
+msgstr "给跟踪请求的昵称"
 
 #: src/getcert.c:1870
 msgid "override requested key usage value"
-msgstr ""
+msgstr "覆盖请求的密钥用途值"
 
 #: src/getcert.c:1871
 msgid "override requested extended key usage OID"
-msgstr ""
+msgstr "覆盖请求的扩展密钥用途 OID"
 
 #: src/getcert.c:1872
 msgid "override requested principal name"
-msgstr ""
+msgstr "覆盖请求的主体名称"
 
 #: src/getcert.c:1873
 msgid "override requested DNS name"
-msgstr ""
+msgstr "覆盖请求的 DNS 名称"
 
 #: src/getcert.c:1874
 msgid "override requested email address"
-msgstr ""
+msgstr "覆盖请求的电子邮件地址"
 
 #: src/getcert.c:1875
 msgid "override requested IP address"
-msgstr ""
+msgstr "覆盖请求的 IP 地址"
 
 #: src/getcert.c:2136 src/getcert.c:3194
 #, c-format
@@ -720,7 +721,7 @@ msgstr "生成的新密钥的大小"
 
 #: src/getcert.c:2519
 msgid "use the specified CA configuration rather than the current one"
-msgstr ""
+msgstr "使用指定的 CA 配置而非当前配置"
 
 #: src/getcert.c:3029
 #, c-format
@@ -749,12 +750,12 @@ msgstr "试图提交“%s”时出错。\n"
 
 #: src/getcert.c:3096
 msgid "refresh information about all outstanding requests"
-msgstr ""
+msgstr "刷新所有待处理请求的信息"
 
 #: src/getcert.c:3098
 msgid ""
 "refresh information only for requests using the specified CA configuration"
-msgstr ""
+msgstr "仅刷新使用指定 CA 配置的请求信息"
 
 #: src/getcert.c:3290
 #, c-format
@@ -764,11 +765,11 @@ msgstr "请求 ID ‘%s’ 正在更新中。\n"
 #: src/getcert.c:3292
 #, c-format
 msgid "Request ID '%s' NOT being refreshed.\n"
-msgstr ""
+msgstr "请求 ID '%s' 未被刷新。\n"
 
 #: src/getcert.c:3349
 msgid "list only information about outstanding requests"
-msgstr ""
+msgstr "仅列出待处理请求的信息"
 
 #: src/getcert.c:3350
 msgid "list only information about tracked certificates"
@@ -776,11 +777,11 @@ msgstr "-t    只列出被跟踪证书的相关信息"
 
 #: src/getcert.c:3352
 msgid "list only requests and certs associated with this CA configuration"
-msgstr ""
+msgstr "仅列出与此 CA 配置关联的请求和证书"
 
 #: src/getcert.c:3359
 msgid "display times in UTC instead of local time"
-msgstr ""
+msgstr "以 UTC 而非本地时间显示时间"
 
 #: src/getcert.c:3476
 #, c-format
@@ -834,7 +835,7 @@ msgstr ",token='%s'"
 #: src/getcert.c:3663
 #, c-format
 msgid ",pin set"
-msgstr ""
+msgstr ",已设置 PIN"
 
 #: src/getcert.c:3666
 #, c-format
@@ -849,12 +850,12 @@ msgstr "证书：type=%s,location='%s'"
 #: src/getcert.c:3693
 #, c-format
 msgid "\tsigning request thumbprint (MD5): %s\n"
-msgstr ""
+msgstr "\t签名请求指纹（MD5）：%s\n"
 
 #: src/getcert.c:3698
 #, c-format
 msgid "\tsigning request thumbprint (SHA1): %s\n"
-msgstr ""
+msgstr "\t签名请求指纹（SHA1）：%s\n"
 
 #: src/getcert.c:3715
 #, c-format
@@ -913,22 +914,22 @@ msgstr "\t证书模板/主页：%s\n"
 #: src/getcert.c:3793 src/getcert.c:4154
 #, c-format
 msgid "\troot certificates saved to files:\n"
-msgstr ""
+msgstr "\t根证书已保存到文件：\n"
 
 #: src/getcert.c:3802 src/getcert.c:4163
 #, c-format
 msgid "\tother root certificates saved to files:\n"
-msgstr ""
+msgstr "\t其他根证书已保存到文件：\n"
 
 #: src/getcert.c:3811 src/getcert.c:4172
 #, c-format
 msgid "\tother certificates saved to files:\n"
-msgstr ""
+msgstr "\t其他证书已保存到文件：\n"
 
 #: src/getcert.c:3820 src/getcert.c:4181
 #, c-format
 msgid "\troot certificates saved to databases:\n"
-msgstr ""
+msgstr "\t根证书已保存到数据库：\n"
 
 #: src/getcert.c:3829 src/getcert.c:4190
 #, c-format
@@ -965,7 +966,7 @@ msgstr "    自动更新：%s\n"
 msgid ""
 "None of ID or database directory and and nickname or certificate file "
 "specified.\n"
-msgstr ""
+msgstr "未指定 ID、数据库目录和昵称或证书文件。\n"
 
 #: src/getcert.c:4036
 msgid "list only the specified CA configuration"
@@ -979,7 +980,7 @@ msgstr "CA '%s'：\n"
 #: src/getcert.c:4110
 #, c-format
 msgid "\tself-identifies as: %s\n"
-msgstr ""
+msgstr "\t自我标识为：%s\n"
 
 #: src/getcert.c:4119
 #, c-format
@@ -1004,27 +1005,27 @@ msgstr "    已知发行者名称：\n"
 #: src/getcert.c:4145
 #, c-format
 msgid "\tknown profiles/templates/certtypes:\n"
-msgstr ""
+msgstr "\t已知的配置文件/模板/证书类型：\n"
 
 #: src/getcert.c:4208
 #, c-format
 msgid "\tdefault profile/template/certtype: %s\n"
-msgstr ""
+msgstr "\t默认配置文件/模板/证书类型：%s\n"
 
 #: src/getcert.c:4216
 #, c-format
 msgid "\tSCEP CA identifier: %s\n"
-msgstr ""
+msgstr "\tSCEP CA 标识符：%s\n"
 
 #: src/getcert.c:4229
 #, c-format
 msgid "\tSCEP CA certificate thumbprint (MD5): %s\n"
-msgstr ""
+msgstr "\tSCEP CA 证书指纹（MD5）：%s\n"
 
 #: src/getcert.c:4235
 #, c-format
 msgid "\tSCEP CA certificate thumbprint (SHA1): %s\n"
-msgstr ""
+msgstr "\tSCEP CA 证书指纹（SHA1）：%s\n"
 
 #: src/getcert.c:4267
 msgid "refresh information about the CA configuration with this name"
@@ -1042,7 +1043,7 @@ msgstr "未指定 CA 昵称或 -a 标记。\n"
 #: src/getcert.c:4342
 #, c-format
 msgid "Data for CA '%s' being refreshed.\n"
-msgstr ""
+msgstr "CA '%s' 的数据正在刷新。\n"
 
 #: src/getcert.c:4344
 #, c-format
@@ -1080,83 +1081,83 @@ msgstr "新 CA“%s”已添加。\n"
 #: src/getcert.c:4438 src/getcert.c:4573
 #, c-format
 msgid "New CA could not be added.\n"
-msgstr ""
+msgstr "无法添加新 CA。\n"
 
 #: src/getcert.c:4457
 msgid "location of SCEP server"
-msgstr ""
+msgstr "SCEP 服务器位置"
 
 #: src/getcert.c:4458
 msgid "CA identifier"
-msgstr ""
+msgstr "CA 标识符"
 
 #: src/getcert.c:4459
 msgid "file containing CA's certificate"
-msgstr ""
+msgstr "包含 CA 证书的文件"
 
 #: src/getcert.c:4460
 msgid "file containing RA's certificate"
-msgstr ""
+msgstr "包含 RA 证书的文件"
 
 #: src/getcert.c:4461
 msgid "file containing certificates in RA's certifying chain"
-msgstr ""
+msgstr "包含 RA 认证链证书的文件"
 
 #: src/getcert.c:4462
 msgid "prefer to not use the SCEP Renewal feature"
-msgstr ""
+msgstr "优先不使用 SCEP 续订功能"
 
 #: src/getcert.c:4508
 #, c-format
 msgid "server URL not specified.\n"
-msgstr ""
+msgstr "未指定服务器 URL。\n"
 
 #: src/getcert.c:4513
 #, c-format
 msgid "HTTPS requires a CA certificate.\n"
-msgstr ""
+msgstr "HTTPS 需要 CA 证书。\n"
 
 #: src/getcert.c:4535
 #, c-format
 msgid "Error building command line.\n"
-msgstr ""
+msgstr "构建命令行时出错。\n"
 
 #: src/getcert.c:4567
 #, c-format
 msgid "Error setting CA identifier.\n"
-msgstr ""
+msgstr "设置 CA 标识符时出错。\n"
 
 #: src/getcert.c:4589
 msgid "nickname of the CA configuration"
-msgstr ""
+msgstr "CA 配置的昵称"
 
 #: src/getcert.c:4590
 msgid "updated helper command to run to communicate with CA"
-msgstr ""
+msgstr "用于与 CA 通信的更新后的辅助命令"
 
 #: src/getcert.c:4658
 #, c-format
 msgid "CA \"%s\" modified.\n"
-msgstr ""
+msgstr "CA \"%s\" 已修改。\n"
 
 #: src/getcert.c:4661
 #, c-format
 msgid "CA could not be modified.\n"
-msgstr ""
+msgstr "无法修改 CA。\n"
 
 #: src/getcert.c:4678
 msgid "nickname of CA configuration to remove"
-msgstr ""
+msgstr "要删除的 CA 配置的昵称"
 
 #: src/getcert.c:4747
 #, c-format
 msgid "CA \"%s\" removed.\n"
-msgstr ""
+msgstr "CA \"%s\" 已删除。\n"
 
 #: src/getcert.c:4749
 #, c-format
 msgid "CA could not be removed.\n"
-msgstr ""
+msgstr "无法删除 CA。\n"
 
 #: src/getcert.c:4787
 #, c-format
@@ -1238,7 +1239,7 @@ msgstr ""
 
 #: src/getcert.c:4808
 msgid "  -G TYPE\ttype of key to be generated if one is not already in place\n"
-msgstr ""
+msgstr "  -G TYPE\t如果尚不存在，要生成的密钥类型\n"
 
 #: src/getcert.c:4809
 msgid "  -g SIZE\tsize of key to be generated if one is not already in place\n"
@@ -1297,15 +1298,15 @@ msgstr "    -E EMAIL    设定所需的电子邮件地址\n"
 
 #: src/getcert.c:4824 src/getcert.c:4933 src/getcert.c:4981
 msgid "  -A ADDRESS\tset requested IP address\n"
-msgstr ""
+msgstr "  -A ADDRESS\t设置请求的 IP 地址\n"
 
 #: src/getcert.c:4825 src/getcert.c:4873 src/getcert.c:4934 src/getcert.c:4982
 msgid "  -l FILE\tfile which holds an optional challenge password\n"
-msgstr ""
+msgstr "  -l FILE\t保存可选质询密码的文件\n"
 
 #: src/getcert.c:4826 src/getcert.c:4874 src/getcert.c:4935 src/getcert.c:4983
 msgid "  -L PASSWORD\tan optional challenge password value\n"
-msgstr ""
+msgstr "  -L PASSWORD\t可选的质询密码值\n"
 
 #: src/getcert.c:4827 src/getcert.c:4875 src/getcert.c:4902 src/getcert.c:4945
 #: src/getcert.c:4995 src/getcert.c:5025 src/getcert.c:5049 src/getcert.c:5066
@@ -1341,15 +1342,15 @@ msgstr "  -C\t在保存证书后运行的命令\n"
 
 #: src/getcert.c:4833 src/getcert.c:4881 src/getcert.c:4951 src/getcert.c:5001
 msgid "  -F\tfile in which to store the CA's certificates\n"
-msgstr ""
+msgstr "  -F\t存储 CA 证书的文件\n"
 
 #: src/getcert.c:4834 src/getcert.c:4882 src/getcert.c:4952 src/getcert.c:5002
 msgid "  -a\tNSS database in which to store the CA's certificates\n"
-msgstr ""
+msgstr "  -a\t存储 CA 证书的 NSS 数据库\n"
 
 #: src/getcert.c:4835 src/getcert.c:4883 src/getcert.c:4953 src/getcert.c:5003
 msgid "  -w\ttry to wait for the certificate to be issued\n"
-msgstr ""
+msgstr "  -w\t尝试等待证书签发\n"
 
 #: src/getcert.c:4836 src/getcert.c:4884 src/getcert.c:4906 src/getcert.c:4954
 #: src/getcert.c:5004 src/getcert.c:5029 src/getcert.c:5052 src/getcert.c:5070
@@ -1401,7 +1402,7 @@ msgstr "  -E EMAIL    覆盖所需的电子邮件地址\n"
 
 #: src/getcert.c:4872
 msgid "  -A ADDRESS\toverride requested IP address\n"
-msgstr ""
+msgstr "  -A ADDRESS\t覆盖请求的 IP 地址\n"
 
 #: src/getcert.c:4888
 #, c-format
@@ -1441,15 +1442,15 @@ msgstr "  -c CA    使用指定的 CA 而不是当前的\n"
 #: src/getcert.c:4958
 #, c-format
 msgid "Usage: %s rekey [options]\n"
-msgstr ""
+msgstr "用法：%s rekey [选项]\n"
 
 #: src/getcert.c:4993
 msgid "  -G TYPE\ttype of new key to be generated\n"
-msgstr ""
+msgstr "  -G TYPE\t要生成的新密钥类型\n"
 
 #: src/getcert.c:4994
 msgid "  -g SIZE\tsize of new key to be generated\n"
-msgstr ""
+msgstr "  -g SIZE\t要生成的新密钥大小\n"
 
 #: src/getcert.c:5008
 #, c-format
@@ -1475,7 +1476,7 @@ msgstr "  -t    只列出被跟踪证书的相关信息\n"
 
 #: src/getcert.c:5017
 msgid "  -u\tdisplay times in UTC instead of local time\n"
-msgstr ""
+msgstr "  -u\t以 UTC 而非本地时间显示时间\n"
 
 #: src/getcert.c:5018
 msgid "* If selecting a specific request:\n"
@@ -1512,40 +1513,40 @@ msgstr "  -s    在会话总线上连接 certmonger 服务\n"
 #: src/getcert.c:5033
 #, c-format
 msgid "Usage: %s refresh [options]\n"
-msgstr ""
+msgstr "用法：%s refresh [选项]\n"
 
 #: src/getcert.c:5036
 msgid "  -a\trefresh information about all outstanding requests\n"
-msgstr ""
+msgstr "  -a\t刷新所有待处理请求的信息\n"
 
 #: src/getcert.c:5056
 #, c-format
 msgid "Usage: %s status [options]\n"
-msgstr ""
+msgstr "用法：%s status [选项]\n"
 
 #: src/getcert.c:5059
 msgid "* Selecting a specific request:\n"
-msgstr ""
+msgstr "* 选择特定请求：\n"
 
 #: src/getcert.c:5061
 msgid "* When using an NSS database for storage:\n"
-msgstr ""
+msgstr "* 使用 NSS 数据库存储时：\n"
 
 #: src/getcert.c:5062
 msgid "  -d DIR\treturn status for the request in this NSS database\n"
-msgstr ""
+msgstr "  -d DIR\t返回此 NSS 数据库中请求的状态\n"
 
 #: src/getcert.c:5063
 msgid "  -n NAME\treturn status for cert which uses this nickname\n"
-msgstr ""
+msgstr "  -n NAME\t返回使用此昵称的证书状态\n"
 
 #: src/getcert.c:5064
 msgid "* When using files for storage:\n"
-msgstr ""
+msgstr "* 使用文件存储时：\n"
 
 #: src/getcert.c:5065
 msgid "  -f FILE\treturn status for cert stored in this PEM file\n"
-msgstr ""
+msgstr "  -f FILE\t返回存储在此 PEM 文件中的证书状态\n"
 
 #: src/getcert.c:5074
 #, c-format
@@ -1559,140 +1560,140 @@ msgstr "  -c CA    只列出具有此名称的 CA 的相关信息\n"
 #: src/getcert.c:5089
 #, c-format
 msgid "Usage: %s refresh-ca [options]\n"
-msgstr ""
+msgstr "用法：%s refresh-ca [选项]\n"
 
 #: src/getcert.c:5094
 msgid "  -c CA\trefresh information about the CA with this name\n"
-msgstr ""
+msgstr "  -c CA\t刷新具有此名称的 CA 的信息\n"
 
 #: src/getcert.c:5095
 msgid "  -a\trefresh information about all known CAs\n"
-msgstr ""
+msgstr "  -a\t刷新所有已知 CA 的信息\n"
 
 #: src/getcert.c:5106
 #, c-format
 msgid "Usage: %s add-ca [options]\n"
-msgstr ""
+msgstr "用法：%s add-ca [选项]\n"
 
 #: src/getcert.c:5110 src/getcert.c:5124
 msgid "  -c CA\t\tnickname to give to the new CA configuration\n"
-msgstr ""
+msgstr "  -c CA\t\t给新 CA 配置的昵称\n"
 
 #: src/getcert.c:5111
 msgid "  -e CMD\thelper command to run to communicate with CA\n"
-msgstr ""
+msgstr "  -e CMD\t用于与 CA 通信的辅助命令\n"
 
 #: src/getcert.c:5120
 #, c-format
 msgid "Usage: %s add-scep-ca [options]\n"
-msgstr ""
+msgstr "用法：%s add-scep-ca [选项]\n"
 
 #: src/getcert.c:5125
 msgid "  -u URL\tlocation of SCEP server\n"
-msgstr ""
+msgstr "  -u URL\tSCEP 服务器位置\n"
 
 #: src/getcert.c:5126
 msgid "  -i ID\t\tCA identifier\n"
-msgstr ""
+msgstr "  -i ID\t\tCA 标识符\n"
 
 #: src/getcert.c:5127
 msgid "  -R FILE\tfile containing CA's certificate\n"
-msgstr ""
+msgstr "  -R FILE\t包含 CA 证书的文件\n"
 
 #: src/getcert.c:5128
 msgid "  -r FILE\tfile containing RA's certificate\n"
-msgstr ""
+msgstr "  -r FILE\t包含 RA 证书的文件\n"
 
 #: src/getcert.c:5129
 msgid "  -I FILE\tfile containing certificates in RA's certifying chain\n"
-msgstr ""
+msgstr "  -I FILE\t包含 RA 认证链证书的文件\n"
 
 #: src/getcert.c:5130
 msgid "  -n\tprefer not to use the SCEP Renewal feature\n"
-msgstr ""
+msgstr "  -n\t优先不使用 SCEP 续订功能\n"
 
 #: src/getcert.c:5139
 #, c-format
 msgid "Usage: %s modify-ca [options]\n"
-msgstr ""
+msgstr "用法：%s modify-ca [选项]\n"
 
 #: src/getcert.c:5143
 msgid "  -c CA\t\tnickname of the CA configuration\n"
-msgstr ""
+msgstr "  -c CA\t\tCA 配置的昵称\n"
 
 #: src/getcert.c:5144
 msgid "  -e CMD\tupdated helper command to run to communicate with CA\n"
-msgstr ""
+msgstr "  -e CMD\t用于与 CA 通信的更新后的辅助命令\n"
 
 #: src/getcert.c:5153
 #, c-format
 msgid "Usage: %s remove-ca [options]\n"
-msgstr ""
+msgstr "用法：%s remove-ca [选项]\n"
 
 #: src/getcert.c:5157
 msgid "  -c CA\tnickname of CA configuration to remove\n"
-msgstr ""
+msgstr "  -c CA\t要删除的 CA 配置的昵称\n"
 
 #: src/getcert.c:5172
 #, c-format
 msgid "Usage: %s command [options]\n"
-msgstr ""
+msgstr "用法：%s 命令 [选项]\n"
 
 #: src/getcert.c:5174
 msgid "request a new certificate from a CA\n"
-msgstr ""
+msgstr "从 CA 请求新证书\n"
 
 #: src/getcert.c:5176
 msgid "begin monitoring an already-issued certificate\n"
-msgstr ""
+msgstr "开始监控已签发的证书\n"
 
 #: src/getcert.c:5178
 msgid "stop monitoring a certificate\n"
-msgstr ""
+msgstr "停止监控证书\n"
 
 #: src/getcert.c:5180
 msgid "resubmit an in-progress enrollment request, or start a new one\n"
-msgstr ""
+msgstr "重新提交进行中的注册请求或发起新请求\n"
 
 #: src/getcert.c:5182
 msgid "generate a new private key and replace a certificate\n"
-msgstr ""
+msgstr "生成新私钥并替换证书\n"
 
 #: src/getcert.c:5184
 msgid "check on the status of an in-progress enrollment request\n"
-msgstr ""
+msgstr "检查进行中的注册请求状态\n"
 
 #: src/getcert.c:5186
 msgid "list certificates being monitored and requested\n"
-msgstr ""
+msgstr "列出正在监控和请求的证书\n"
 
 #: src/getcert.c:5188
 msgid "check the status of a certificate being monitored or requested\n"
-msgstr ""
+msgstr "检查正在监控或请求的证书状态\n"
 
 #: src/getcert.c:5191
 msgid "add a CA configuration\n"
-msgstr ""
+msgstr "添加 CA 配置\n"
 
 #: src/getcert.c:5193
 msgid "add an SCEP CA configuration\n"
-msgstr ""
+msgstr "添加 SCEP CA 配置\n"
 
 #: src/getcert.c:5196
 msgid "list known CA configurations\n"
-msgstr ""
+msgstr "列出已知的 CA 配置\n"
 
 #: src/getcert.c:5199
 msgid "modify a CA configuration\n"
-msgstr ""
+msgstr "修改 CA 配置\n"
 
 #: src/getcert.c:5202
 msgid "refresh cache of all information obtained from a CA\n"
-msgstr ""
+msgstr "刷新从 CA 获取的所有信息的缓存\n"
 
 #: src/getcert.c:5205
 msgid "remove a CA configuration\n"
-msgstr ""
+msgstr "删除 CA 配置\n"
 
 #: src/getcert.c:5273
 #, c-format
@@ -1702,22 +1703,22 @@ msgstr "%s：未识别命令\n"
 #: src/ipa.c:144
 #, c-format
 msgid "Unable to determine location of IPA LDAP server.\n"
-msgstr ""
+msgstr "无法确定 IPA LDAP 服务器的位置。\n"
 
 #: src/ipa.c:149
 #, c-format
 msgid "Unable to contact an IPA LDAP server.\n"
-msgstr ""
+msgstr "无法联系 IPA LDAP 服务器。\n"
 
 #: src/ipa.c:233 src/ipa.c:533
 #, c-format
 msgid "Unable to determine base DN of domain information on IPA server.\n"
-msgstr ""
+msgstr "无法确定 IPA 服务器上域信息的基础 DN。\n"
 
 #: src/ipa.c:369
 #, c-format
 msgid "Error setting up for XMLRPC on the client.\n"
-msgstr ""
+msgstr "在客户端上设置 XMLRPC 时出错。\n"
 
 #: src/ipa.c:658
 #, c-format
@@ -1744,32 +1745,32 @@ msgstr "无法确定签名请求的实体名。\n"
 #: src/ipa.c:831
 #, c-format
 msgid "No IPA domain configured, and none specified.\n"
-msgstr ""
+msgstr "未配置 IPA 域，也未指定。\n"
 
 #: src/ipa.c:868
 #, c-format
 msgid ""
 "Error setting up ccache for \"host\" service on client using default keytab: "
 "%s.\n"
-msgstr ""
+msgstr "使用默认 keytab 在客户端上为 \"host\" 服务设置 ccache 时出错：%s。\n"
 
 #: src/ipa.c:872
 #, c-format
 msgid ""
 "Error setting up ccache for \"%s\" on client using default keytab: %s.\n"
-msgstr ""
+msgstr "使用默认 keytab 在客户端上为 \"%s\" 设置 ccache 时出错：%s。\n"
 
 #: src/ipa.c:879
 #, c-format
 msgid ""
 "Error setting up ccache for \"host\" service on client using keytab \"%s\": "
 "%s.\n"
-msgstr ""
+msgstr "使用 keytab \"%s\" 在客户端上为 \"host\" 服务设置 ccache 时出错：%s。\n"
 
 #: src/ipa.c:883
 #, c-format
 msgid "Error setting up ccache for \"%s\" on client using keytab \"%s\": %s.\n"
-msgstr ""
+msgstr "使用 keytab \"%s\" 在客户端上为 \"%s\" 设置 ccache 时出错：%s。\n"
 
 #: src/local.c:556
 #, c-format
@@ -1778,76 +1779,76 @@ msgstr "无法读取签名请求。\n"
 
 #: src/main.c:74
 msgid "use session bus"
-msgstr ""
+msgstr "使用会话总线"
 
 #: src/main.c:75
 msgid "use system bus"
-msgstr ""
+msgstr "使用系统总线"
 
 #: src/main.c:76
 msgid "start a dedicated listening socket"
-msgstr ""
+msgstr "启动专用监听套接字"
 
 #: src/main.c:77
 msgid "only use a dedicated listening socket"
-msgstr ""
+msgstr "仅使用专用监听套接字"
 
 #: src/main.c:78
 msgid "specify the dedicated listening socket"
-msgstr ""
+msgstr "指定专用监听套接字"
 
 #: src/main.c:78
 msgid "PATHNAME"
-msgstr ""
+msgstr "路径名"
 
 #: src/main.c:79
 msgid "don't become a daemon"
-msgstr ""
+msgstr "不变为守护进程"
 
 #: src/main.c:80
 msgid "do become a daemon"
-msgstr ""
+msgstr "变为守护进程"
 
 #: src/main.c:81
 msgid "bus-activated, idle timeout"
-msgstr ""
+msgstr "总线激活，空闲超时"
 
 #: src/main.c:81
 msgid "SECONDS"
-msgstr ""
+msgstr "秒"
 
 #: src/main.c:82
 msgid "don't use an idle timeout"
-msgstr ""
+msgstr "不使用空闲超时"
 
 #: src/main.c:83
 msgid "set debugging level (implies -n)"
-msgstr ""
+msgstr "设置调试级别（隐含 -n）"
 
 #: src/main.c:83
 msgid "NUMBER"
-msgstr ""
+msgstr "数字"
 
 #: src/main.c:84 src/main.c:86
 msgid "start COMMAND and exit when it does"
-msgstr ""
+msgstr "启动命令并在其退出时退出"
 
 #: src/main.c:87
 msgid "write service PID to file"
-msgstr ""
+msgstr "将服务 PID 写入文件"
 
 #: src/main.c:88
 msgid "force NSS into FIPS mode"
-msgstr ""
+msgstr "强制 NSS 进入 FIPS 模式"
 
 #: src/main.c:90
 msgid "print version information"
-msgstr ""
+msgstr "打印版本信息"
 
 #: src/main.c:174
 #, c-format
 msgid "Usage: %s [-s|-S] [-n|-f] [-d LEVEL] [-p FILE] [-F] [-v]\n"
-msgstr ""
+msgstr "用法：%s [-s|-S] [-n|-f] [-d LEVEL] [-p FILE] [-F] [-v]\n"
 
 #: src/main.c:177
 msgid "\t-s         use session bus\n"
@@ -1859,15 +1860,15 @@ msgstr "\t-S         使用系统总线\n"
 
 #: src/main.c:179
 msgid "\t-l         start a dedicated listening socket\n"
-msgstr ""
+msgstr "\t-l         启动专用监听套接字\n"
 
 #: src/main.c:180
 msgid "\t-L         only use a dedicated listening socket\n"
-msgstr ""
+msgstr "\t-L         仅使用专用监听套接字\n"
 
 #: src/main.c:181
 msgid "\t-P PATH    specify the dedicated listening socket\n"
-msgstr ""
+msgstr "\t-P PATH    指定专用监听套接字\n"
 
 #: src/main.c:182
 msgid "\t-n         don't become a daemon\n"
@@ -1891,7 +1892,7 @@ msgstr "\t-d LEVEL   设定调试级别 (使用 -n)\n"
 
 #: src/main.c:187
 msgid "\t-c COMMAND start COMMAND and exit when it does\n"
-msgstr ""
+msgstr "\t-c COMMAND 启动命令并在其退出时退出\n"
 
 #: src/main.c:188
 msgid "\t-p FILE    write service PID to file\n"
@@ -1905,7 +1906,7 @@ msgstr "\t-F         强制 NSS 进入 FIPS 模式\n"
 
 #: src/main.c:190
 msgid "\t-v         print version information and exit\n"
-msgstr ""
+msgstr "\t-v         打印版本信息并退出\n"
 
 #: src/scep.c:352
 #, c-format
@@ -1928,35 +1929,37 @@ msgid ""
 "Error reading request.  Expected PKCS7 data containing a GetInitialCert "
 "pkiMessage, got nothing.\n"
 msgstr ""
+"读取请求出错。应为包含 GetInitialCert pkiMessage 的 PKCS7 数据，但未获取到"
+"。\n"
 
 #: src/scep.c:405 src/scep.c:565
 #, c-format
 msgid ""
 "Error reading request.  Expected PKCS7 data containing a PKCSReq pkiMessage, "
 "got nothing.\n"
-msgstr ""
+msgstr "读取请求出错。应为包含 PKCSReq pkiMessage 的 PKCS7 数据，但未获取到。\n"
 
 #: src/scep.c:433 src/scep.c:459
 #, c-format
 msgid "Warning: request is neither a PKCSReq nor a GetInitialCert request.\n"
-msgstr ""
+msgstr "警告：请求既不是 PKCSReq 也不是 GetInitialCert 请求。\n"
 
 #: src/scep.c:437 src/scep.c:463
 #, c-format
 msgid ""
 "Warning: request type \"%s\"is neither a PKCSReq nor a GetInitialCert "
 "request.\n"
-msgstr ""
+msgstr "警告：请求类型 \"%s\" 既不是 PKCSReq 也不是 GetInitialCert 请求。\n"
 
 #: src/scep.c:470
 #, c-format
 msgid "Warning: request is missing transactionId.\n"
-msgstr ""
+msgstr "警告：请求缺少 transactionId。\n"
 
 #: src/scep.c:474
 #, c-format
 msgid "Warning: request is missing senderNonce.\n"
-msgstr ""
+msgstr "警告：请求缺少 senderNonce。\n"
 
 #: src/scep.c:637
 #, c-format
@@ -1966,7 +1969,7 @@ msgstr "来自 %2$s 响应代码为 %1$d 而非 200。\n"
 #: src/scep.c:685 src/scep.c:1121
 #, c-format
 msgid "Server reply was of unexpected MIME type \"%s\".\n"
-msgstr ""
+msgstr "服务器回复的 MIME 类型 \"%s\" 不是预期的。\n"
 
 #: src/scep.c:930
 #, c-format
@@ -1976,32 +1979,32 @@ msgstr "错误：验证服务器响应上的签名失败。\n"
 #: src/scep.c:946
 #, c-format
 msgid "Error: reply was not a CertRep (%s).\n"
-msgstr ""
+msgstr "错误：回复不是 CertRep（%s）。\n"
 
 #: src/scep.c:951
 #, c-format
 msgid "Error: reply is missing transactionId.\n"
-msgstr ""
+msgstr "错误：回复缺少 transactionId。\n"
 
 #: src/scep.c:956
 #, c-format
 msgid "Error: reply contains a different transactionId.\n"
-msgstr ""
+msgstr "错误：回复包含不同的 transactionId。\n"
 
 #: src/scep.c:962
 #, c-format
 msgid "Error: reply is missing pkiStatus.\n"
-msgstr ""
+msgstr "错误：回复缺少 pkiStatus。\n"
 
 #: src/scep.c:966
 #, c-format
 msgid "Error: reply is missing recipientNonce.\n"
-msgstr ""
+msgstr "错误：回复缺少 recipientNonce。\n"
 
 #: src/scep.c:972
 #, c-format
 msgid "Error: reply nonce doesn't match request.\n"
-msgstr ""
+msgstr "错误：回复的 nonce 与请求不匹配。\n"
 
 #: src/scep.c:976
 #, c-format
@@ -2011,57 +2014,57 @@ msgstr "错误：回复缺失 senderNonce。\n"
 #: src/scep.c:994
 #, c-format
 msgid "Unspecified failure at server.\n"
-msgstr ""
+msgstr "服务器发生未指定的错误。\n"
 
 #: src/scep.c:997
 #, c-format
 msgid "Unrecognized or unsupported algorithm identifier in client request.\n"
-msgstr ""
+msgstr "客户端请求中存在无法识别或不支持的算法标识符。\n"
 
 #: src/scep.c:1000
 #, c-format
 msgid "Integrity check of client request failed at server.\n"
-msgstr ""
+msgstr "服务器对客户端请求的完整性检查失败。\n"
 
 #: src/scep.c:1003
 #, c-format
 msgid "Transaction either is not permitted or is not supported by server.\n"
-msgstr ""
+msgstr "事务不被允许或服务器不支持。\n"
 
 #: src/scep.c:1006
 #, c-format
 msgid "Clock skew too great.\n"
-msgstr ""
+msgstr "时钟偏差过大。\n"
 
 #: src/scep.c:1009
 #, c-format
 msgid "Unsupported extension.\n"
-msgstr ""
+msgstr "不支持的扩展。\n"
 
 #: src/scep.c:1012
 #, c-format
 msgid "Must archive keys.\n"
-msgstr ""
+msgstr "必须归档密钥。\n"
 
 #: src/scep.c:1015
 #, c-format
 msgid "Bad identity.\n"
-msgstr ""
+msgstr "身份错误。\n"
 
 #: src/scep.c:1018
 #, c-format
 msgid "Proof of possession required.\n"
-msgstr ""
+msgstr "需要持有证明。\n"
 
 #: src/scep.c:1021
 #, c-format
 msgid "Proof of possession failed.\n"
-msgstr ""
+msgstr "持有证明失败。\n"
 
 #: src/scep.c:1024
 #, c-format
 msgid "No key reuse.\n"
-msgstr ""
+msgstr "不能重用密钥。\n"
 
 #: src/scep.c:1027
 #, c-format
@@ -2071,32 +2074,32 @@ msgstr "内部 CA 错误。\n"
 #: src/scep.c:1030
 #, c-format
 msgid "Try later.\n"
-msgstr ""
+msgstr "请稍后重试。\n"
 
 #: src/scep.c:1032
 #, c-format
 msgid "Server returned failure code \"%s\".\n"
-msgstr ""
+msgstr "服务器返回失败代码 \"%s\"。\n"
 
 #: src/scep.c:1044
 #, c-format
 msgid "Error: couldn't parse signed-data.\n"
-msgstr ""
+msgstr "错误：无法解析 signed-data。\n"
 
 #: src/scep.c:1059 src/scep.c:1074
 #, c-format
 msgid "Error: signed-data payload is not enveloped-data.\n"
-msgstr ""
+msgstr "错误：signed-data 载荷不是 enveloped-data。\n"
 
 #: src/scep.c:1092
 #, c-format
 msgid "Error: enveloped-data payload is not data.\n"
-msgstr ""
+msgstr "错误：enveloped-data 载荷不是 data。\n"
 
 #: src/scep.c:1116
 #, c-format
 msgid "Error: pkiStatus \"%s\" not recognized.\n"
-msgstr ""
+msgstr "错误：无法识别 pkiStatus \"%s\"。\n"
 
 #: src/tdbush.c:119 src/tdbush.c:1944 src/tdbush.c:2351
 msgid "An internal error has occurred."
@@ -2138,7 +2141,7 @@ msgstr "证书存储位置没有指定。"
 msgid ""
 "The parent of location \"%s\" could not be accessed due to insufficient "
 "permissions."
-msgstr ""
+msgstr "由于权限不足，无法访问位置 \"%s\" 的父级。"
 
 #: src/tdbush.c:542 src/tdbush.c:786 src/tdbush.c:993 src/tdbush.c:1093
 #: src/tdbush.c:1193
@@ -2156,7 +2159,7 @@ msgstr "位置“%s”必须是文件。"
 #, c-format
 msgid ""
 "The location \"%s\" could not be accessed due to insufficient permissions."
-msgstr ""
+msgstr "由于权限不足，无法访问位置 \"%s\"。"
 
 #: src/tdbush.c:601 src/tdbush.c:834 src/tdbush.c:948 src/tdbush.c:1048
 #: src/tdbush.c:1148
@@ -2200,7 +2203,7 @@ msgstr "在相同位置的键已经被包含昵称 \"%s\" 的请求使用。"
 #: src/tdbush.c:1313 src/tdbush.c:3102
 #, c-format
 msgid "No support for key type \"%s\"."
-msgstr ""
+msgstr "不支持密钥类型 \"%s\"。"
 
 #: src/tdbush.c:1400
 msgid "No such CA."
@@ -2217,11 +2220,11 @@ msgstr "未识别的参数或错误的值类型。"
 
 #: src/tdbush.c:5070
 msgid "Error parsing arguments."
-msgstr ""
+msgstr "解析参数时出错。"
 
 #: src/tdbush.c:5124
 msgid "Unrecognized property name."
-msgstr ""
+msgstr "无法识别的属性名。"
 
 #: src/tdbusm.c:2156
 msgid "Insufficient access.  Please retry operation as root.\n"
