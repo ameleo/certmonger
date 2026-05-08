@@ -16,21 +16,22 @@
 # Aly Machaca <alyaj2a@gmail.com>, 2016. #zanata
 # Emilio Herrera <ehespinosa57@gmail.com>, 2017. #zanata
 # Máximo Castañeda Riloba <mcrcctm@gmail.com>, 2017. #zanata
+# Javier Francisco <fserrador@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2017-02-21 10:35-0500\n"
-"Last-Translator: Emilio Herrera <ehespinosa57@gmail.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/certmonger/"
-"language/es/)\n"
+"PO-Revision-Date: 2025-04-01 17:22+0000\n"
+"Last-Translator: Javier Francisco <fserrador@gmail.com>\n"
+"Language-Team: Spanish <https://translate.fedoraproject.org/projects/"
+"certmonger/master/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.9.6\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.10.4\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -44,14 +45,15 @@ msgid "Unable to determine hostname of CA.\n"
 msgstr "No es posible determinar el nombre del equipo de CA.\n"
 
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr "No es posible leer la petición de identificación.\n"
+msgstr "No es capaz de leer solicitud de firma desde archivo \"%s\".\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr "No es posible leer la petición de identificación.\n"
+msgstr ""
+"No es capaz de leer solicitud de firma desde variable de entorno \"%s\".\n"
 
 #: src/certmaster.c:184
 #, c-format
@@ -265,57 +267,52 @@ msgstr "Error creando mensaje de petición DBus.\n"
 #: src/getcert.c:393
 #, c-format
 msgid "missing argument for %s"
-msgstr ""
+msgstr "faltando argumento para %s"
 
 #: src/getcert.c:398
-#, fuzzy
 msgid "missing argument"
-msgstr "Error analizando argumentos."
+msgstr "argumento ausente"
 
 #: src/getcert.c:401
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized option %s"
-msgstr "Nombre de propiedad no reconocido."
+msgstr "opción %s no reconocida"
 
 #: src/getcert.c:406
-#, fuzzy
 msgid "unrecognized option"
-msgstr "Nombre de propiedad no reconocido."
+msgstr "opción no reconocida"
 
 #: src/getcert.c:409
 msgid "aliases nested too deeply"
-msgstr ""
+msgstr "aliases anidados demasiado profundo"
 
 #: src/getcert.c:412
 msgid "bad parameter quoting"
-msgstr ""
+msgstr "parámetro incorrecto de entrecomillado"
 
 #: src/getcert.c:418
 msgid "invalid numeric value"
-msgstr ""
+msgstr "valor numérico no válido"
 
 #: src/getcert.c:421
 msgid "number too large or too small"
-msgstr ""
+msgstr "número muy grande o muy pequeño"
 
 #: src/getcert.c:424
 msgid "bad operation"
-msgstr ""
+msgstr "operación incorrecta"
 
 #: src/getcert.c:427
-#, fuzzy
 msgid "internal error"
-msgstr "Ha ocurrido un error interno."
+msgstr "error interno"
 
 #: src/getcert.c:430
-#, fuzzy
 msgid "out of memory"
-msgstr "Falta memoria.\n"
+msgstr "falta memoria"
 
 #: src/getcert.c:434
-#, fuzzy
 msgid "error in popt configuration file"
-msgstr "borrar una configuración CA\n"
+msgstr "error en el archivo de configuración popt"
 
 #: src/getcert.c:477
 #, c-format
@@ -355,7 +352,7 @@ msgstr "Base de datos NSS para clave y certificado"
 #: src/getcert.c:769 src/getcert.c:1847 src/getcert.c:2501 src/getcert.c:3101
 #: src/getcert.c:3355 src/getcert.c:3876
 msgid "nickname for NSS-based storage (only valid with -d)"
-msgstr "nickname para almacenamientos basado en NSS (sólo válido con  -d)"
+msgstr "apodo para almacenamientos basado en NSS (sólo válido con -d)"
 
 #: src/getcert.c:770 src/getcert.c:1848 src/getcert.c:2502 src/getcert.c:3102
 #: src/getcert.c:3356 src/getcert.c:3877
@@ -443,9 +440,8 @@ msgid "ask the CA to process the request using the named profile or template"
 msgstr "pide al CA que procese la petición usando el perfil o modelo llamado"
 
 #: src/getcert.c:792 src/getcert.c:1869 src/getcert.c:2522
-#, fuzzy
 msgid "ask the CA to process the request using the named issuer"
-msgstr "pide al CA que procese la petición usando el perfil o modelo llamado"
+msgstr "pide al AC que procese la solicitud usando el emisor nombrado"
 
 #: src/getcert.c:793 src/getcert.c:2523
 msgid "set requested subject name (default: CN=<hostname>)"
@@ -484,19 +480,16 @@ msgid "an optional challenge password value"
 msgstr "un valor de reto de contraseña opcional"
 
 #: src/getcert.c:802 src/getcert.c:1878 src/getcert.c:2532
-#, fuzzy
 msgid "request a CA certificate"
-msgstr "HTTPS requiere un certificado CA.\n"
+msgstr "solicita un certificado AC"
 
 #: src/getcert.c:803 src/getcert.c:1879 src/getcert.c:2533
-#, fuzzy
 msgid "request a non-CA certificate"
-msgstr "HTTPS requiere un certificado CA.\n"
+msgstr "solicita un certificado no AC"
 
 #: src/getcert.c:804 src/getcert.c:1880 src/getcert.c:2534
-#, fuzzy
 msgid "path length for CA certificate"
-msgstr "archivo PEM para certificado"
+msgstr "longitud de ruta para certificado AC"
 
 #: src/getcert.c:805 src/getcert.c:1881 src/getcert.c:2535
 msgid "try to wait for the certificate to be issued"
@@ -546,7 +539,7 @@ msgstr "No se pudo evaluar OID \"%s\".\n"
 #: src/getcert.c:952 src/getcert.c:2004 src/getcert.c:2664
 #, c-format
 msgid "Error parsing Kerberos principal name \"%s\": %s.\n"
-msgstr "Error analizando el nombre  \"%s\"del principal de Kerberos: %s.\n"
+msgstr "Error interpretando el nombre \"%s\" principal de Kerberos: %s.\n"
 
 #: src/getcert.c:961 src/getcert.c:2013 src/getcert.c:2673
 #, c-format
@@ -613,14 +606,15 @@ msgstr ""
 "archivo.\n"
 
 #: src/getcert.c:1114
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The IPA backend requires the use of the -K option (principal name) when any "
 "of the -N (subject name), -E (email address), -A (IP address), -D (DNS "
 "name), or -U (extendedKeyUsage) options is used.\n"
 msgstr ""
-"El motor de IPA necesita la utilización de la opción -K (el nombre del "
-"principal) cuando se esté utilizando la opción -N (el nombre del asunto).\n"
+"El motor de IPA requiere el empleo de la opción -K (el nombre del principal) "
+"cuando cualquiera de las opciones -N (nombre asunto), -E (dirección correo-e)"
+", -A (dirección IP), -D(Nombre DNS), o -U (extendedUsage) es utilizada.\n"
 
 #: src/getcert.c:1296 src/getcert.c:1762 src/getcert.c:2272 src/getcert.c:2867
 #: src/getcert.c:3208 src/getcert.c:3447 src/getcert.c:4731
@@ -817,7 +811,7 @@ msgstr ""
 
 #: src/getcert.c:3359
 msgid "display times in UTC instead of local time"
-msgstr ""
+msgstr "exhibe horas en UTC en vez de hora local"
 
 #: src/getcert.c:3476
 #, c-format
@@ -838,12 +832,12 @@ msgstr "\testado: %s\n"
 #: src/getcert.c:3630
 #, c-format
 msgid "\tca-error: %s\n"
-msgstr "\tca-error: %s\n"
+msgstr "\terror-ac: %s\n"
 
 #: src/getcert.c:3632
 #, c-format
 msgid "\tstuck: %s\n"
-msgstr "\tstuck: %s\n"
+msgstr "\tatasco: %s\n"
 
 #: src/getcert.c:3652
 #, c-format
@@ -936,14 +930,12 @@ msgstr "\tnombre del principal: "
 
 #: src/getcert.c:3756
 msgid "\tIP address: "
-msgstr "⇥Dirección IP:"
+msgstr "\t⇥Dirección IP: "
 
 #: src/getcert.c:3775
 #, c-format
 msgid "\tkey usage: %s\n"
-msgstr ""
-"\tutilización de clave: %s\n"
-"\n"
+msgstr "\tutilización de clave: %s\n"
 
 #: src/getcert.c:3779
 msgid "\teku: "
@@ -997,7 +989,7 @@ msgstr "\tcomando de almacenado posterior: %s\n"
 #: src/getcert.c:3849
 #, c-format
 msgid "\ttrack: %s\n"
-msgstr "\ttrack: %s\n"
+msgstr "\tpista: %s\n"
 
 #: src/getcert.c:3853
 #, c-format
@@ -1286,9 +1278,7 @@ msgstr "  -I NAME\tapodo a ser asignado a la petición\n"
 
 #: src/getcert.c:4808
 msgid "  -G TYPE\ttype of key to be generated if one is not already in place\n"
-msgstr ""
-"-G TYPE⇥tipo de llave a ser generada si no hay alguna en su lugar\n"
-"\n"
+msgstr "  -G TIPO⇥tipo de llave a ser generada si no hay alguna en su lugar\n"
 
 #: src/getcert.c:4809
 msgid "  -g SIZE\tsize of key to be generated if one is not already in place\n"
@@ -1321,11 +1311,10 @@ msgstr ""
 "modelo invocado\n"
 
 #: src/getcert.c:4816 src/getcert.c:4865 src/getcert.c:4944 src/getcert.c:4992
-#, fuzzy
 msgid "  -X ISSUER\task the CA to process the request using the named issuer\n"
 msgstr ""
-"  -T PROFILE\tpide a CA el proceso de la solicitud utilizando el perfil o el "
-"modelo invocado\n"
+"  -X EMISOR\tsolicita al AC que procese la solicitud utilizando el emisor "
+"nombrado\n"
 
 #: src/getcert.c:4817
 msgid "* Parameters for the signing request:\n"
@@ -1345,9 +1334,7 @@ msgstr ""
 
 #: src/getcert.c:4820 src/getcert.c:4868 src/getcert.c:4929 src/getcert.c:4977
 msgid "  -u KEYUSAGE\tset requested key usage value\n"
-msgstr ""
-"  -u KEYUSAGE\tfijado el valor de utilzación de clave pedido\n"
-"\n"
+msgstr "  -u EMPLEO-CLAVE\tfijado el valor de utilización de clave solicitada\n"
 
 #: src/getcert.c:4821 src/getcert.c:4930 src/getcert.c:4978
 msgid "  -K NAME\tset requested principal name\n"
@@ -1407,15 +1394,15 @@ msgstr "  -C\tcomando a ejecutar luego de guardar el certificado\n"
 
 #: src/getcert.c:4833 src/getcert.c:4881 src/getcert.c:4951 src/getcert.c:5001
 msgid "  -F\tfile in which to store the CA's certificates\n"
-msgstr "-F archivo en el cual almacenar los certificados CA\n"
+msgstr "  -F\t archivo en el cual almacenar los certificados AC\n"
 
 #: src/getcert.c:4834 src/getcert.c:4882 src/getcert.c:4952 src/getcert.c:5002
 msgid "  -a\tNSS database in which to store the CA's certificates\n"
-msgstr "-a base de datos en la cual almacenar los certificados CA\n"
+msgstr "  -a\t base de datos NNS en la cual almacenar los certificados AC\n"
 
 #: src/getcert.c:4835 src/getcert.c:4883 src/getcert.c:4953 src/getcert.c:5003
 msgid "  -w\ttry to wait for the certificate to be issued\n"
-msgstr "-w intenta esperar que los certificados sean emitidos\n"
+msgstr "  -w intenta esperar que los certificados sean emitidos\n"
 
 #: src/getcert.c:4836 src/getcert.c:4884 src/getcert.c:4906 src/getcert.c:4954
 #: src/getcert.c:5004 src/getcert.c:5029 src/getcert.c:5052 src/getcert.c:5070
@@ -1546,7 +1533,7 @@ msgstr "  -t\tlista sólo información acerca de certificados en seguimiento\n"
 
 #: src/getcert.c:5017
 msgid "  -u\tdisplay times in UTC instead of local time\n"
-msgstr ""
+msgstr "  -u\texhibe horas en UTC en vez de hora local\n"
 
 #: src/getcert.c:5018
 msgid "* If selecting a specific request:\n"
@@ -1605,11 +1592,12 @@ msgstr "* cuando se usa una base de datos NSS para almacenamiento\n"
 #: src/getcert.c:5062
 msgid "  -d DIR\treturn status for the request in this NSS database\n"
 msgstr ""
-"-d DIR devuelve el estado para las peticiones en esta base de datos NSS\n"
+"  -d DIR\t devuelve el estado para las solicitudes en esta base de datos "
+"NSS\n"
 
 #: src/getcert.c:5063
 msgid "  -n NAME\treturn status for cert which uses this nickname\n"
-msgstr "-n NOMBRE devuelve el estado para cert que usa este apodo\n"
+msgstr "  -n NOMBRE\tdevuelve el estado para cert el cual utiliza este apodo\n"
 
 #: src/getcert.c:5064
 msgid "* When using files for storage:\n"
@@ -1618,7 +1606,7 @@ msgstr "* cuando se usan archivos para almacenamiento:\n"
 #: src/getcert.c:5065
 msgid "  -f FILE\treturn status for cert stored in this PEM file\n"
 msgstr ""
-"-f ARCHIVO devuelve el estado para cert almacenado en este archivo PEM\n"
+"  -f ARCHIVO\tdevuelve el estado para cert almacenado en este archivo PEM\n"
 
 #: src/getcert.c:5074
 #, c-format
@@ -1637,7 +1625,7 @@ msgstr "Uso: %s refresh-ca [opciones]\n"
 
 #: src/getcert.c:5094
 msgid "  -c CA\trefresh information about the CA with this name\n"
-msgstr "-c CA refresca la información acerca de los CA con este nombre\n"
+msgstr "  -c AC\trefresca información sobre los AC con este nombre\n"
 
 #: src/getcert.c:5095
 msgid "  -a\trefresh information about all known CAs\n"
@@ -1988,28 +1976,31 @@ msgstr "\t-p FILE    escribir servicio PID al archivo \n"
 
 #: src/main.c:189
 msgid "\t-F         force NSS into FIPS mode\n"
-msgstr ""
-"\t-F         forzar NSS en modo FIPS\n"
-"\n"
+msgstr "\t-F         forzar NSS en modo FIPS\n"
 
 #: src/main.c:190
 msgid "\t-v         print version information and exit\n"
-msgstr "\t-v         imprimir información de versión y salir\n"
+msgstr "\t-v         declara información de versión y salir\n"
 
 #: src/scep.c:352
-#, fuzzy, c-format
+#, c-format
 msgid "No SCEP URL (-u) given, and no default known.\n"
-msgstr "No se indica URL de agente (-A), y no hay valor predeterminado.\n"
+msgstr ""
+"Ninguna URL SCEP (-u) proporcionada, y ningún predeterminado conocido.\n"
 
 #: src/scep.c:356
-#, fuzzy, c-format
+#, c-format
 msgid "No SCEP operation (-c/-C/-g/-p) given, and no default known.\n"
-msgstr "No se indica URL de agente (-A), y no hay valor predeterminado.\n"
+msgstr ""
+"Ninguna operación SCEP dada (-c/-C/-g/-p), y ninguno predeterminado conocido."
+"\n"
 
 #: src/scep.c:376 src/scep.c:395
-#, fuzzy, c-format
+#, c-format
 msgid "No RA certificate (-r) given, and no default known.\n"
-msgstr "No se indica perfil/plantilla (-T), y no hay valor predeterminado.\n"
+msgstr ""
+"No se proporciona certificado RA (-r), y no hay valor predeterminado "
+"conocido.\n"
 
 #: src/scep.c:386 src/scep.c:540
 #, c-format
@@ -2017,6 +2008,8 @@ msgid ""
 "Error reading request.  Expected PKCS7 data containing a GetInitialCert "
 "pkiMessage, got nothing.\n"
 msgstr ""
+"Error al leer solicitud.  Se esperaban datos PKCS7 que contengan un "
+"pkiMessage de GetInitialCert, no obtuvo nada.\n"
 
 #: src/scep.c:405 src/scep.c:565
 #, c-format
@@ -2024,11 +2017,14 @@ msgid ""
 "Error reading request.  Expected PKCS7 data containing a PKCSReq pkiMessage, "
 "got nothing.\n"
 msgstr ""
+"Error al leer solicitud.  Esperaba datos de PKCS7 conteniendo un pkiMessage "
+"de PKCSReq, no obtuvo nada.\n"
 
 #: src/scep.c:433 src/scep.c:459
 #, c-format
 msgid "Warning: request is neither a PKCSReq nor a GetInitialCert request.\n"
 msgstr ""
+"Advertencia: solicitud ni es un PKCSReq ni una solicitud GetInitialCert.\n"
 
 #: src/scep.c:437 src/scep.c:463
 #, c-format
@@ -2036,156 +2032,163 @@ msgid ""
 "Warning: request type \"%s\"is neither a PKCSReq nor a GetInitialCert "
 "request.\n"
 msgstr ""
+"Aviso: tipo \"%s\" solicitado ni es un PKCSReq ni una solicitud de "
+"GetInitialCert.\n"
 
 #: src/scep.c:470
 #, c-format
 msgid "Warning: request is missing transactionId.\n"
-msgstr ""
+msgstr "Aviso: a la solicitud le falta transactionld.\n"
 
 #: src/scep.c:474
 #, c-format
 msgid "Warning: request is missing senderNonce.\n"
-msgstr ""
+msgstr "Aviso: solicitud ausente de senderNonce.\n"
 
 #: src/scep.c:637
-#, fuzzy, c-format
+#, c-format
 msgid "Got response code %d from %s, not 200.\n"
-msgstr "No se ha recibido una respuesta desde el servicio %s.\n"
+msgstr "Obtuvo código de respuesta %d desde %s, no 200.\n"
 
 #: src/scep.c:685 src/scep.c:1121
 #, c-format
 msgid "Server reply was of unexpected MIME type \"%s\".\n"
-msgstr ""
+msgstr "Respuesta de servidor fue de tipo MIME no esperado \"%s\".\n"
 
 #: src/scep.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "Error: failed to verify signature on server response.\n"
-msgstr "Error analizando la respuesta del servidor.\n"
+msgstr "Error: ha fallado al verificar firma en la respuesta del servidor.\n"
 
 #: src/scep.c:946
 #, c-format
 msgid "Error: reply was not a CertRep (%s).\n"
-msgstr ""
+msgstr "Error: respuesta no fue CertRep (%s).\n"
 
 #: src/scep.c:951
 #, c-format
 msgid "Error: reply is missing transactionId.\n"
-msgstr ""
+msgstr "Error: falta respuesta transactionld.\n"
 
 #: src/scep.c:956
 #, c-format
 msgid "Error: reply contains a different transactionId.\n"
-msgstr ""
+msgstr "Error: respuesta contiene un transactionld diferente.\n"
 
 #: src/scep.c:962
 #, c-format
 msgid "Error: reply is missing pkiStatus.\n"
-msgstr ""
+msgstr "Error: réplica en pkiStatus ausente.\n"
 
 #: src/scep.c:966
 #, c-format
 msgid "Error: reply is missing recipientNonce.\n"
-msgstr ""
+msgstr "Error: réplica en recipientNonce ausente.\n"
 
 #: src/scep.c:972
 #, c-format
 msgid "Error: reply nonce doesn't match request.\n"
-msgstr ""
+msgstr "Error: respuesta única no coincide con solicitud.\n"
 
 #: src/scep.c:976
-#, fuzzy, c-format
+#, c-format
 msgid "Error: reply is missing senderNonce.\n"
-msgstr "Error analizando la respuesta del servidor.\n"
+msgstr "Error: respuesta es ausencia de senderNonce.\n"
 
 #: src/scep.c:994
 #, c-format
 msgid "Unspecified failure at server.\n"
-msgstr ""
+msgstr "Fallo inesperado en el servidor.\n"
 
 #: src/scep.c:997
 #, c-format
 msgid "Unrecognized or unsupported algorithm identifier in client request.\n"
 msgstr ""
+"Solicitud de identificador de algoritmo no reconocido o soportado en el "
+"cliente.\n"
 
 #: src/scep.c:1000
 #, c-format
 msgid "Integrity check of client request failed at server.\n"
 msgstr ""
+"Comprobación de integridad de solicitud de cliente incorrecta en el servidor."
+"\n"
 
 #: src/scep.c:1003
 #, c-format
 msgid "Transaction either is not permitted or is not supported by server.\n"
 msgstr ""
+"Transacción o bien no está permitida o no está admitida por el servidor.\n"
 
 #: src/scep.c:1006
 #, c-format
 msgid "Clock skew too great.\n"
-msgstr ""
+msgstr "Desvío de reloj demasiado grande.\n"
 
 #: src/scep.c:1009
 #, c-format
 msgid "Unsupported extension.\n"
-msgstr ""
+msgstr "Extensión no mantenida.\n"
 
 #: src/scep.c:1012
 #, c-format
 msgid "Must archive keys.\n"
-msgstr ""
+msgstr "Debe archivar claves.\n"
 
 #: src/scep.c:1015
 #, c-format
 msgid "Bad identity.\n"
-msgstr ""
+msgstr "Identidad incorrecta.\n"
 
 #: src/scep.c:1018
 #, c-format
 msgid "Proof of possession required.\n"
-msgstr ""
+msgstr "Se requiere prueba de posesión.\n"
 
 #: src/scep.c:1021
 #, c-format
 msgid "Proof of possession failed.\n"
-msgstr ""
+msgstr "Prueba de posesión incorrecta.\n"
 
 #: src/scep.c:1024
 #, c-format
 msgid "No key reuse.\n"
-msgstr ""
+msgstr "Ninguna clave reutilizada.\n"
 
 #: src/scep.c:1027
-#, fuzzy, c-format
+#, c-format
 msgid "Internal CA error.\n"
-msgstr "Error interno: estado desconocido.\n"
+msgstr "Error interno de AC.\n"
 
 #: src/scep.c:1030
 #, c-format
 msgid "Try later.\n"
-msgstr ""
+msgstr "Intente más tarde.\n"
 
 #: src/scep.c:1032
 #, c-format
 msgid "Server returned failure code \"%s\".\n"
-msgstr ""
+msgstr "Servidor devolvió código de fallo \"%s\".\n"
 
 #: src/scep.c:1044
 #, c-format
 msgid "Error: couldn't parse signed-data.\n"
-msgstr ""
+msgstr "Error: no pudo interpretar datos firmados.\n"
 
 #: src/scep.c:1059 src/scep.c:1074
 #, c-format
 msgid "Error: signed-data payload is not enveloped-data.\n"
-msgstr ""
+msgstr "Error: carga de datos firmados no son datos cubiertos.\n"
 
 #: src/scep.c:1092
 #, c-format
 msgid "Error: enveloped-data payload is not data.\n"
-msgstr ""
+msgstr "Error: carga de datos cubiertos no son datos.\n"
 
 #: src/scep.c:1116
 #, c-format
 msgid "Error: pkiStatus \"%s\" not recognized.\n"
-msgstr ""
+msgstr "Error: pkiStatus \"%s\" no reconocido.\n"
 
 #: src/tdbush.c:119 src/tdbush.c:1944 src/tdbush.c:2351
 msgid "An internal error has occurred."
@@ -2193,12 +2196,12 @@ msgstr "Ha ocurrido un error interno."
 
 #: src/tdbush.c:183
 msgid "No matching entry found.\n"
-msgstr "No se ha encontrado una entrada coincidente.\n"
+msgstr "Ningún apunte coincidente encontrado.\n"
 
 #: src/tdbush.c:345
 #, c-format
 msgid "There is already a CA with the nickname \"%s\"."
-msgstr "Ya existe un CA con el apodo \"%s\"."
+msgstr "Ya hay un AC con el apodo \"%s\"."
 
 #: src/tdbush.c:439
 msgid "Certificate storage type not specified."
@@ -2207,8 +2210,7 @@ msgstr "No ha sido especificado el tipo de certificado de almacenamiento."
 #: src/tdbush.c:452
 #, c-format
 msgid "Certificate storage type \"%s\" not supported."
-msgstr ""
-"No existe soporte para el tipo \"%s\" de certificado de almacenamiento."
+msgstr "Tipo de almacenaje \"%s\" del certificado no soportado."
 
 #: src/tdbush.c:489 src/tdbush.c:522 src/tdbush.c:581 src/tdbush.c:766
 #: src/tdbush.c:825 src/tdbush.c:928 src/tdbush.c:973 src/tdbush.c:1028
@@ -2216,11 +2218,11 @@ msgstr ""
 #: src/tdbush.c:3230 src/tdbush.c:3382
 #, c-format
 msgid "The location \"%s\" must be an absolute path."
-msgstr "La ubicación \"%s\" debe ser una ruta absoluta."
+msgstr "El lugar \"%s\" debe ser una ruta absoluta."
 
 #: src/tdbush.c:516 src/tdbush.c:575 src/tdbush.c:644
 msgid "Certificate storage location not specified."
-msgstr "No ha sido indicada una ubicación del certificado de almacenamiento."
+msgstr "No ha sido indicado un lugar del certificado de almacenamiento."
 
 #: src/tdbush.c:534 src/tdbush.c:778 src/tdbush.c:985 src/tdbush.c:1085
 #: src/tdbush.c:1185
@@ -2229,50 +2231,49 @@ msgid ""
 "The parent of location \"%s\" could not be accessed due to insufficient "
 "permissions."
 msgstr ""
-"El padre de la ubicación \"%s\" no pudo ser accesado debido a permisos "
+"El antecesor del lugar \"%s\" no pudo ser accedido debido a permisos "
 "insuficientes."
 
 #: src/tdbush.c:542 src/tdbush.c:786 src/tdbush.c:993 src/tdbush.c:1093
 #: src/tdbush.c:1193
 #, c-format
 msgid "The parent of location \"%s\" must be a valid directory."
-msgstr "El paterno de la ubicación \"%s\" debe ser un directorio válido."
+msgstr "El antecesor del lugar \"%s\" debe ser un directorio válido."
 
 #: src/tdbush.c:553 src/tdbush.c:797 src/tdbush.c:1004 src/tdbush.c:1104
 #: src/tdbush.c:1204
 #, c-format
 msgid "The location \"%s\" must be a file."
-msgstr "La ubicación \"%s\" debe ser un archivo."
+msgstr "El lugar \"%s\" debe ser un archivo."
 
 #: src/tdbush.c:593 src/tdbush.c:940 src/tdbush.c:1040 src/tdbush.c:1140
 #, c-format
 msgid ""
 "The location \"%s\" could not be accessed due to insufficient permissions."
-msgstr ""
-"La ubicación \"%s\" no pudo ser accesada debido a permisos insuficientes."
+msgstr "El lugar \"%s\" no pudo ser accedido debido a permisos insuficientes."
 
 #: src/tdbush.c:601 src/tdbush.c:834 src/tdbush.c:948 src/tdbush.c:1048
 #: src/tdbush.c:1148
 #, c-format
 msgid "The location \"%s\" must be a directory."
-msgstr "La ubicación \"%s\" debe ser un directorio."
+msgstr "El lugar \"%s\" debe ser un directorio."
 
 #: src/tdbush.c:622
 msgid "Certificate nickname not specified."
-msgstr "No ha sido especificado un apodo de certificado."
+msgstr "Apodo de certificado no especificado."
 
 #: src/tdbush.c:665 src/tdbush.c:3055
 #, c-format
 msgid "There is already a request with the nickname \"%s\"."
-msgstr "Ya existe una petición con el apodo \"%s\"."
+msgstr "Ya hay una solicitud con el apodo \"%s\"."
 
 #: src/tdbush.c:701
 #, c-format
 msgid ""
 "Certificate at same location is already used by request with nickname \"%s\"."
 msgstr ""
-"Un certificado en la misma ubicación ya está siendo utilizado por la "
-"petición hecha con el alias \"%s\"."
+"Ya existe un certificado en el mismo lugar utilizado por la solicitud con el "
+"apodo \"%s\"."
 
 #: src/tdbush.c:734
 #, c-format
@@ -2281,7 +2282,7 @@ msgstr "No existe soporte para el tipo \"%s\" de llave de almacenamiento."
 
 #: src/tdbush.c:760 src/tdbush.c:819
 msgid "Key storage location not specified."
-msgstr "No ha sido especificada una ubicación de la llave."
+msgstr "No ha sido especificada un lugar de la llave."
 
 #: src/tdbush.c:853
 msgid "Key nickname not specified."
@@ -2291,8 +2292,8 @@ msgstr "No ha sido especificado un apodo de llave."
 #, c-format
 msgid "Key at same location is already used by request with nickname \"%s\"."
 msgstr ""
-"Una llave en la misma ubicación ya está siendo utilizada por la petición "
-"hecha con el alias \"%s\"."
+"Ya se está utilizando una llave en el mismo lugar por la solicitud hecha con "
+"el apodo \"%s\"."
 
 #: src/tdbush.c:1313 src/tdbush.c:3102
 #, c-format
@@ -2301,20 +2302,20 @@ msgstr "Sin soporte para tipo de llave %s\"."
 
 #: src/tdbush.c:1400
 msgid "No such CA."
-msgstr "No existe el CA."
+msgstr "No existe el AC."
 
 #: src/tdbush.c:3073
 #, c-format
 msgid "Certificate authority \"%s\" not known."
-msgstr "No se conoce la autoridad \"%s\" del certifiicado. "
+msgstr "No se conoce la autoridad \"%s\" del certificado."
 
 #: src/tdbush.c:3518
 msgid "Unrecognized parameter or wrong value type."
-msgstr "Parámetro irreconocible o tipo de valor erróneo."
+msgstr "Parámetro irreconocible o tipo de valor incorrecto."
 
 #: src/tdbush.c:5070
 msgid "Error parsing arguments."
-msgstr "Error analizando argumentos."
+msgstr "Error al interpretar argumentos."
 
 #: src/tdbush.c:5124
 msgid "Unrecognized property name."
@@ -2322,7 +2323,7 @@ msgstr "Nombre de propiedad no reconocido."
 
 #: src/tdbusm.c:2156
 msgid "Insufficient access.  Please retry operation as root.\n"
-msgstr "Acceso insuficiente.  Por favor reintente la operanción como root.\n"
+msgstr "Acceso insuficiente.  Por favor reintente la operación como root.\n"
 
 #: src/tdbusm.c:2160
 msgid "Please verify that the certmonger service has been started.\n"
@@ -2331,4 +2332,4 @@ msgstr "Por favor verifique que el servicio certmonger ha sido arrancado.\n"
 #: src/tdbusm.c:2163
 msgid "Please verify that the certmonger service is still running.\n"
 msgstr ""
-"Por favor verifique que el servicio certmonger está todavía corriendo.\n"
+"Por favor verifique que el servicio certmonger está todavía en ejecución.\n"
