@@ -5,21 +5,22 @@
 # Translators:
 # Mario Santagiuliana <fedora at marionline.it>, 2012
 # Silvio Pierro <perplesso82@gmail.com>, 2012
+# Salvatore Cocuzza <info@salvatorecocuzza.it>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2015-01-05 05:53-0500\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
-"Language-Team: Italian (http://www.transifex.com/projects/p/certmonger/"
-"language/it/)\n"
+"PO-Revision-Date: 2025-01-04 20:38+0000\n"
+"Last-Translator: Salvatore Cocuzza <info@salvatorecocuzza.it>\n"
+"Language-Team: Italian <https://translate.fedoraproject.org/projects/"
+"certmonger/master/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.9.6\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -33,14 +34,16 @@ msgid "Unable to determine hostname of CA.\n"
 msgstr "Impossibile determinare l'hostname di CA.\n"
 
 #: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from file \"%s\".\n"
-msgstr "Impossibile leggere la richiesta di firma.\n"
+msgstr "Impossibile leggere la richiesta di firma %s.\n"
 
 #: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read signing request from environment variable \"%s\".\n"
-msgstr "Impossibile leggere la richiesta di firma.\n"
+msgstr ""
+"Impossibile leggere la richiesta di firma dalla variabile di ambiente \"%s\"."
+"\n"
 
 #: src/certmaster.c:184
 #, c-format
@@ -65,103 +68,107 @@ msgstr "Errore server.\n"
 #: src/dogtag.c:226
 #, c-format
 msgid "Profile params (-O) must be in the form of param=value.\n"
-msgstr ""
+msgstr "I parametri del profilo (-O) devono essere nel formato param=valore.\n"
 
 #: src/dogtag.c:249
 #, c-format
 msgid "Submit params (-o) must be in the form of param=value.\n"
-msgstr ""
+msgstr "I parametri inviati (-o) devono essere nel formato param=valore.\n"
 
 #: src/dogtag.c:408 src/dogtag.c:413 src/dogtag.c:442
 #, c-format
 msgid "No agent credentials specified, and no default known.\n"
 msgstr ""
+"Nessuna credenziale dell'agente specificata e nessun valore predefinito noto."
+"\n"
 
 #: src/dogtag.c:418
 #, c-format
 msgid "Requested renewal, but no serial number provided.\n"
-msgstr ""
+msgstr "Rinnovo richiesto, ma nessun numero di serie fornito.\n"
 
 #: src/dogtag.c:422
 #, c-format
 msgid "No end-entity URL (-E) given, and no default known.\n"
 msgstr ""
+"Nessun URL dell'entità finale (-E) fornito e nessun valore predefinito noto."
+"\n"
 
 #: src/dogtag.c:427 src/dogtag.c:437 src/dogtag.c:594
 #, c-format
 msgid "No agent URL (-A) given, and no default known.\n"
-msgstr ""
+msgstr "Nessun URL dell'agente (-A) fornito e nessun valore predefinito noto.\n"
 
 #: src/dogtag.c:432
 #, c-format
 msgid "No profile/template (-T) given, and no default known.\n"
-msgstr ""
+msgstr "Nessun profilo/modello (-T) fornito e nessun valore predefinito noto.\n"
 
 #: src/dogtag.c:452
 #, c-format
 msgid "Error shutting down NSS.\n"
-msgstr ""
+msgstr "Errore durante l'arresto di NSS.\n"
 
 #: src/dogtag.c:487 src/dogtag.c:777
 #, c-format
 msgid "Internal error: unknown state.\n"
-msgstr ""
+msgstr "Errore interno: stato sconosciuto.\n"
 
 #: src/dogtag.c:600
 #, c-format
 msgid "No agent credentials (-n) given, but they are needed.\n"
-msgstr ""
+msgstr "Nessuna credenziale dell'agente (-n) fornita, ma è necessaria.\n"
 
 #: src/dogtag.c:757 src/scep.c:619
 #, c-format
 msgid "Error %d connecting to %s: %s.\n"
-msgstr ""
+msgstr "Errore %d durante la connessione a %s: %s.\n"
 
 #: src/dogtag.c:762 src/scep.c:624
 #, c-format
 msgid "Error %d connecting to %s.\n"
-msgstr ""
+msgstr "Errore %d durante la connessione a %s.\n"
 
 #: src/dogtag.c:770 src/scep.c:648
 #, c-format
 msgid "Internal error: no response to \"%s?%s\".\n"
-msgstr ""
+msgstr "Errore interno: nessuna risposta a \"%s?%s\".\n"
 
 #: src/getcert.c:61 src/main.c:84 src/main.c:86
 msgid "COMMAND"
-msgstr ""
+msgstr "COMANDO"
 
 #: src/getcert.c:62
 msgid "DIRECTORY"
-msgstr ""
+msgstr "DIRECTORY"
 
 #: src/getcert.c:63 src/getcert.c:70
 msgid "LIST"
-msgstr ""
+msgstr "LISTA"
 
 #: src/getcert.c:64 src/getcert.c:68
 msgid "ADDRESS"
-msgstr ""
+msgstr "INDIRIZZO"
 
 #: src/getcert.c:65 src/main.c:87
 msgid "FILENAME"
-msgstr ""
+msgstr "NOME FILE"
 
 #: src/getcert.c:66
 msgid "HOSTNAME"
-msgstr ""
+msgstr "NOME HOST"
 
 #: src/getcert.c:67
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/getcert.c:69
 msgid "BITS"
-msgstr ""
+msgstr "BITS"
 
 #: src/getcert.c:71
 msgid "MODE"
-msgstr ""
+msgstr "MODALITÀ"
 
 #: src/getcert.c:72
 msgid "NAME"
@@ -169,15 +176,15 @@ msgstr ""
 
 #: src/getcert.c:73
 msgid "PRINCIPAL"
-msgstr ""
+msgstr "PRINCIPALE"
 
 #: src/getcert.c:74
 msgid "SUBJECT"
-msgstr ""
+msgstr "SOGGETTO"
 
 #: src/getcert.c:75
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/getcert.c:76
 msgid "USERNAME[:GROUPNAME]"
@@ -201,7 +208,7 @@ msgstr ""
 #: src/getcert.c:142
 #, c-format
 msgid "Path \"%s\": insufficient permissions.\n"
-msgstr ""
+msgstr "Percorso \"%s\": autorizzazioni insufficienti.\n"
 
 #: src/getcert.c:148
 #, c-format
@@ -221,22 +228,22 @@ msgstr "Il percorso \"%s\" non è un file regolare.\n"
 #: src/getcert.c:340
 #, c-format
 msgid "No system bus running.\n"
-msgstr ""
+msgstr "Nessun bus di sistema in funzione.\n"
 
 #: src/getcert.c:341
 #, c-format
 msgid "Running as UID 0.\n"
-msgstr ""
+msgstr "In esecuzione come UID 0.\n"
 
 #: src/getcert.c:342
 #, c-format
 msgid "Launching temporary dedicated service daemon.\n"
-msgstr ""
+msgstr "Avvio del demone del servizio dedicato temporaneo.\n"
 
 #: src/getcert.c:371
 #, c-format
 msgid "Error connecting to D-Bus.\n"
-msgstr ""
+msgstr "Errore di connessione al D-Bus.\n"
 
 #: src/getcert.c:372 src/tdbusm.c:2166
 #, c-format
@@ -251,56 +258,52 @@ msgstr "Errore nella creazione di messaggi di richiesta DBus.\n"
 #: src/getcert.c:393
 #, c-format
 msgid "missing argument for %s"
-msgstr ""
+msgstr "Argomento mancante per '%s'"
 
 #: src/getcert.c:398
-#, fuzzy
 msgid "missing argument"
-msgstr "Argomenti aggiuntivi:\n"
+msgstr "argomento mancante"
 
 #: src/getcert.c:401
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized option %s"
-msgstr "%s: comando non riconosciuto\n"
+msgstr "opzione non riconosciuta %s"
 
 #: src/getcert.c:406
-#, fuzzy
 msgid "unrecognized option"
-msgstr "%s: comando non riconosciuto\n"
+msgstr "opzione non riconosciuta"
 
 #: src/getcert.c:409
 msgid "aliases nested too deeply"
-msgstr ""
+msgstr "alias nidificati troppo in profondità"
 
 #: src/getcert.c:412
 msgid "bad parameter quoting"
-msgstr ""
+msgstr "virgolette di parametri errate"
 
 #: src/getcert.c:418
 msgid "invalid numeric value"
-msgstr ""
+msgstr "valore numerico non valido"
 
 #: src/getcert.c:421
 msgid "number too large or too small"
-msgstr ""
+msgstr "numero troppo grande o troppo piccolo"
 
 #: src/getcert.c:424
 msgid "bad operation"
-msgstr ""
+msgstr "cattivo funzionamento"
 
 #: src/getcert.c:427
-#, fuzzy
 msgid "internal error"
-msgstr "Si è verificato un errore interno."
+msgstr "errore interno"
 
 #: src/getcert.c:430
-#, fuzzy
 msgid "out of memory"
-msgstr "Memoria esaurita.\n"
+msgstr "Memoria esaurita"
 
 #: src/getcert.c:434
 msgid "error in popt configuration file"
-msgstr ""
+msgstr "errore nel file di configurazione popt"
 
 #: src/getcert.c:477
 #, c-format
@@ -330,164 +333,170 @@ msgstr "Nessuna risposta ricevuta dal servizio %s.\n"
 #: src/getcert.c:699 src/getcert.c:3978
 #, c-format
 msgid "State %s, stuck: %s.\n"
-msgstr ""
+msgstr "Stato %s, bloccato: %s.\n"
 
 #: src/getcert.c:768 src/getcert.c:1846 src/getcert.c:2500 src/getcert.c:3100
 #: src/getcert.c:3354 src/getcert.c:3875
 msgid "NSS database for key and cert"
-msgstr ""
+msgstr "Database NSS per chiave e certificato"
 
 #: src/getcert.c:769 src/getcert.c:1847 src/getcert.c:2501 src/getcert.c:3101
 #: src/getcert.c:3355 src/getcert.c:3876
 msgid "nickname for NSS-based storage (only valid with -d)"
-msgstr ""
+msgstr "nickname per l'archiviazione basata su NSS (valido solo con -d)"
 
 #: src/getcert.c:770 src/getcert.c:1848 src/getcert.c:2502 src/getcert.c:3102
 #: src/getcert.c:3356 src/getcert.c:3877
 msgid "optional token name for NSS-based storage (only valid with -d)"
 msgstr ""
+"nome token opzionale per l'archiviazione basata su NSS (valido solo con -d)"
 
 #: src/getcert.c:771
 msgid "PEM file for private key"
-msgstr ""
+msgstr "File PEM per la chiave privata"
 
 #: src/getcert.c:772
 msgid "PEM file for certificate (only valid with -k)"
-msgstr ""
+msgstr "File PEM per il certificato (valido solo con -k)"
 
 #: src/getcert.c:773 src/getcert.c:1851 src/getcert.c:2508
 msgid "file which holds the private key encryption PIN"
-msgstr ""
+msgstr "file che contiene il PIN di crittografia della chiave privata"
 
 #: src/getcert.c:774 src/getcert.c:1852 src/getcert.c:2509
 msgid "private key encryption PIN"
-msgstr ""
+msgstr "PIN di crittografia della chiave privata"
 
 #: src/getcert.c:775 src/getcert.c:1853 src/getcert.c:2510
 msgid "owner information for private key"
-msgstr ""
+msgstr "informazioni sul proprietario della chiave privata"
 
 #: src/getcert.c:776 src/getcert.c:1854 src/getcert.c:2511
 msgid "file permissions for private key"
-msgstr ""
+msgstr "autorizzazioni sui file per la chiave privata"
 
 #: src/getcert.c:777 src/getcert.c:1855 src/getcert.c:2512
 msgid "owner information for certificate"
-msgstr ""
+msgstr "informazioni sul proprietario del certificato"
 
 #: src/getcert.c:778 src/getcert.c:1856 src/getcert.c:2513
 msgid "file permissions for certificate"
-msgstr ""
+msgstr "autorizzazioni file per il certificato"
 
 #: src/getcert.c:779 src/getcert.c:1857 src/getcert.c:2514
 msgid "NSS database in which to store the CA's certificates"
-msgstr ""
+msgstr "Database NSS in cui archiviare i certificati della CA"
 
 #: src/getcert.c:780 src/getcert.c:1858 src/getcert.c:2515
 msgid "file in which to store the CA's certificates"
-msgstr ""
+msgstr "file in cui archiviare i certificati della CA"
 
 #: src/getcert.c:781 src/getcert.c:1859 src/getcert.c:2516
 msgid "command to run before saving the certificate"
-msgstr ""
+msgstr "comando da eseguire prima di salvare il certificato"
 
 #: src/getcert.c:782 src/getcert.c:1860 src/getcert.c:2517
 msgid "command to run after saving the certificate"
-msgstr ""
+msgstr "comando da eseguire dopo aver salvato il certificato"
 
 #: src/getcert.c:783
 msgid "nickname to assign to the request"
-msgstr ""
+msgstr "nickname da assegnare alla richiesta"
 
 #: src/getcert.c:784
 msgid "type of key to be generated if one is not already in place"
-msgstr ""
+msgstr "tipo di chiave da generare se non ne esiste già una"
 
 #: src/getcert.c:785
 msgid "size of key to be generated if one is not already in place"
-msgstr ""
+msgstr "dimensione della chiave da generare se non ne esiste già una"
 
 #: src/getcert.c:786 src/getcert.c:1863
 msgid "attempt to renew the certificate when expiration nears (default)"
 msgstr ""
+"tentare di rinnovare il certificato quando si avvicina la scadenza ("
+"impostazione predefinita)"
 
 #: src/getcert.c:787 src/getcert.c:1864
 msgid "don't attempt to renew the certificate when expiration nears"
-msgstr ""
+msgstr "non tentare di rinnovare il certificato quando si avvicina la scadenza"
 
 #: src/getcert.c:789 src/getcert.c:1866
 msgid "use the specified CA configuration rather than the default"
-msgstr ""
+msgstr "utilizzare la configurazione CA specificata anziché quella predefinita"
 
 #: src/getcert.c:791 src/getcert.c:1868 src/getcert.c:2521
 msgid "ask the CA to process the request using the named profile or template"
 msgstr ""
+"chiedere alla CA di elaborare la richiesta utilizzando il profilo o il "
+"modello indicato"
 
 #: src/getcert.c:792 src/getcert.c:1869 src/getcert.c:2522
 msgid "ask the CA to process the request using the named issuer"
 msgstr ""
+"chiedere alla CA di elaborare la richiesta utilizzando l'emittente indicato"
 
 #: src/getcert.c:793 src/getcert.c:2523
 msgid "set requested subject name (default: CN=<hostname>)"
-msgstr ""
+msgstr "imposta il nome del soggetto richiesto (predefinito: CN=<nome host>)"
 
 #: src/getcert.c:794 src/getcert.c:2524
 msgid "set requested key usage value"
-msgstr ""
+msgstr "impostare il valore di utilizzo della chiave richiesto"
 
 #: src/getcert.c:795 src/getcert.c:2525
 msgid "set requested extended key usage OID"
-msgstr ""
+msgstr "impostare l'OID di utilizzo esteso della chiave richiesto"
 
 #: src/getcert.c:796 src/getcert.c:2526
 msgid "set requested principal name"
-msgstr ""
+msgstr "impostare il nome principale richiesto"
 
 #: src/getcert.c:797 src/getcert.c:2527
 msgid "set requested DNS name"
-msgstr ""
+msgstr "impostare il nome DNS richiesto"
 
 #: src/getcert.c:798 src/getcert.c:2528
 msgid "set requested email address"
-msgstr ""
+msgstr "impostare l'indirizzo email richiesto"
 
 #: src/getcert.c:799 src/getcert.c:2529
 msgid "set requested IP address"
-msgstr ""
+msgstr "impostare l'indirizzo IP richiesto"
 
 #: src/getcert.c:800 src/getcert.c:1876 src/getcert.c:2530
 msgid "file which holds an optional challenge password value"
-msgstr ""
+msgstr "file che contiene un valore opzionale per la password di verifica"
 
 #: src/getcert.c:801 src/getcert.c:1877 src/getcert.c:2531
 msgid "an optional challenge password value"
-msgstr ""
+msgstr "un valore opzionale per la password di verifica"
 
 #: src/getcert.c:802 src/getcert.c:1878 src/getcert.c:2532
 msgid "request a CA certificate"
-msgstr ""
+msgstr "richiedere un certificato CA"
 
 #: src/getcert.c:803 src/getcert.c:1879 src/getcert.c:2533
 msgid "request a non-CA certificate"
-msgstr ""
+msgstr "richiedere un certificato non CA"
 
 #: src/getcert.c:804 src/getcert.c:1880 src/getcert.c:2534
 msgid "path length for CA certificate"
-msgstr ""
+msgstr "lunghezza del percorso per il certificato CA"
 
 #: src/getcert.c:805 src/getcert.c:1881 src/getcert.c:2535
 msgid "try to wait for the certificate to be issued"
-msgstr ""
+msgstr "prova ad aspettare l'emissione del certificato"
 
 #: src/getcert.c:806 src/getcert.c:1882 src/getcert.c:2536
 msgid "maximum time to wait for the certificate to be issued"
-msgstr ""
+msgstr "tempo massimo di attesa per l'emissione del certificato"
 
 #: src/getcert.c:807 src/getcert.c:1883 src/getcert.c:2537 src/getcert.c:3105
 #: src/getcert.c:3360 src/getcert.c:3880 src/getcert.c:4038 src/getcert.c:4270
 #: src/getcert.c:4366 src/getcert.c:4463 src/getcert.c:4591 src/getcert.c:4679
 msgid "connect to the certmonger service on the session bus"
-msgstr ""
+msgstr "connettersi al servizio certimonger sul bus di sessione"
 
 #: src/getcert.c:808 src/getcert.c:1884 src/getcert.c:2538 src/getcert.c:3106
 #: src/getcert.c:3361 src/getcert.c:3881 src/getcert.c:4039 src/getcert.c:4271
