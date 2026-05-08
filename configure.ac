@@ -8,7 +8,7 @@ AC_PROG_RANLIB
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION(0.19)
 AM_ICONV
-ALL_LINGUAS="bg ca cs_CZ da de es eu fr gu hu id it ja ka ko lt nb nl pl pt pt_BR ru si sv ta tr uk zh_CN zh_TW"
+ALL_LINGUAS="bg ca cs_CZ da de es eu fr gu hu id it ja ka ko lo lt nb nl pl pt pt_BR ru si sv ta tr uk zh_CN zh_TW"
 if test x$GCC = xyes ; then
 	CFLAGS="$CFLAGS -Wall -Wextra"
 fi

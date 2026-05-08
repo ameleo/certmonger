@@ -1,0 +1,2232 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Red Hat, Inc.
+# This file is distributed under the same license as the certmonger package.
+# Bone NI <bounkirdni@gmail.com>, 2026.
+msgid ""
+msgstr ""
+"Project-Id-Version: certmonger 0.79\n"
+"Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
+"POT-Creation-Date: 2017-02-26 02:20-0500\n"
+"PO-Revision-Date: 2026-05-08 09:59+0000\n"
+"Last-Translator: Bone NI <bounkirdni@gmail.com>\n"
+"Language-Team: Lao <https://translate.fedoraproject.org/projects/certmonger/"
+"master/lo/>\n"
+"Language: lo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.17.1\n"
+
+#: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
+#: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
+#, c-format
+msgid "Out of memory.\n"
+msgstr "ໜ່ວຍຄວາມຈຳບໍ່ພຽງພໍ.\n"
+
+#: src/certmaster.c:136
+#, c-format
+msgid "Unable to determine hostname of CA.\n"
+msgstr "ບໍ່ສາມາດລະບຸຊື່ໂຮສ (hostname) ຂອງ CA ໄດ້.\n"
+
+#: src/certmaster.c:153 src/dogtag.c:521 src/ipa.c:796
+#, c-format
+msgid "Unable to read signing request from file \"%s\".\n"
+msgstr "ບໍ່ສາມາດອ່ານຄຳຮ້ອງຂໍລົງລາຍເຊັນຈາກໄຟລ໌ \"%s\" ໄດ້.\n"
+
+#: src/certmaster.c:156 src/dogtag.c:524 src/ipa.c:799
+#, c-format
+msgid "Unable to read signing request from environment variable \"%s\".\n"
+msgstr "ບໍ່ສາມາດອ່ານຄຳຮ້ອງຂໍລົງລາຍເຊັນຈາກຕົວປ່ຽນສະພາບແວດລ້ອມ \"%s\" ໄດ້.\n"
+
+#: src/certmaster.c:184
+#, c-format
+msgid "Error setting up for XMLRPC.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າ XMLRPC.\n"
+
+#: src/certmaster.c:206 src/getcert.c:526 src/getcert.c:545 src/getcert.c:564
+#: src/getcert.c:583 src/getcert.c:601 src/getcert.c:694 src/getcert.c:1409
+#: src/getcert.c:1796 src/getcert.c:2354 src/getcert.c:2440 src/getcert.c:3021
+#: src/getcert.c:3244 src/getcert.c:3272 src/getcert.c:3499 src/getcert.c:3603
+#: src/getcert.c:3638 src/getcert.c:3673 src/getcert.c:3710 src/getcert.c:3973
+#: src/getcert.c:4429 src/getcert.c:4547 src/getcert.c:4742
+#, c-format
+msgid "Error parsing server response.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການວິເຄາະການຕອບກັບຈາກເຊີເວີ.\n"
+
+#: src/certmaster.c:210
+#, c-format
+msgid "Server error.\n"
+msgstr "ເຊີເວີຜິດພາດ.\n"
+
+#: src/dogtag.c:226
+#, c-format
+msgid "Profile params (-O) must be in the form of param=value.\n"
+msgstr "ພາຣາມິເຕີໂປຣໄຟລ໌ (-O) ຕ້ອງຢູ່ໃນຮູບແບບ param=value.\n"
+
+#: src/dogtag.c:249
+#, c-format
+msgid "Submit params (-o) must be in the form of param=value.\n"
+msgstr "ພາຣາມິເຕີການສົ່ງ (-o) ຕ້ອງຢູ່ໃນຮູບແບບ param=value.\n"
+
+#: src/dogtag.c:408 src/dogtag.c:413 src/dogtag.c:442
+#, c-format
+msgid "No agent credentials specified, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸຂໍ້ມູນຢືນຢັນຕົວຕົນຂອງຕົວແທນ (agent) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/dogtag.c:418
+#, c-format
+msgid "Requested renewal, but no serial number provided.\n"
+msgstr "ມີການຮ້ອງຂໍຕໍ່ອາຍຸ ແຕ່ບໍ່ໄດ້ລະບຸໝາຍເລກຊີຣຽວ.\n"
+
+#: src/dogtag.c:422
+#, c-format
+msgid "No end-entity URL (-E) given, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸ URL ຂອງ end-entity (-E) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/dogtag.c:427 src/dogtag.c:437 src/dogtag.c:594
+#, c-format
+msgid "No agent URL (-A) given, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸ URL ຂອງຕົວແທນ (-A) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/dogtag.c:432
+#, c-format
+msgid "No profile/template (-T) given, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸ ໂປຣໄຟລ໌/ເທັມເພລດ (-T) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/dogtag.c:452
+#, c-format
+msgid "Error shutting down NSS.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການປິດການເຮັດວຽກຂອງ NSS.\n"
+
+#: src/dogtag.c:487 src/dogtag.c:777
+#, c-format
+msgid "Internal error: unknown state.\n"
+msgstr "ຂໍ້ຜິດພາດພາຍໃນ: ບໍ່ຮູ້ຈັກສະຖານະ.\n"
+
+#: src/dogtag.c:600
+#, c-format
+msgid "No agent credentials (-n) given, but they are needed.\n"
+msgstr "ບໍ່ໄດ້ລະບຸຂໍ້ມູນຢືນຢັນຕົວຕົນຂອງຕົວແທນ (-n) ເຊິ່ງຈຳເປັນຕ້ອງໃຊ້.\n"
+
+#: src/dogtag.c:757 src/scep.c:619
+#, c-format
+msgid "Error %d connecting to %s: %s.\n"
+msgstr "ຂໍ້ຜິດພາດ %d ໃນການເຊື່ອມຕໍ່ຫາ %s: %s.\n"
+
+#: src/dogtag.c:762 src/scep.c:624
+#, c-format
+msgid "Error %d connecting to %s.\n"
+msgstr "ຂໍ້ຜິດພາດ %d ໃນການເຊື່ອມຕໍ່ຫາ %s.\n"
+
+#: src/dogtag.c:770 src/scep.c:648
+#, c-format
+msgid "Internal error: no response to \"%s?%s\".\n"
+msgstr "ຂໍ້ຜິດພາດພາຍໃນ: ບໍ່ມີການຕອບກັບຈາກ \"%s?%s\".\n"
+
+#: src/getcert.c:61 src/main.c:84 src/main.c:86
+msgid "COMMAND"
+msgstr "ຄຳສັ່ງ"
+
+#: src/getcert.c:62
+msgid "DIRECTORY"
+msgstr "ໄດເຣັກທໍຣີ"
+
+#: src/getcert.c:63 src/getcert.c:70
+msgid "LIST"
+msgstr "ລາຍການ"
+
+#: src/getcert.c:64 src/getcert.c:68
+msgid "ADDRESS"
+msgstr "ທີ່ຢູ່"
+
+#: src/getcert.c:65 src/main.c:87
+msgid "FILENAME"
+msgstr "ຊື່ໄຟລ໌"
+
+#: src/getcert.c:66
+msgid "HOSTNAME"
+msgstr "ຊື່ໂຮສ"
+
+#: src/getcert.c:67
+msgid "ID"
+msgstr "ໄອດີ"
+
+#: src/getcert.c:69
+msgid "BITS"
+msgstr "ບິດ"
+
+#: src/getcert.c:71
+msgid "MODE"
+msgstr "ໂໝດ"
+
+#: src/getcert.c:72
+msgid "NAME"
+msgstr "ຊື່"
+
+#: src/getcert.c:73
+msgid "PRINCIPAL"
+msgstr "ພຣິນຊິໂພ (PRINCIPAL)"
+
+#: src/getcert.c:74
+msgid "SUBJECT"
+msgstr "ຫົວຂໍ້ (SUBJECT)"
+
+#: src/getcert.c:75
+msgid "URL"
+msgstr "ຢູອາແອວ (URL)"
+
+#: src/getcert.c:76
+msgid "USERNAME[:GROUPNAME]"
+msgstr "ຊື່ຜູ້ໃຊ້[:ຊື່ກຸ່ມ]"
+
+#: src/getcert.c:115
+#, c-format
+msgid "Path \"%s\" is not absolute, attempting to use \"%s\" instead.\n"
+msgstr "ເສັ້ນທາງ \"%s\" ບໍ່ແມ່ນເສັ້ນທາງເຕັມ, ຈະພະຍາຍາມໃຊ້ \"%s\" ແທນ.\n"
+
+#: src/getcert.c:120
+#, c-format
+msgid ""
+"Path \"%s\" is not absolute, and there was an error determining the name of "
+"the current directory.\n"
+msgstr ""
+"ເສັ້ນທາງ \"%s\" ບໍ່ແມ່ນເສັ້ນທາງເຕັມ ແລະ ເກີດຂໍ້ຜິດພາດໃນການລະບຸຊື່ໄດເຣັກທໍຣີປັດຈຸບັນ.\n"
+
+#: src/getcert.c:142
+#, c-format
+msgid "Path \"%s\": insufficient permissions.\n"
+msgstr "ເສັ້ນທາງ \"%s\": ສິດການເຂົ້າເຖິງບໍ່ພຽງພໍ.\n"
+
+#: src/getcert.c:148
+#, c-format
+msgid "Path \"%s\" is not a directory.\n"
+msgstr "ເສັ້ນທາງ \"%s\" ບໍ່ແມ່ນໄດເຣັກທໍຣີ.\n"
+
+#: src/getcert.c:154
+#, c-format
+msgid "Path \"%s\": %s.\n"
+msgstr "ເສັ້ນທາງ \"%s\": %s.\n"
+
+#: src/getcert.c:194
+#, c-format
+msgid "Path \"%s\" is not a regular file.\n"
+msgstr "ເສັ້ນທາງ \"%s\" ບໍ່ແມ່ນໄຟລ໌ປົກກະຕິ.\n"
+
+#: src/getcert.c:340
+#, c-format
+msgid "No system bus running.\n"
+msgstr "ບໍ່ມີ system bus ເຮັດວຽກຢູ່.\n"
+
+#: src/getcert.c:341
+#, c-format
+msgid "Running as UID 0.\n"
+msgstr "ກຳລັງເຮັດວຽກດ້ວຍ UID 0.\n"
+
+#: src/getcert.c:342
+#, c-format
+msgid "Launching temporary dedicated service daemon.\n"
+msgstr "ກຳລັງເລີ່ມຕົ້ນເດມອນບໍລິການແບບສະເພາະຊົ່ວຄາວ.\n"
+
+#: src/getcert.c:371
+#, c-format
+msgid "Error connecting to D-Bus.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການເຊື່ອມຕໍ່ຫາ D-Bus.\n"
+
+#: src/getcert.c:372 src/tdbusm.c:2166
+#, c-format
+msgid "Please verify that the message bus (D-Bus) service is running.\n"
+msgstr "ກະລຸນາກວດສອບວ່າບໍລິການ message bus (D-Bus) ກຳລັງເຮັດວຽກຢູ່.\n"
+
+#: src/getcert.c:379
+#, c-format
+msgid "Error creating DBus request message.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການສ້າງຂໍ້ຄວາມຮ້ອງຂໍ DBus.\n"
+
+#: src/getcert.c:393
+#, c-format
+msgid "missing argument for %s"
+msgstr "ຂາດອາກິວເມນສຳລັບ %s"
+
+#: src/getcert.c:398
+msgid "missing argument"
+msgstr "ຂາດອາກິວເມນ"
+
+#: src/getcert.c:401
+#, c-format
+msgid "unrecognized option %s"
+msgstr "ບໍ່ຮູ້ຈັກຕົວເລືອກ %s"
+
+#: src/getcert.c:406
+msgid "unrecognized option"
+msgstr "ບໍ່ຮູ້ຈັກຕົວເລືອກ"
+
+#: src/getcert.c:409
+msgid "aliases nested too deeply"
+msgstr "ຊື່ນາມແຝງ (aliases) ຊ້ອນກັນເລິກເກີນໄປ"
+
+#: src/getcert.c:412
+msgid "bad parameter quoting"
+msgstr "ການໃສ່ເຄື່ອງໝາຍຄຳເວົ້າໃນພາຣາມິເຕີບໍ່ຖືກຕ້ອງ"
+
+#: src/getcert.c:418
+msgid "invalid numeric value"
+msgstr "ຄ່າຕົວເລກບໍ່ຖືກຕ້ອງ"
+
+#: src/getcert.c:421
+msgid "number too large or too small"
+msgstr "ຕົວເລກໃຫຍ່ ຫຼື ນ້ອຍເກີນໄປ"
+
+#: src/getcert.c:424
+msgid "bad operation"
+msgstr "ການເຮັດວຽກບໍ່ຖືກຕ້ອງ"
+
+#: src/getcert.c:427
+msgid "internal error"
+msgstr "ຂໍ້ຜິດພາດພາຍໃນ"
+
+#: src/getcert.c:430
+msgid "out of memory"
+msgstr "ໜ່ວຍຄວາມຈຳເຕັມ"
+
+#: src/getcert.c:434
+msgid "error in popt configuration file"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນໄຟລ໌ຕັ້ງຄ່າ popt"
+
+#: src/getcert.c:477
+#, c-format
+msgid "Error %s: %s\n"
+msgstr "ຂໍ້ຜິດພາດ %s: %s\n"
+
+#: src/getcert.c:481
+#, c-format
+msgid "Error %s\n"
+msgstr "ຂໍ້ຜິດພາດ %s\n"
+
+#: src/getcert.c:487
+#, c-format
+msgid "Error: %s\n"
+msgstr "ຂໍ້ຜິດພາດ: %s\n"
+
+#: src/getcert.c:489
+#, c-format
+msgid "Received error response from local %s service.\n"
+msgstr "ໄດ້ຮັບການຕອບກັບທີ່ຜິດພາດຈາກບໍລິການ %s ພາຍໃນເຄື່ອງ.\n"
+
+#: src/getcert.c:495
+#, c-format
+msgid "No response received from %s service.\n"
+msgstr "ບໍ່ໄດ້ຮັບການຕອບກັບຈາກບໍລິການ %s.\n"
+
+#: src/getcert.c:699 src/getcert.c:3978
+#, c-format
+msgid "State %s, stuck: %s.\n"
+msgstr "ສະຖານະ %s, ຄ້າງຢູ່ທີ່: %s.\n"
+
+#: src/getcert.c:768 src/getcert.c:1846 src/getcert.c:2500 src/getcert.c:3100
+#: src/getcert.c:3354 src/getcert.c:3875
+msgid "NSS database for key and cert"
+msgstr "ຖານຂໍ້ມູນ NSS ສຳລັບຄີ ແລະ ໃບຢັ້ງຢືນ"
+
+#: src/getcert.c:769 src/getcert.c:1847 src/getcert.c:2501 src/getcert.c:3101
+#: src/getcert.c:3355 src/getcert.c:3876
+msgid "nickname for NSS-based storage (only valid with -d)"
+msgstr ""
+"ຊື່ອ້າງອີງ (nickname) ສຳລັບບ່ອນເກັບຂໍ້ມູນແບບ NSS (ໃຊ້ໄດ້ກັບ -d ເທົ່ານັ້ນ)"
+
+#: src/getcert.c:770 src/getcert.c:1848 src/getcert.c:2502 src/getcert.c:3102
+#: src/getcert.c:3356 src/getcert.c:3877
+msgid "optional token name for NSS-based storage (only valid with -d)"
+msgstr "ຊື່ໂທເຄັນທາງເລືອກສຳລັບບ່ອນເກັບຂໍ້ມູນແບບ NSS (ໃຊ້ໄດ້ກັບ -d ເທົ່ານັ້ນ)"
+
+#: src/getcert.c:771
+msgid "PEM file for private key"
+msgstr "ໄຟລ໌ PEM ສຳລັບຄີສ່ວນຕົວ (private key)"
+
+#: src/getcert.c:772
+msgid "PEM file for certificate (only valid with -k)"
+msgstr "ໄຟລ໌ PEM ສຳລັບໃບຢັ້ງຢືນ (ໃຊ້ໄດ້ກັບ -k ເທົ່ານັ້ນ)"
+
+#: src/getcert.c:773 src/getcert.c:1851 src/getcert.c:2508
+msgid "file which holds the private key encryption PIN"
+msgstr "ໄຟລ໌ທີ່ເກັບ PIN ສຳລັບເຂົ້າລະຫັດຄີສ່ວນຕົວ"
+
+#: src/getcert.c:774 src/getcert.c:1852 src/getcert.c:2509
+msgid "private key encryption PIN"
+msgstr "PIN ສຳລັບເຂົ້າລະຫັດຄີສ່ວນຕົວ"
+
+#: src/getcert.c:775 src/getcert.c:1853 src/getcert.c:2510
+msgid "owner information for private key"
+msgstr "ຂໍ້ມູນເຈົ້າຂອງສຳລັບຄີສ່ວນຕົວ"
+
+#: src/getcert.c:776 src/getcert.c:1854 src/getcert.c:2511
+msgid "file permissions for private key"
+msgstr "ສິດການເຂົ້າເຖິງໄຟລ໌ສຳລັບຄີສ່ວນຕົວ"
+
+#: src/getcert.c:777 src/getcert.c:1855 src/getcert.c:2512
+msgid "owner information for certificate"
+msgstr "ຂໍ້ມູນເຈົ້າຂອງສຳລັບໃບຢັ້ງຢືນ"
+
+#: src/getcert.c:778 src/getcert.c:1856 src/getcert.c:2513
+msgid "file permissions for certificate"
+msgstr "ສິດການເຂົ້າເຖິງໄຟລ໌ສຳລັບໃບຢັ້ງຢືນ"
+
+#: src/getcert.c:779 src/getcert.c:1857 src/getcert.c:2514
+msgid "NSS database in which to store the CA's certificates"
+msgstr "ຖານຂໍ້ມູນ NSS ທີ່ຈະໃຊ້ເກັບໃບຢັ້ງຢືນຂອງ CA"
+
+#: src/getcert.c:780 src/getcert.c:1858 src/getcert.c:2515
+msgid "file in which to store the CA's certificates"
+msgstr "ໄຟລ໌ທີ່ຈະໃຊ້ເກັບໃບຢັ້ງຢືນຂອງ CA"
+
+#: src/getcert.c:781 src/getcert.c:1859 src/getcert.c:2516
+msgid "command to run before saving the certificate"
+msgstr "ຄຳສັ່ງທີ່ຈະໃຫ້ເຮັດວຽກກ່ອນການບັນທຶກໃບຢັ້ງຢືນ"
+
+#: src/getcert.c:782 src/getcert.c:1860 src/getcert.c:2517
+msgid "command to run after saving the certificate"
+msgstr "ຄຳສັ່ງທີ່ຈະໃຫ້ເຮັດວຽກຫຼັງການບັນທຶກໃບຢັ້ງຢືນ"
+
+#: src/getcert.c:783
+msgid "nickname to assign to the request"
+msgstr "ຊື່ອ້າງອີງທີ່ຈະກຳນົດໃຫ້ກັບຄຳຮ້ອງຂໍ"
+
+#: src/getcert.c:784
+msgid "type of key to be generated if one is not already in place"
+msgstr "ປະເພດຂອງຄີທີ່ຈະສ້າງ ຖ້າຍັງບໍ່ທັນມີຄີຢູ່"
+
+#: src/getcert.c:785
+msgid "size of key to be generated if one is not already in place"
+msgstr "ຂະໜາດຂອງຄີທີ່ຈະສ້າງ ຖ້າຍັງບໍ່ທັນມີຄີຢູ່"
+
+#: src/getcert.c:786 src/getcert.c:1863
+msgid "attempt to renew the certificate when expiration nears (default)"
+msgstr "ພະຍາຍາມຕໍ່ອາຍຸໃບຢັ້ງຢືນເມື່ອໃກ້ຈະໝົດອາຍຸ (ຄ່າເລີ່ມຕົ້ນ)"
+
+#: src/getcert.c:787 src/getcert.c:1864
+msgid "don't attempt to renew the certificate when expiration nears"
+msgstr "ບໍ່ຕ້ອງພະຍາຍາມຕໍ່ອາຍຸໃບຢັ້ງຢືນເມື່ອໃກ້ຈະໝົດອາຍຸ"
+
+#: src/getcert.c:789 src/getcert.c:1866
+msgid "use the specified CA configuration rather than the default"
+msgstr "ໃຊ້ການຕັ້ງຄ່າ CA ທີ່ລະບຸໄວ້ ແທນຄ່າເລີ່ມຕົ້ນ"
+
+#: src/getcert.c:791 src/getcert.c:1868 src/getcert.c:2521
+msgid "ask the CA to process the request using the named profile or template"
+msgstr "ຮ້ອງຂໍໃຫ້ CA ດຳເນີນການຄຳຮ້ອງຂໍໂດຍໃຊ້ໂປຣໄຟລ໌ ຫຼື ເທັມເພລດທີ່ລະບຸ"
+
+#: src/getcert.c:792 src/getcert.c:1869 src/getcert.c:2522
+msgid "ask the CA to process the request using the named issuer"
+msgstr "ຮ້ອງຂໍໃຫ້ CA ດຳເນີນການຄຳຮ້ອງຂໍໂດຍໃຊ້ຜູ້ອອກໃບຢັ້ງຢືນ (issuer) ທີ່ລະບຸ"
+
+#: src/getcert.c:793 src/getcert.c:2523
+msgid "set requested subject name (default: CN=<hostname>)"
+msgstr "ກຳນົດຊື່ເຈົ້າຂອງ (subject name) ທີ່ຮ້ອງຂໍ (ຄ່າເລີ່ມຕົ້ນ: CN=<hostname>)"
+
+#: src/getcert.c:794 src/getcert.c:2524
+msgid "set requested key usage value"
+msgstr "ກຳນົດຄ່າການໃຊ້ງານຄີ (key usage) ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:795 src/getcert.c:2525
+msgid "set requested extended key usage OID"
+msgstr "ກຳນົດ OID ຂອງການໃຊ້ງານຄີແບບຂະຫຍາຍ (extended key usage) ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:796 src/getcert.c:2526
+msgid "set requested principal name"
+msgstr "ກຳນົດຊື່ພຣິນຊິໂພ (principal name) ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:797 src/getcert.c:2527
+msgid "set requested DNS name"
+msgstr "ກຳນົດຊື່ DNS ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:798 src/getcert.c:2528
+msgid "set requested email address"
+msgstr "ກຳນົດທີ່ຢູ່ອີເມລທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:799 src/getcert.c:2529
+msgid "set requested IP address"
+msgstr "ກຳນົດທີ່ຢູ່ IP ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:800 src/getcert.c:1876 src/getcert.c:2530
+msgid "file which holds an optional challenge password value"
+msgstr "ໄຟລ໌ທີ່ເກັບລະຫັດຜ່ານ challenge (ທາງເລືອກ)"
+
+#: src/getcert.c:801 src/getcert.c:1877 src/getcert.c:2531
+msgid "an optional challenge password value"
+msgstr "ຄ່າລະຫັດຜ່ານ challenge (ທາງເລືອກ)"
+
+#: src/getcert.c:802 src/getcert.c:1878 src/getcert.c:2532
+msgid "request a CA certificate"
+msgstr "ຮ້ອງຂໍໃບຢັ້ງຢືນ CA"
+
+#: src/getcert.c:803 src/getcert.c:1879 src/getcert.c:2533
+msgid "request a non-CA certificate"
+msgstr "ຮ້ອງຂໍໃບຢັ້ງຢືນທີ່ບໍ່ແມ່ນ CA"
+
+#: src/getcert.c:804 src/getcert.c:1880 src/getcert.c:2534
+msgid "path length for CA certificate"
+msgstr "ຄວາມຍາວເສັ້ນທາງ (path length) ສຳລັບໃບຢັ້ງຢືນ CA"
+
+#: src/getcert.c:805 src/getcert.c:1881 src/getcert.c:2535
+msgid "try to wait for the certificate to be issued"
+msgstr "ພະຍາຍາມລໍຖ້າໃຫ້ໃບຢັ້ງຢືນຖືກອອກໃຫ້"
+
+#: src/getcert.c:806 src/getcert.c:1882 src/getcert.c:2536
+msgid "maximum time to wait for the certificate to be issued"
+msgstr "ເວລາລໍຖ້າສູງສຸດເພື່ອໃຫ້ໃບຢັ້ງຢືນຖືກອອກໃຫ້"
+
+#: src/getcert.c:807 src/getcert.c:1883 src/getcert.c:2537 src/getcert.c:3105
+#: src/getcert.c:3360 src/getcert.c:3880 src/getcert.c:4038 src/getcert.c:4270
+#: src/getcert.c:4366 src/getcert.c:4463 src/getcert.c:4591 src/getcert.c:4679
+msgid "connect to the certmonger service on the session bus"
+msgstr "ເຊື່ອມຕໍ່ຫາບໍລິການ certmonger ຜ່ານ session bus"
+
+#: src/getcert.c:808 src/getcert.c:1884 src/getcert.c:2538 src/getcert.c:3106
+#: src/getcert.c:3361 src/getcert.c:3881 src/getcert.c:4039 src/getcert.c:4271
+#: src/getcert.c:4367 src/getcert.c:4464 src/getcert.c:4592 src/getcert.c:4680
+msgid "connect to the certmonger service on the system bus"
+msgstr "ເຊື່ອມຕໍ່ຫາບໍລິການ certmonger ຜ່ານ system bus"
+
+#: src/getcert.c:825 src/getcert.c:1893 src/getcert.c:2547
+#, c-format
+msgid "Error initializing Kerberos library: %s.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມຕົ້ນໄລບຣາຣີ Kerberos: %s.\n"
+
+#: src/getcert.c:889 src/getcert.c:2619
+#, c-format
+msgid "No support for generating \"%s\" keys.\n"
+msgstr "ບໍ່ຮອງຮັບການສ້າງຄີ \"%s\".\n"
+
+#: src/getcert.c:891 src/getcert.c:2621
+#, c-format
+msgid "Known key types include:"
+msgstr "ປະເພດຄີທີ່ຮູ້ຈັກລວມມີ:"
+
+#: src/getcert.c:931 src/getcert.c:1983 src/getcert.c:2643
+#, c-format
+msgid "Unrecognized keyUsage \"%s\".\n"
+msgstr "ບໍ່ຮູ້ຈັກ keyUsage \"%s\".\n"
+
+#: src/getcert.c:941 src/getcert.c:1993 src/getcert.c:2653
+#, c-format
+msgid "Could not evaluate OID \"%s\".\n"
+msgstr "ບໍ່ສາມາດປະເມີນຄ່າ OID \"%s\" ໄດ້.\n"
+
+#: src/getcert.c:952 src/getcert.c:2004 src/getcert.c:2664
+#, c-format
+msgid "Error parsing Kerberos principal name \"%s\": %s.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການວິເຄາະຊື່ Kerberos principal \"%s\": %s.\n"
+
+#: src/getcert.c:961 src/getcert.c:2013 src/getcert.c:2673
+#, c-format
+msgid "Error unparsing Kerberos principal name \"%s\": %s.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການແປງຊື່ Kerberos principal \"%s\" ກັບຄືນ: %s.\n"
+
+#: src/getcert.c:1016 src/getcert.c:2068 src/getcert.c:2728
+#, c-format
+msgid "%s: invalid value -- '%s'\n"
+msgstr "%s: ຄ່າບໍ່ຖືກຕ້ອງ -- '%s'\n"
+
+#: src/getcert.c:1039 src/getcert.c:2096 src/getcert.c:2751 src/getcert.c:3176
+#: src/getcert.c:3422 src/getcert.c:4073
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: ຕົວເລືອກນີ້ຕ້ອງການອາກິວເມນ -- '%c'\n"
+
+#: src/getcert.c:1043 src/getcert.c:2099 src/getcert.c:2754 src/getcert.c:3180
+#: src/getcert.c:3426 src/getcert.c:4076
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: ຕົວເລືອກບໍ່ຖືກຕ້ອງ -- '%c'\n"
+
+#: src/getcert.c:1057
+#, c-format
+msgid "Error: unused extra argument \"%s\".\n"
+msgstr "ຂໍ້ຜິດພາດ: ອາກິວເມນສ່ວນເກີນ \"%s\" ບໍ່ໄດ້ຖືກນຳໃຊ້.\n"
+
+#: src/getcert.c:1060 src/getcert.c:2115 src/getcert.c:2767 src/getcert.c:3200
+#: src/getcert.c:3439 src/getcert.c:3938 src/getcert.c:4089 src/getcert.c:4321
+#: src/getcert.c:4416 src/getcert.c:4518 src/getcert.c:4641 src/getcert.c:4724
+#, c-format
+msgid "Error: unused extra arguments were supplied.\n"
+msgstr "ຂໍ້ຜິດພາດ: ມີການລະບຸອາກິວເມນສ່ວນເກີນທີ່ບໍ່ໄດ້ຖືກນຳໃຊ້.\n"
+
+#: src/getcert.c:1066 src/getcert.c:2121 src/getcert.c:2381 src/getcert.c:2791
+#, c-format
+msgid "Database location or nickname specified without the other.\n"
+msgstr "ມີການລະບຸທີ່ຢູ່ຖານຂໍ້ມູນ ຫຼື ຊື່ອ້າງອີງ ຢ່າງໃດຢ່າງໜຶ່ງໂດຍຂາດອີກຢ່າງ.\n"
+
+#: src/getcert.c:1072 src/getcert.c:2127 src/getcert.c:2387 src/getcert.c:2797
+#, c-format
+msgid "Database directory and certificate file both specified.\n"
+msgstr "ມີການລະບຸທັງໄດເຣັກທໍຣີຖານຂໍ້ມູນ ແລະ ໄຟລ໌ໃບຢັ້ງຢືນ.\n"
+
+#: src/getcert.c:1080 src/getcert.c:2395 src/getcert.c:2805
+#, c-format
+msgid ""
+"None of database directory and nickname or certificate file specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸທັງໄດເຣັກທໍຣີຖານຂໍ້ມູນ/ຊື່ອ້າງອີງ ຫຼື ໄຟລ໌ໃບຢັ້ງຢືນ.\n"
+
+#: src/getcert.c:1087 src/getcert.c:2143
+#, c-format
+msgid "Key and certificate can not both be saved to the same file.\n"
+msgstr "ບໍ່ສາມາດບັນທຶກທັງຄີ ແລະ ໃບຢັ້ງຢືນໄວ້ໃນໄຟລ໌ດຽວກັນໄດ້.\n"
+
+#: src/getcert.c:1114
+#, c-format
+msgid ""
+"The IPA backend requires the use of the -K option (principal name) when any "
+"of the -N (subject name), -E (email address), -A (IP address), -D (DNS "
+"name), or -U (extendedKeyUsage) options is used.\n"
+msgstr ""
+"IPA backend ຕ້ອງການໃຫ້ໃຊ້ຕົວເລືອກ -K (ຊື່ principal) ເມື່ອມີການໃຊ້ຕົວເລືອກໃດໜຶ່ງຕໍ່ໄປນີ້: -N (ຊື່ "
+"subject), -E (ທີ່ຢູ່ອີເມລ), -A (ທີ່ຢູ່ IP), -D (ຊື່ DNS), ຫຼື -U (extendedKeyUsage).\n"
+
+#: src/getcert.c:1296 src/getcert.c:1762 src/getcert.c:2272 src/getcert.c:2867
+#: src/getcert.c:3208 src/getcert.c:3447 src/getcert.c:4731
+#, c-format
+msgid "No CA with name \"%s\" found.\n"
+msgstr "ບໍ່ພົບ CA ທີ່ມີຊື່ວ່າ \"%s\".\n"
+
+#: src/getcert.c:1404 src/getcert.c:1791 src/getcert.c:2348 src/getcert.c:2435
+#: src/getcert.c:3015 src/getcert.c:4424 src/getcert.c:4542 src/getcert.c:4561
+#: src/getcert.c:4651 src/getcert.c:4737
+#, c-format
+msgid "Error setting request arguments.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າອາກິວເມນຄຳຮ້ອງຂໍ.\n"
+
+#: src/getcert.c:1415
+#, c-format
+msgid "New signing request \"%s\" added.\n"
+msgstr "ເພີ່ມຄຳຮ້ອງຂໍລົງລາຍເຊັນໃໝ່ \"%s\" ແລ້ວ.\n"
+
+#: src/getcert.c:1421
+#, c-format
+msgid "New signing request could not be added.\n"
+msgstr "ບໍ່ສາມາດເພີ່ມຄຳຮ້ອງຂໍລົງລາຍເຊັນໃໝ່ໄດ້.\n"
+
+#: src/getcert.c:1802
+#, c-format
+msgid "New tracking request \"%s\" added.\n"
+msgstr "ເພີ່ມຄຳຮ້ອງຂໍຕິດຕາມໃໝ່ \"%s\" ແລ້ວ.\n"
+
+#: src/getcert.c:1809
+#, c-format
+msgid "New tracking request could not be added.\n"
+msgstr "ບໍ່ສາມາດເພີ່ມຄຳຮ້ອງຂໍຕິດຕາມໃໝ່ໄດ້.\n"
+
+#: src/getcert.c:1849
+msgid "PEM file for private key (only valid with -f)"
+msgstr "ໄຟລ໌ PEM ສຳລັບຄີສ່ວນຕົວ (ໃຊ້ໄດ້ກັບ -f ເທົ່ານັ້ນ)"
+
+#: src/getcert.c:1850 src/getcert.c:2503 src/getcert.c:3103 src/getcert.c:3357
+#: src/getcert.c:3878
+msgid "PEM file for certificate"
+msgstr "ໄຟລ໌ PEM ສຳລັບໃບຢັ້ງຢືນ"
+
+#: src/getcert.c:1861
+msgid "nickname of an existing request"
+msgstr "ຊື່ອ້າງອີງຂອງຄຳຮ້ອງຂໍທີ່ມີຢູ່ແລ້ວ"
+
+#: src/getcert.c:1862
+msgid "nickname to give to tracking request"
+msgstr "ຊື່ອ້າງອີງທີ່ຈະກຳນົດໃຫ້ຄຳຮ້ອງຂໍຕິດຕາມ"
+
+#: src/getcert.c:1870
+msgid "override requested key usage value"
+msgstr "ຂຽນທັບຄ່າ key usage ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:1871
+msgid "override requested extended key usage OID"
+msgstr "ຂຽນທັບ OID ຂອງ extended key usage ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:1872
+msgid "override requested principal name"
+msgstr "ຂຽນທັບຊື່ principal ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:1873
+msgid "override requested DNS name"
+msgstr "ຂຽນທັບຊື່ DNS ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:1874
+msgid "override requested email address"
+msgstr "ຂຽນທັບທີ່ຢູ່ອີເມລທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:1875
+msgid "override requested IP address"
+msgstr "ຂຽນທັບທີ່ຢູ່ IP ທີ່ຮ້ອງຂໍ"
+
+#: src/getcert.c:2136 src/getcert.c:3194
+#, c-format
+msgid ""
+"None of ID or database directory and nickname or certificate file "
+"specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸທັງ ID, ໄດເຣັກທໍຣີຖານຂໍ້ມູນ/ຊື່ອ້າງອີງ ຫຼື ໄຟລ໌ໃບຢັ້ງຢືນ.\n"
+
+#: src/getcert.c:2362
+#, c-format
+msgid "Request \"%s\" modified.\n"
+msgstr "ແກ້ໄຂຄຳຮ້ອງຂໍ \"%s\" ແລ້ວ.\n"
+
+#: src/getcert.c:2366
+#, c-format
+msgid "Request \"%s\" could not be modified.\n"
+msgstr "ບໍ່ສາມາດແກ້ໄຂຄຳຮ້ອງຂໍ \"%s\" ໄດ້.\n"
+
+#: src/getcert.c:2374 src/getcert.c:2784 src/getcert.c:3454 src/getcert.c:3946
+#, c-format
+msgid "No request found with specified nickname.\n"
+msgstr "ບໍ່ພົບຄຳຮ້ອງຂໍທີ່ມີຊື່ອ້າງອີງຕາມທີ່ລະບຸ.\n"
+
+#: src/getcert.c:2426 src/getcert.c:2811 src/getcert.c:3465 src/getcert.c:3957
+#, c-format
+msgid "No request found that matched arguments.\n"
+msgstr "ບໍ່ພົບຄຳຮ້ອງຂໍທີ່ກົງກັບອາກິວເມນ.\n"
+
+#: src/getcert.c:2445
+#, c-format
+msgid "Request \"%s\" removed.\n"
+msgstr "ລຶບຄຳຮ້ອງຂໍ \"%s\" ອອກແລ້ວ.\n"
+
+#: src/getcert.c:2449
+#, c-format
+msgid "Request \"%s\" could not be removed.\n"
+msgstr "ບໍ່ສາມາດລຶບຄຳຮ້ອງຂໍ \"%s\" ອອກໄດ້.\n"
+
+#: src/getcert.c:2504 src/getcert.c:3104 src/getcert.c:3358 src/getcert.c:3879
+msgid "nickname for tracking request"
+msgstr "ຊື່ອ້າງອີງສຳລັບຄຳຮ້ອງຂໍຕິດຕາມ"
+
+#: src/getcert.c:2505
+msgid "new nickname to give to tracking request"
+msgstr "ຊື່ອ້າງອີງໃໝ່ທີ່ຈະກຳນົດໃຫ້ຄຳຮ້ອງຂໍຕິດຕາມ"
+
+#: src/getcert.c:2506
+msgid "type of new key to be generated"
+msgstr "ປະເພດຂອງຄີໃໝ່ທີ່ຈະສ້າງ"
+
+#: src/getcert.c:2507
+msgid "size of new key to be generated"
+msgstr "ຂະໜາດຂອງຄີໃໝ່ທີ່ຈະສ້າງ"
+
+#: src/getcert.c:2519
+msgid "use the specified CA configuration rather than the current one"
+msgstr "ໃຊ້ການຕັ້ງຄ່າ CA ທີ່ລະບຸ ແທນການຕັ້ງຄ່າປັດຈຸບັນ"
+
+#: src/getcert.c:3029
+#, c-format
+msgid "Error modifying \"%s\".\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການແກ້ໄຂ \"%s\".\n"
+
+#: src/getcert.c:3045
+#, c-format
+msgid "Resubmitting \"%s\" to \"%s\".\n"
+msgstr "ກຳລັງສົ່ງ \"%s\" ຫາ \"%s\" ອີກຄັ້ງ.\n"
+
+#: src/getcert.c:3048
+#, c-format
+msgid "Resubmitting \"%s\".\n"
+msgstr "ກຳລັງສົ່ງ \"%s\" ອີກຄັ້ງ.\n"
+
+#: src/getcert.c:3057
+#, c-format
+msgid "Error attempting to submit \"%s\" to \"%s\".\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການພະຍາຍາມສົ່ງ \"%s\" ຫາ \"%s\".\n"
+
+#: src/getcert.c:3060
+#, c-format
+msgid "Error attempting to submit \"%s\".\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການພະຍາຍາມສົ່ງ \"%s\".\n"
+
+#: src/getcert.c:3096
+msgid "refresh information about all outstanding requests"
+msgstr "ຣີເຟຣຊຂໍ້ມູນກ່ຽວກັບຄຳຮ້ອງຂໍທີ່ຍັງຄ້າງທັງໝົດ"
+
+#: src/getcert.c:3098
+msgid ""
+"refresh information only for requests using the specified CA configuration"
+msgstr "ຣີເຟຣຊຂໍ້ມູນສະເພາະຄຳຮ້ອງຂໍທີ່ໃຊ້ການຕັ້ງຄ່າ CA ທີ່ລະບຸ"
+
+#: src/getcert.c:3290
+#, c-format
+msgid "Request ID '%s' being refreshed.\n"
+msgstr "ກຳລັງຣີເຟຣຊ ຄຳຮ້ອງຂໍໄອດີ '%s'.\n"
+
+#: src/getcert.c:3292
+#, c-format
+msgid "Request ID '%s' NOT being refreshed.\n"
+msgstr "ຄຳຮ້ອງຂໍໄອດີ '%s' ບໍ່ໄດ້ຖືກຣີເຟຣຊ.\n"
+
+#: src/getcert.c:3349
+msgid "list only information about outstanding requests"
+msgstr "ສະແດງສະເພາະລາຍການຂໍ້ມູນກ່ຽວກັບຄຳຮ້ອງຂໍທີ່ຍັງຄ້າງ"
+
+#: src/getcert.c:3350
+msgid "list only information about tracked certificates"
+msgstr "ສະແດງສະເພາະລາຍການຂໍ້ມູນກ່ຽວກັບໃບຢັ້ງຢືນທີ່ຖືກຕິດຕາມ"
+
+#: src/getcert.c:3352
+msgid "list only requests and certs associated with this CA configuration"
+msgstr "ສະແດງສະເພາະລາຍການຄຳຮ້ອງຂໍ ແລະ ໃບຢັ້ງຢືນທີ່ກ່ຽວຂ້ອງກັບການຕັ້ງຄ່າ CA ນີ້"
+
+#: src/getcert.c:3359
+msgid "display times in UTC instead of local time"
+msgstr "ສະແດງເວລາເປັນ UTC ແທນເວລາທ້ອງຖິ່ນ"
+
+#: src/getcert.c:3476
+#, c-format
+msgid "Number of certificates and requests being tracked: %d.\n"
+msgstr "ຈຳນວນໃບຢັ້ງຢືນ ແລະ ຄຳຮ້ອງຂໍທີ່ຖືກຕິດຕາມຢູ່: %d.\n"
+
+#: src/getcert.c:3625
+#, c-format
+msgid "Request ID '%s':\n"
+msgstr "ຄຳຮ້ອງຂໍໄອດີ '%s':\n"
+
+#: src/getcert.c:3626
+#, c-format
+msgid "\tstatus: %s\n"
+msgstr "\tສະຖານະ: %s\n"
+
+#: src/getcert.c:3630
+#, c-format
+msgid "\tca-error: %s\n"
+msgstr "\tຂໍ້ຜິດພາດຂອງ ca: %s\n"
+
+#: src/getcert.c:3632
+#, c-format
+msgid "\tstuck: %s\n"
+msgstr "\tຄ້າງຢູ່ທີ່: %s\n"
+
+#: src/getcert.c:3652
+#, c-format
+msgid "\tkey pair storage: type=%s"
+msgstr "\tບ່ອນເກັບຄູ່ຄີ: ປະເພດ=%s"
+
+#: src/getcert.c:3652
+msgid "NONE"
+msgstr "ບໍ່ມີ"
+
+#: src/getcert.c:3654
+#, c-format
+msgid ",location='%s'"
+msgstr ",ທີ່ຕັ້ງ='%s'"
+
+#: src/getcert.c:3657 src/getcert.c:3679
+#, c-format
+msgid ",nickname='%s'"
+msgstr ",ຊື່ອ້າງອີງ='%s'"
+
+#: src/getcert.c:3660 src/getcert.c:3682
+#, c-format
+msgid ",token='%s'"
+msgstr ",ໂທເຄັນ='%s'"
+
+#: src/getcert.c:3663
+#, c-format
+msgid ",pin set"
+msgstr ",ຕັ້ງ pin ແລ້ວ"
+
+#: src/getcert.c:3666
+#, c-format
+msgid ",pinfile='%s'"
+msgstr ",ໄຟລ໌ pin='%s'"
+
+#: src/getcert.c:3677
+#, c-format
+msgid "\tcertificate: type=%s,location='%s'"
+msgstr "\tໃບຢັ້ງຢືນ: ປະເພດ=%s,ທີ່ຕັ້ງ='%s'"
+
+#: src/getcert.c:3693
+#, c-format
+msgid "\tsigning request thumbprint (MD5): %s\n"
+msgstr "\tລາຍນິ້ວມືຄຳຮ້ອງຂໍລົງລາຍເຊັນ (MD5): %s\n"
+
+#: src/getcert.c:3698
+#, c-format
+msgid "\tsigning request thumbprint (SHA1): %s\n"
+msgstr "\tລາຍນິ້ວມືຄຳຮ້ອງຂໍລົງລາຍເຊັນ (SHA1): %s\n"
+
+#: src/getcert.c:3715
+#, c-format
+msgid "\tCA: %s\n"
+msgstr "\tCA: %s\n"
+
+#: src/getcert.c:3717
+#, c-format
+msgid "\tissuer: %s\n"
+msgstr "\tຜູ້ອອກໃບຢັ້ງຢືນ: %s\n"
+
+#: src/getcert.c:3718
+#, c-format
+msgid "\tsubject: %s\n"
+msgstr "\tເຈົ້າຂອງ (subject): %s\n"
+
+#: src/getcert.c:3719
+msgid "unknown"
+msgstr "ບໍ່ຮູ້ຈັກ"
+
+#: src/getcert.c:3723 src/getcert.c:3727 src/getcert.c:3732
+#, c-format
+msgid "\texpires: %s\n"
+msgstr "\tໝົດອາຍຸ: %s\n"
+
+#: src/getcert.c:3736
+msgid "\temail: "
+msgstr "\tອີເມລ: "
+
+#: src/getcert.c:3742
+msgid "\tdns: "
+msgstr "\tdns: "
+
+#: src/getcert.c:3748
+msgid "\tprincipal name: "
+msgstr "\tຊື່ principal: "
+
+#: src/getcert.c:3756
+msgid "\tIP address: "
+msgstr "\tທີ່ຢູ່ IP: "
+
+#: src/getcert.c:3775
+#, c-format
+msgid "\tkey usage: %s\n"
+msgstr "\tການໃຊ້ງານຄີ: %s\n"
+
+#: src/getcert.c:3779
+msgid "\teku: "
+msgstr "\teku: "
+
+#: src/getcert.c:3787
+#, c-format
+msgid "\tcertificate template/profile: %s\n"
+msgstr "\tເທັມເພລດ/ໂປຣໄຟລ໌ ໃບຢັ້ງຢືນ: %s\n"
+
+#: src/getcert.c:3793 src/getcert.c:4154
+#, c-format
+msgid "\troot certificates saved to files:\n"
+msgstr "\tໃບຢັ້ງຢືນຮາກ (root certificates) ທີ່ບັນທຶກໄວ້ໃນໄຟລ໌:\n"
+
+#: src/getcert.c:3802 src/getcert.c:4163
+#, c-format
+msgid "\tother root certificates saved to files:\n"
+msgstr "\tໃບຢັ້ງຢືນຮາກອື່ນໆ ທີ່ບັນທຶກໄວ້ໃນໄຟລ໌:\n"
+
+#: src/getcert.c:3811 src/getcert.c:4172
+#, c-format
+msgid "\tother certificates saved to files:\n"
+msgstr "\tໃບຢັ້ງຢືນອື່ນໆ ທີ່ບັນທຶກໄວ້ໃນໄຟລ໌:\n"
+
+#: src/getcert.c:3820 src/getcert.c:4181
+#, c-format
+msgid "\troot certificates saved to databases:\n"
+msgstr "\tໃບຢັ້ງຢືນຮາກ ທີ່ບັນທຶກໄວ້ໃນຖານຂໍ້ມູນ:\n"
+
+#: src/getcert.c:3829 src/getcert.c:4190
+#, c-format
+msgid "\tother root certificates saved to databases:\n"
+msgstr "\tໃບຢັ້ງຢືນຮາກອື່ນໆ ທີ່ບັນທຶກໄວ້ໃນຖານຂໍ້ມູນ:\n"
+
+#: src/getcert.c:3838 src/getcert.c:4199
+#, c-format
+msgid "\tother certificates saved to databases:\n"
+msgstr "\tໃບຢັ້ງຢືນອື່ນໆ ທີ່ບັນທຶກໄວ້ໃນຖານຂໍ້ມູນ:\n"
+
+#: src/getcert.c:3843 src/getcert.c:4245
+#, c-format
+msgid "\tpre-save command: %s\n"
+msgstr "\tຄຳສັ່ງກ່ອນບັນທຶກ: %s\n"
+
+#: src/getcert.c:3846 src/getcert.c:4251
+#, c-format
+msgid "\tpost-save command: %s\n"
+msgstr "\tຄຳສັ່ງຫຼັງບັນທຶກ: %s\n"
+
+#: src/getcert.c:3849
+#, c-format
+msgid "\ttrack: %s\n"
+msgstr "\tຕິດຕາມ: %s\n"
+
+#: src/getcert.c:3853
+#, c-format
+msgid "\tauto-renew: %s\n"
+msgstr "\tຕໍ່ອາຍຸອັດຕະໂນມັດ: %s\n"
+
+#: src/getcert.c:3961
+#, c-format
+msgid ""
+"None of ID or database directory and and nickname or certificate file "
+"specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸທັງ ID, ໄດເຣັກທໍຣີຖານຂໍ້ມູນ/ຊື່ອ້າງອີງ ຫຼື ໄຟລ໌ໃບຢັ້ງຢືນ.\n"
+
+#: src/getcert.c:4036
+msgid "list only the specified CA configuration"
+msgstr "ສະແດງສະເພາະການຕັ້ງຄ່າ CA ທີ່ລະບຸ"
+
+#: src/getcert.c:4104
+#, c-format
+msgid "CA '%s':\n"
+msgstr "CA '%s':\n"
+
+#: src/getcert.c:4110
+#, c-format
+msgid "\tself-identifies as: %s\n"
+msgstr "\tລະບຸຕົວຕົນເອງເປັນ: %s\n"
+
+#: src/getcert.c:4119
+#, c-format
+msgid "\tca-type: %s\n"
+msgstr "\tປະເພດ ca: %s\n"
+
+#: src/getcert.c:4121
+#, c-format
+msgid "\thelper-location: %s\n"
+msgstr "\tທີ່ຕັ້ງຕົວຊ່ວຍ: %s\n"
+
+#: src/getcert.c:4126
+#, c-format
+msgid "\tnext-serial-number: %s\n"
+msgstr "\tໝາຍເລກຊີຣຽວຖັດໄປ: %s\n"
+
+#: src/getcert.c:4136
+#, c-format
+msgid "\tknown-issuer-names:\n"
+msgstr "\tຊື່ຜູ້ອອກໃບຢັ້ງຢືນທີ່ຮູ້ຈັກ:\n"
+
+#: src/getcert.c:4145
+#, c-format
+msgid "\tknown profiles/templates/certtypes:\n"
+msgstr "\tໂປຣໄຟລ໌/ເທັມເພລດ/ປະເພດໃບຢັ້ງຢືນ ທີ່ຮູ້ຈັກ:\n"
+
+#: src/getcert.c:4208
+#, c-format
+msgid "\tdefault profile/template/certtype: %s\n"
+msgstr "\tໂປຣໄຟລ໌/ເທັມເພລດ/ປະເພດໃບຢັ້ງຢືນ ເລີ່ມຕົ້ນ: %s\n"
+
+#: src/getcert.c:4216
+#, c-format
+msgid "\tSCEP CA identifier: %s\n"
+msgstr "\tຕົວລະບຸ SCEP CA: %s\n"
+
+#: src/getcert.c:4229
+#, c-format
+msgid "\tSCEP CA certificate thumbprint (MD5): %s\n"
+msgstr "\tລາຍນິ້ວມືໃບຢັ້ງຢືນ SCEP CA (MD5): %s\n"
+
+#: src/getcert.c:4235
+#, c-format
+msgid "\tSCEP CA certificate thumbprint (SHA1): %s\n"
+msgstr "\tລາຍນິ້ວມືໃບຢັ້ງຢືນ SCEP CA (SHA1): %s\n"
+
+#: src/getcert.c:4267
+msgid "refresh information about the CA configuration with this name"
+msgstr "ຣີເຟຣຊຂໍ້ມູນກ່ຽວກັບການຕັ້ງຄ່າ CA ທີ່ມີຊື່ນີ້"
+
+#: src/getcert.c:4269
+msgid "refresh information about all known CAs"
+msgstr "ຣີເຟຣຊຂໍ້ມູນກ່ຽວກັບ CA ທັງໝົດທີ່ຮູ້ຈັກ"
+
+#: src/getcert.c:4316
+#, c-format
+msgid "Neither CA nickname nor -a flag specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸທັງຊື່ອ້າງອີງ CA ຫຼື ຟລັກ -a.\n"
+
+#: src/getcert.c:4342
+#, c-format
+msgid "Data for CA '%s' being refreshed.\n"
+msgstr "ກຳລັງຣີເຟຣຊຂໍ້ມູນສຳລັບ CA '%s'.\n"
+
+#: src/getcert.c:4344
+#, c-format
+msgid "Data for unnamed CA being refreshed.\n"
+msgstr "ກຳລັງຣີເຟຣຊຂໍ້ມູນສຳລັບ CA ທີ່ບໍ່ມີຊື່.\n"
+
+#: src/getcert.c:4347
+#, c-format
+msgid "\terror refreshing CA data\n"
+msgstr "\tເກີດຂໍ້ຜິດພາດໃນການຣີເຟຣຊຂໍ້ມູນ CA\n"
+
+#: src/getcert.c:4364 src/getcert.c:4456
+msgid "nickname to give to the new CA configuration"
+msgstr "ຊື່ອ້າງອີງທີ່ຈະກຳນົດໃຫ້ກັບການຕັ້ງຄ່າ CA ໃໝ່"
+
+#: src/getcert.c:4365
+msgid "helper command to run to communicate with CA"
+msgstr "ຄຳສັ່ງຕົວຊ່ວຍທີ່ຈະໃຊ້ສື່ສານກັບ CA"
+
+#: src/getcert.c:4406 src/getcert.c:4503 src/getcert.c:4631 src/getcert.c:4719
+#, c-format
+msgid "CA nickname not specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸຊື່ອ້າງອີງ CA.\n"
+
+#: src/getcert.c:4411 src/getcert.c:4636
+#, c-format
+msgid "CA helper command not specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸຄຳສັ່ງຕົວຊ່ວຍ CA.\n"
+
+#: src/getcert.c:4435 src/getcert.c:4553
+#, c-format
+msgid "New CA \"%s\" added.\n"
+msgstr "ເພີ່ມ CA ໃໝ່ \"%s\" ແລ້ວ.\n"
+
+#: src/getcert.c:4438 src/getcert.c:4573
+#, c-format
+msgid "New CA could not be added.\n"
+msgstr "ບໍ່ສາມາດເພີ່ມ CA ໃໝ່ໄດ້.\n"
+
+#: src/getcert.c:4457
+msgid "location of SCEP server"
+msgstr "ທີ່ຕັ້ງຂອງເຊີເວີ SCEP"
+
+#: src/getcert.c:4458
+msgid "CA identifier"
+msgstr "ຕົວລະບຸ CA"
+
+#: src/getcert.c:4459
+msgid "file containing CA's certificate"
+msgstr "ໄຟລ໌ທີ່ບັນຈຸໃບຢັ້ງຢືນຂອງ CA"
+
+#: src/getcert.c:4460
+msgid "file containing RA's certificate"
+msgstr "ໄຟລ໌ທີ່ບັນຈຸໃບຢັ້ງຢືນຂອງ RA"
+
+#: src/getcert.c:4461
+msgid "file containing certificates in RA's certifying chain"
+msgstr "ໄຟລ໌ທີ່ບັນຈຸໃບຢັ້ງຢືນໃນລະບົບໂສ້ການຢັ້ງຢືນ (certifying chain) ຂອງ RA"
+
+#: src/getcert.c:4462
+msgid "prefer to not use the SCEP Renewal feature"
+msgstr "ບໍ່ຕ້ອງການໃຊ້ຟີເຈີການຕໍ່ອາຍຸຂອງ SCEP"
+
+#: src/getcert.c:4508
+#, c-format
+msgid "server URL not specified.\n"
+msgstr "ບໍ່ໄດ້ລະບຸ URL ຂອງເຊີເວີ.\n"
+
+#: src/getcert.c:4513
+#, c-format
+msgid "HTTPS requires a CA certificate.\n"
+msgstr "HTTPS ຕ້ອງການໃບຢັ້ງຢືນ CA.\n"
+
+#: src/getcert.c:4535
+#, c-format
+msgid "Error building command line.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການສ້າງຄຳສັ່ງ (command line).\n"
+
+#: src/getcert.c:4567
+#, c-format
+msgid "Error setting CA identifier.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າຕົວລະບຸ CA.\n"
+
+#: src/getcert.c:4589
+msgid "nickname of the CA configuration"
+msgstr "ຊື່ອ້າງອີງຂອງການຕັ້ງຄ່າ CA"
+
+#: src/getcert.c:4590
+msgid "updated helper command to run to communicate with CA"
+msgstr "ຄຳສັ່ງຕົວຊ່ວຍທີ່ອັບເດດແລ້ວເພື່ອໃຊ້ສື່ສານກັບ CA"
+
+#: src/getcert.c:4658
+#, c-format
+msgid "CA \"%s\" modified.\n"
+msgstr "ແກ້ໄຂ CA \"%s\" ແລ້ວ.\n"
+
+#: src/getcert.c:4661
+#, c-format
+msgid "CA could not be modified.\n"
+msgstr "ບໍ່ສາມາດແກ້ໄຂ CA ໄດ້.\n"
+
+#: src/getcert.c:4678
+msgid "nickname of CA configuration to remove"
+msgstr "ຊື່ອ້າງອີງຂອງການຕັ້ງຄ່າ CA ທີ່ຈະລຶບອອກ"
+
+#: src/getcert.c:4747
+#, c-format
+msgid "CA \"%s\" removed.\n"
+msgstr "ລຶບ CA \"%s\" ອອກແລ້ວ.\n"
+
+#: src/getcert.c:4749
+#, c-format
+msgid "CA could not be removed.\n"
+msgstr "ບໍ່ສາມາດລຶບ CA ອອກໄດ້.\n"
+
+#: src/getcert.c:4787
+#, c-format
+msgid "%s - client certificate enrollment tool\n"
+msgstr "%s - ເຄື່ອງມືລົງທະບຽນໃບຢັ້ງຢືນຂອງໄຄລເອັນ (client)\n"
+
+#: src/getcert.c:4791
+#, c-format
+msgid "Usage: %s request [options]\n"
+msgstr "ວິທີໃຊ້: %s request [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:4793 src/getcert.c:4842 src/getcert.c:4890 src/getcert.c:4912
+#: src/getcert.c:4960 src/getcert.c:5038
+msgid "Required arguments:\n"
+msgstr "ອາກິວເມນທີ່ຈຳເປັນ:\n"
+
+#: src/getcert.c:4794 src/getcert.c:4845 src/getcert.c:4893 src/getcert.c:4915
+#: src/getcert.c:4963 src/getcert.c:5020 src/getcert.c:5041
+msgid "* If using an NSS database for storage:\n"
+msgstr "* ຖ້າໃຊ້ຖານຂໍ້ມູນ NSS ສຳລັບການເກັບຂໍ້ມູນ:\n"
+
+#: src/getcert.c:4795 src/getcert.c:4846 src/getcert.c:4894 src/getcert.c:4916
+#: src/getcert.c:4964 src/getcert.c:5042
+msgid "  -d DIR\tNSS database for key and cert\n"
+msgstr "  -d DIR\tຖານຂໍ້ມູນ NSS ສຳລັບຄີ ແລະ ໃບຢັ້ງຢືນ\n"
+
+#: src/getcert.c:4796 src/getcert.c:4847 src/getcert.c:4895 src/getcert.c:4917
+#: src/getcert.c:4965 src/getcert.c:5043
+msgid "  -n NAME\tnickname for NSS-based storage (only valid with -d)\n"
+msgstr ""
+"  -n NAME\tຊື່ອ້າງອີງສຳລັບການເກັບຂໍ້ມູນແບບ NSS (ໃຊ້ໄດ້ກັບ -d ເທົ່ານັ້ນ)\n"
+
+#: src/getcert.c:4797 src/getcert.c:4848 src/getcert.c:4896 src/getcert.c:4918
+#: src/getcert.c:4966 src/getcert.c:5044
+msgid ""
+"  -t NAME\toptional token name for NSS-based storage (only valid with -d)\n"
+msgstr ""
+"  -t NAME\tຊື່ໂທເຄັນທາງເລືອກສຳລັບການເກັບຂໍ້ມູນແບບ NSS (ໃຊ້ໄດ້ກັບ -d ເທົ່ານັ້ນ)\n"
+
+#: src/getcert.c:4798 src/getcert.c:4849 src/getcert.c:4897 src/getcert.c:4919
+#: src/getcert.c:4967 src/getcert.c:5023 src/getcert.c:5045
+msgid "* If using files for storage:\n"
+msgstr "* ຖ້າໃຊ້ໄຟລ໌ສຳລັບການເກັບຂໍ້ມູນ:\n"
+
+#: src/getcert.c:4799 src/getcert.c:4850 src/getcert.c:4898
+msgid "  -k FILE\tPEM file for private key\n"
+msgstr "  -k FILE\tໄຟລ໌ PEM ສຳລັບຄີສ່ວນຕົວ\n"
+
+#: src/getcert.c:4800 src/getcert.c:4851 src/getcert.c:4899
+msgid "  -f FILE\tPEM file for certificate (only valid with -k)\n"
+msgstr "  -f FILE\tໄຟລ໌ PEM ສຳລັບໃບຢັ້ງຢືນ (ໃຊ້ໄດ້ກັບ -k ເທົ່ານັ້ນ)\n"
+
+#: src/getcert.c:4801
+msgid "* If keys are to be encrypted:\n"
+msgstr "* ຖ້າຕ້ອງການເຂົ້າລະຫັດຄີ:\n"
+
+#: src/getcert.c:4802 src/getcert.c:4853 src/getcert.c:4923 src/getcert.c:4971
+msgid "  -p FILE\tfile which holds the encryption PIN\n"
+msgstr "  -p FILE\tໄຟລ໌ທີ່ເກັບ PIN ສຳລັບການເຂົ້າລະຫັດ\n"
+
+#: src/getcert.c:4803 src/getcert.c:4854 src/getcert.c:4924 src/getcert.c:4972
+msgid "  -P PIN\tPIN value\n"
+msgstr "  -P PIN\tຄ່າ PIN\n"
+
+#: src/getcert.c:4805 src/getcert.c:4856 src/getcert.c:4901 src/getcert.c:4937
+#: src/getcert.c:4985 src/getcert.c:5010 src/getcert.c:5048 src/getcert.c:5058
+#: src/getcert.c:5076 src/getcert.c:5091 src/getcert.c:5108 src/getcert.c:5122
+#: src/getcert.c:5141 src/getcert.c:5155
+msgid "Optional arguments:\n"
+msgstr "ອາກິວເມນທາງເລືອກ:\n"
+
+#: src/getcert.c:4806 src/getcert.c:4857 src/getcert.c:4938 src/getcert.c:4986
+msgid "* Certificate handling settings:\n"
+msgstr "* ການຕັ້ງຄ່າການຈັດການໃບຢັ້ງຢືນ:\n"
+
+#: src/getcert.c:4807
+msgid "  -I NAME\tnickname to assign to the request\n"
+msgstr "  -I NAME\tຊື່ອ້າງອີງທີ່ຈະກຳນົດໃຫ້ກັບຄຳຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4808
+msgid "  -G TYPE\ttype of key to be generated if one is not already in place\n"
+msgstr "  -G TYPE\tປະເພດຂອງຄີທີ່ຈະສ້າງ ຖ້າຍັງບໍ່ທັນມີຄີຢູ່\n"
+
+#: src/getcert.c:4809
+msgid "  -g SIZE\tsize of key to be generated if one is not already in place\n"
+msgstr "  -g SIZE\tຂະໜາດຂອງຄີທີ່ຈະສ້າງ ຖ້າຍັງບໍ່ທັນມີຄີຢູ່\n"
+
+#: src/getcert.c:4810 src/getcert.c:4859
+msgid ""
+"  -r\t\tattempt to renew the certificate when expiration nears (default)\n"
+msgstr "  -r\t\tພະຍາຍາມຕໍ່ອາຍຸໃບຢັ້ງຢືນເມື່ອໃກ້ໝົດອາຍຸ (ຄ່າເລີ່ມຕົ້ນ)\n"
+
+#: src/getcert.c:4811 src/getcert.c:4860
+msgid "  -R\t\tdon't attempt to renew the certificate when expiration nears\n"
+msgstr "  -R\t\tບໍ່ຕ້ອງພະຍາຍາມຕໍ່ອາຍຸໃບຢັ້ງຢືນເມື່ອໃກ້ໝົດອາຍຸ\n"
+
+#: src/getcert.c:4813 src/getcert.c:4862
+msgid "  -c CA\t\tuse the specified CA rather than the default\n"
+msgstr "  -c CA\t\tໃຊ້ CA ທີ່ລະບຸ ແທນຄ່າເລີ່ມຕົ້ນ\n"
+
+#: src/getcert.c:4815 src/getcert.c:4864 src/getcert.c:4943 src/getcert.c:4991
+msgid ""
+"  -T PROFILE\task the CA to process the request using the named profile or "
+"template\n"
+msgstr ""
+"  -T PROFILE\tຮ້ອງຂໍໃຫ້ CA ດຳເນີນການຄຳຮ້ອງຂໍໂດຍໃຊ້ໂປຣໄຟລ໌ ຫຼື ເທັມເພລດທີ່ລະບຸ\n"
+
+#: src/getcert.c:4816 src/getcert.c:4865 src/getcert.c:4944 src/getcert.c:4992
+msgid "  -X ISSUER\task the CA to process the request using the named issuer\n"
+msgstr ""
+"  -X ISSUER\tຮ້ອງຂໍໃຫ້ CA ດຳເນີນການຄຳຮ້ອງຂໍໂດຍໃຊ້ຜູ້ອອກໃບຢັ້ງຢືນທີ່ລະບຸ\n"
+
+#: src/getcert.c:4817
+msgid "* Parameters for the signing request:\n"
+msgstr "* ພາຣາມິເຕີສຳລັບຄຳຮ້ອງຂໍລົງລາຍເຊັນ:\n"
+
+#: src/getcert.c:4818 src/getcert.c:4927 src/getcert.c:4975
+msgid "  -N NAME\tset requested subject name (default: CN=<hostname>)\n"
+msgstr "  -N NAME\tກຳນົດຊື່ subject ທີ່ຮ້ອງຂໍ (ຄ່າເລີ່ມຕົ້ນ: CN=<hostname>)\n"
+
+#: src/getcert.c:4819 src/getcert.c:4928 src/getcert.c:4976
+msgid "  -U EXTUSAGE\tset requested extended key usage OID\n"
+msgstr "  -U EXTUSAGE\tກຳນົດ OID ຂອງ extended key usage ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4820 src/getcert.c:4868 src/getcert.c:4929 src/getcert.c:4977
+msgid "  -u KEYUSAGE\tset requested key usage value\n"
+msgstr "  -u KEYUSAGE\tກຳນົດຄ່າ key usage ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4821 src/getcert.c:4930 src/getcert.c:4978
+msgid "  -K NAME\tset requested principal name\n"
+msgstr "  -K NAME\tກຳນົດຊື່ principal ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4822 src/getcert.c:4931 src/getcert.c:4979
+msgid "  -D DNSNAME\tset requested DNS name\n"
+msgstr "  -D DNSNAME\tກຳນົດຊື່ DNS ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4823 src/getcert.c:4932 src/getcert.c:4980
+msgid "  -E EMAIL\tset requested email address\n"
+msgstr "  -E EMAIL\tກຳນົດທີ່ຢູ່ອີເມລທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4824 src/getcert.c:4933 src/getcert.c:4981
+msgid "  -A ADDRESS\tset requested IP address\n"
+msgstr "  -A ADDRESS\tກຳນົດທີ່ຢູ່ IP ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4825 src/getcert.c:4873 src/getcert.c:4934 src/getcert.c:4982
+msgid "  -l FILE\tfile which holds an optional challenge password\n"
+msgstr "  -l FILE\tໄຟລ໌ທີ່ເກັບລະຫັດຜ່ານ challenge (ທາງເລືອກ)\n"
+
+#: src/getcert.c:4826 src/getcert.c:4874 src/getcert.c:4935 src/getcert.c:4983
+msgid "  -L PASSWORD\tan optional challenge password value\n"
+msgstr "  -L PASSWORD\tຄ່າລະຫັດຜ່ານ challenge (ທາງເລືອກ)\n"
+
+#: src/getcert.c:4827 src/getcert.c:4875 src/getcert.c:4902 src/getcert.c:4945
+#: src/getcert.c:4995 src/getcert.c:5025 src/getcert.c:5049 src/getcert.c:5066
+#: src/getcert.c:5081 src/getcert.c:5097 src/getcert.c:5112 src/getcert.c:5131
+#: src/getcert.c:5145 src/getcert.c:5158
+msgid "* Bus options:\n"
+msgstr "* ຕົວເລືອກ Bus:\n"
+
+#: src/getcert.c:4828 src/getcert.c:4876 src/getcert.c:4903 src/getcert.c:4946
+#: src/getcert.c:4996 src/getcert.c:5050
+msgid "  -S\t\tconnect to the certmonger service on the system bus\n"
+msgstr "  -S\t\tເຊື່ອມຕໍ່ຫາບໍລິການ certmonger ຜ່ານ system bus\n"
+
+#: src/getcert.c:4829 src/getcert.c:4877 src/getcert.c:4904 src/getcert.c:4947
+#: src/getcert.c:4997 src/getcert.c:5051
+msgid "  -s\t\tconnect to the certmonger service on the session bus\n"
+msgstr "  -s\t\tເຊື່ອມຕໍ່ຫາບໍລິການ certmonger ຜ່ານ session bus\n"
+
+#: src/getcert.c:4830 src/getcert.c:4878 src/getcert.c:4905 src/getcert.c:4948
+#: src/getcert.c:4998 src/getcert.c:5028 src/getcert.c:5069 src/getcert.c:5084
+#: src/getcert.c:5100 src/getcert.c:5115 src/getcert.c:5134 src/getcert.c:5148
+#: src/getcert.c:5161
+msgid "* Other options:\n"
+msgstr "* ຕົວເລືອກອື່ນໆ:\n"
+
+#: src/getcert.c:4831 src/getcert.c:4879 src/getcert.c:4949 src/getcert.c:4999
+msgid "  -B\tcommand to run before saving the certificate\n"
+msgstr "  -B\tຄຳສັ່ງທີ່ຈະເຮັດວຽກກ່ອນການບັນທຶກໃບຢັ້ງຢືນ\n"
+
+#: src/getcert.c:4832 src/getcert.c:4880 src/getcert.c:4950 src/getcert.c:5000
+msgid "  -C\tcommand to run after saving the certificate\n"
+msgstr "  -C\tຄຳສັ່ງທີ່ຈະເຮັດວຽກຫຼັງການບັນທຶກໃບຢັ້ງຢືນ\n"
+
+#: src/getcert.c:4833 src/getcert.c:4881 src/getcert.c:4951 src/getcert.c:5001
+msgid "  -F\tfile in which to store the CA's certificates\n"
+msgstr "  -F\tໄຟລ໌ທີ່ຈະໃຊ້ເກັບໃບຢັ້ງຢືນຂອງ CA\n"
+
+#: src/getcert.c:4834 src/getcert.c:4882 src/getcert.c:4952 src/getcert.c:5002
+msgid "  -a\tNSS database in which to store the CA's certificates\n"
+msgstr "  -a\tຖານຂໍ້ມູນ NSS ທີ່ຈະໃຊ້ເກັບໃບຢັ້ງຢືນຂອງ CA\n"
+
+#: src/getcert.c:4835 src/getcert.c:4883 src/getcert.c:4953 src/getcert.c:5003
+msgid "  -w\ttry to wait for the certificate to be issued\n"
+msgstr "  -w\tພະຍາຍາມລໍຖ້າໃຫ້ໃບຢັ້ງຢືນຖືກອອກໃຫ້\n"
+
+#: src/getcert.c:4836 src/getcert.c:4884 src/getcert.c:4906 src/getcert.c:4954
+#: src/getcert.c:5004 src/getcert.c:5029 src/getcert.c:5052 src/getcert.c:5070
+#: src/getcert.c:5085 src/getcert.c:5101 src/getcert.c:5116 src/getcert.c:5135
+#: src/getcert.c:5149 src/getcert.c:5162
+msgid "  -v\treport all details of errors\n"
+msgstr "  -v\tລາຍງານລາຍລະອຽດທັງໝົດຂອງຂໍ້ຜິດພາດ\n"
+
+#: src/getcert.c:4840
+#, c-format
+msgid "Usage: %s start-tracking [options]\n"
+msgstr "ວິທີໃຊ້: %s start-tracking [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:4843
+msgid "* If modifying an existing request:\n"
+msgstr "* ຖ້າແກ້ໄຂຄຳຮ້ອງຂໍທີ່ມີຢູ່ແລ້ວ:\n"
+
+#: src/getcert.c:4844
+msgid "  -i NAME\tnickname of an existing tracking request\n"
+msgstr "  -i NAME\tຊື່ອ້າງອີງຂອງຄຳຮ້ອງຂໍຕິດຕາມທີ່ມີຢູ່ແລ້ວ\n"
+
+#: src/getcert.c:4852 src/getcert.c:4922 src/getcert.c:4970
+msgid "* If keys are encrypted:\n"
+msgstr "* ຖ້າຄີຖືກເຂົ້າລະຫັດໄວ້:\n"
+
+#: src/getcert.c:4858
+msgid "  -I NAME\tnickname to give to tracking request\n"
+msgstr "  -I NAME\tຊື່ອ້າງອີງທີ່ຈະກຳນົດໃຫ້ຄຳຮ້ອງຂໍຕິດຕາມ\n"
+
+#: src/getcert.c:4866
+msgid "* Parameters for the signing request at renewal time:\n"
+msgstr "* ພາຣາມິເຕີສຳລັບຄຳຮ້ອງຂໍລົງລາຍເຊັນໃນເວລາຕໍ່ອາຍຸ:\n"
+
+#: src/getcert.c:4867
+msgid "  -U EXTUSAGE\toverride requested extended key usage OID\n"
+msgstr "  -U EXTUSAGE\tຂຽນທັບ OID ຂອງ extended key usage ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4869
+msgid "  -K NAME\toverride requested principal name\n"
+msgstr "  -K NAME\tຂຽນທັບຊື່ principal ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4870
+msgid "  -D DNSNAME\toverride requested DNS name\n"
+msgstr "  -D DNSNAME\tຂຽນທັບຊື່ DNS ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4871
+msgid "  -E EMAIL\toverride requested email address\n"
+msgstr "  -E EMAIL\tຂຽນທັບທີ່ຢູ່ອີເມລທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4872
+msgid "  -A ADDRESS\toverride requested IP address\n"
+msgstr "  -A ADDRESS\tຂຽນທັບທີ່ຢູ່ IP ທີ່ຮ້ອງຂໍ\n"
+
+#: src/getcert.c:4888
+#, c-format
+msgid "Usage: %s stop-tracking [options]\n"
+msgstr "ວິທີໃຊ້: %s stop-tracking [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:4891 src/getcert.c:4913 src/getcert.c:4961 src/getcert.c:5039
+msgid "* By request identifier:\n"
+msgstr "* ໂດຍໃຊ້ຕົວລະບຸຄຳຮ້ອງຂໍ:\n"
+
+#: src/getcert.c:4892 src/getcert.c:4914 src/getcert.c:4962 src/getcert.c:5019
+#: src/getcert.c:5040 src/getcert.c:5060
+msgid "  -i NAME\tnickname for tracking request\n"
+msgstr "  -i NAME\tຊື່ອ້າງອີງສຳລັບຄຳຮ້ອງຂໍຕິດຕາມ\n"
+
+#: src/getcert.c:4910
+#, c-format
+msgid "Usage: %s resubmit [options]\n"
+msgstr "ວິທີໃຊ້: %s resubmit [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:4920 src/getcert.c:4968 src/getcert.c:5046
+msgid "  -f FILE\tPEM file for certificate\n"
+msgstr "  -f FILE\tໄຟລ໌ PEM ສຳລັບໃບຢັ້ງຢືນ\n"
+
+#: src/getcert.c:4926 src/getcert.c:4974
+msgid "* New parameter values for the signing request:\n"
+msgstr "* ຄ່າພາຣາມິເຕີໃໝ່ສຳລັບຄຳຮ້ອງຂໍລົງລາຍເຊັນ:\n"
+
+#: src/getcert.c:4939 src/getcert.c:4987
+msgid "  -I NAME\tnew nickname to give to tracking request\n"
+msgstr "  -I NAME\tຊື່ອ້າງອີງໃໝ່ທີ່ຈະກຳນົດໃຫ້ຄຳຮ້ອງຂໍຕິດຕາມ\n"
+
+#: src/getcert.c:4941 src/getcert.c:4989
+msgid "  -c CA\t\tuse the specified CA rather than the current one\n"
+msgstr "  -c CA\t\tໃຊ້ CA ທີ່ລະບຸ ແທນ CA ປັດຈຸບັນ\n"
+
+#: src/getcert.c:4958
+#, c-format
+msgid "Usage: %s rekey [options]\n"
+msgstr "ວິທີໃຊ້: %s rekey [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:4993
+msgid "  -G TYPE\ttype of new key to be generated\n"
+msgstr "  -G TYPE\tປະເພດຂອງຄີໃໝ່ທີ່ຈະສ້າງ\n"
+
+#: src/getcert.c:4994
+msgid "  -g SIZE\tsize of new key to be generated\n"
+msgstr "  -g SIZE\tຂະໜາດຂອງຄີໃໝ່ທີ່ຈະສ້າງ\n"
+
+#: src/getcert.c:5008
+#, c-format
+msgid "Usage: %s list [options]\n"
+msgstr "ວິທີໃຊ້: %s list [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5011 src/getcert.c:5035 src/getcert.c:5078 src/getcert.c:5093
+#: src/getcert.c:5109 src/getcert.c:5123 src/getcert.c:5142 src/getcert.c:5156
+msgid "* General options:\n"
+msgstr "* ຕົວເລືອກທົ່ວໄປ:\n"
+
+#: src/getcert.c:5013
+msgid "  -c CA\tlist only requests and certs associated with this CA\n"
+msgstr "  -c CA\tສະແດງສະເພາະຄຳຮ້ອງຂໍ ແລະ ໃບຢັ້ງຢືນທີ່ກ່ຽວຂ້ອງກັບ CA ນີ້\n"
+
+#: src/getcert.c:5015
+msgid "  -r\tlist only information about outstanding requests\n"
+msgstr "  -r\tສະແດງສະເພາະລາຍການຂໍ້ມູນກ່ຽວກັບຄຳຮ້ອງຂໍທີ່ຍັງຄ້າງ\n"
+
+#: src/getcert.c:5016
+msgid "  -t\tlist only information about tracked certificates\n"
+msgstr "  -t\tສະແດງສະເພາະລາຍການຂໍ້ມູນກ່ຽວກັບໃບຢັ້ງຢືນທີ່ຖືກຕິດຕາມ\n"
+
+#: src/getcert.c:5017
+msgid "  -u\tdisplay times in UTC instead of local time\n"
+msgstr "  -u\tສະແດງເວລາເປັນ UTC ແທນເວລາທ້ອງຖິ່ນ\n"
+
+#: src/getcert.c:5018
+msgid "* If selecting a specific request:\n"
+msgstr "* ຖ້າເລືອກຄຳຮ້ອງຂໍສະເພາະ:\n"
+
+#: src/getcert.c:5021
+msgid "  -d DIR\tonly list requests and certs which use this NSS database\n"
+msgstr "  -d DIR\tສະແດງສະເພາະຄຳຮ້ອງຂໍ ແລະ ໃບຢັ້ງຢືນທີ່ໃຊ້ຖານຂໍ້ມູນ NSS ນີ້\n"
+
+#: src/getcert.c:5022
+msgid "  -n NAME\tonly list requests and certs which use this nickname\n"
+msgstr "  -n NAME\tສະແດງສະເພາະຄຳຮ້ອງຂໍ ແລະ ໃບຢັ້ງຢືນທີ່ໃຊ້ຊື່ອ້າງອີງນີ້\n"
+
+#: src/getcert.c:5024
+msgid "  -f FILE\tonly list requests and certs stored in this PEM file\n"
+msgstr "  -f FILE\tສະແດງສະເພາະຄຳຮ້ອງຂໍ ແລະ ໃບຢັ້ງຢືນທີ່ເກັບໃນໄຟລ໌ PEM ນີ້\n"
+
+#: src/getcert.c:5026 src/getcert.c:5067 src/getcert.c:5082 src/getcert.c:5098
+#: src/getcert.c:5113 src/getcert.c:5132 src/getcert.c:5146 src/getcert.c:5159
+msgid "  -S\tconnect to the certmonger service on the system bus\n"
+msgstr "  -S\tເຊື່ອມຕໍ່ຫາບໍລິການ certmonger ຜ່ານ system bus\n"
+
+#: src/getcert.c:5027 src/getcert.c:5068 src/getcert.c:5083 src/getcert.c:5099
+#: src/getcert.c:5114 src/getcert.c:5133 src/getcert.c:5147 src/getcert.c:5160
+msgid "  -s\tconnect to the certmonger service on the session bus\n"
+msgstr "  -s\tເຊື່ອມຕໍ່ຫາບໍລິການ certmonger ຜ່ານ session bus\n"
+
+#: src/getcert.c:5033
+#, c-format
+msgid "Usage: %s refresh [options]\n"
+msgstr "ວິທີໃຊ້: %s refresh [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5036
+msgid "  -a\trefresh information about all outstanding requests\n"
+msgstr "  -a\tຣີເຟຣຊຂໍ້ມູນກ່ຽວກັບຄຳຮ້ອງຂໍທີ່ຍັງຄ້າງທັງໝົດ\n"
+
+#: src/getcert.c:5056
+#, c-format
+msgid "Usage: %s status [options]\n"
+msgstr "ວິທີໃຊ້: %s status [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5059
+msgid "* Selecting a specific request:\n"
+msgstr "* ການເລືອກຄຳຮ້ອງຂໍສະເພາະ:\n"
+
+#: src/getcert.c:5061
+msgid "* When using an NSS database for storage:\n"
+msgstr "* ເມື່ອໃຊ້ຖານຂໍ້ມູນ NSS ສຳລັບການເກັບຂໍ້ມູນ:\n"
+
+#: src/getcert.c:5062
+msgid "  -d DIR\treturn status for the request in this NSS database\n"
+msgstr "  -d DIR\tສົ່ງຄືນສະຖານະສຳລັບຄຳຮ້ອງຂໍໃນຖານຂໍ້ມູນ NSS ນີ້\n"
+
+#: src/getcert.c:5063
+msgid "  -n NAME\treturn status for cert which uses this nickname\n"
+msgstr "  -n NAME\tສົ່ງຄືນສະຖານະສຳລັບໃບຢັ້ງຢືນທີ່ໃຊ້ຊື່ອ້າງອີງນີ້\n"
+
+#: src/getcert.c:5064
+msgid "* When using files for storage:\n"
+msgstr "* ເມື່ອໃຊ້ໄຟລ໌ສຳລັບການເກັບຂໍ້ມູນ:\n"
+
+#: src/getcert.c:5065
+msgid "  -f FILE\treturn status for cert stored in this PEM file\n"
+msgstr "  -f FILE\tສົ່ງຄືນສະຖານະສຳລັບໃບຢັ້ງຢືນທີ່ເກັບໃນໄຟລ໌ PEM ນີ້\n"
+
+#: src/getcert.c:5074
+#, c-format
+msgid "Usage: %s list-cas [options]\n"
+msgstr "ວິທີໃຊ້: %s list-cas [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5079
+msgid "  -c CA\tlist only information about the CA with this name\n"
+msgstr "  -c CA\tສະແດງສະເພາະຂໍ້ມູນກ່ຽວກັບ CA ທີ່ມີຊື່ນີ້\n"
+
+#: src/getcert.c:5089
+#, c-format
+msgid "Usage: %s refresh-ca [options]\n"
+msgstr "ວິທີໃຊ້: %s refresh-ca [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5094
+msgid "  -c CA\trefresh information about the CA with this name\n"
+msgstr "  -c CA\tຣີເຟຣຊຂໍ້ມູນກ່ຽວກັບ CA ທີ່ມີຊື່ນີ້\n"
+
+#: src/getcert.c:5095
+msgid "  -a\trefresh information about all known CAs\n"
+msgstr "  -a\tຣີເຟຣຊຂໍ້ມູນກ່ຽວກັບ CA ທັງໝົດທີ່ຮູ້ຈັກ\n"
+
+#: src/getcert.c:5106
+#, c-format
+msgid "Usage: %s add-ca [options]\n"
+msgstr "ວິທີໃຊ້: %s add-ca [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5110 src/getcert.c:5124
+msgid "  -c CA\t\tnickname to give to the new CA configuration\n"
+msgstr "  -c CA\t\tຊື່ອ້າງອີງທີ່ຈະກຳນົດໃຫ້ກັບການຕັ້ງຄ່າ CA ໃໝ່\n"
+
+#: src/getcert.c:5111
+msgid "  -e CMD\thelper command to run to communicate with CA\n"
+msgstr "  -e CMD\tຄຳສັ່ງຕົວຊ່ວຍທີ່ຈະໃຊ້ສື່ສານກັບ CA\n"
+
+#: src/getcert.c:5120
+#, c-format
+msgid "Usage: %s add-scep-ca [options]\n"
+msgstr "ວິທີໃຊ້: %s add-scep-ca [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5125
+msgid "  -u URL\tlocation of SCEP server\n"
+msgstr "  -u URL\tທີ່ຕັ້ງຂອງເຊີເວີ SCEP\n"
+
+#: src/getcert.c:5126
+msgid "  -i ID\t\tCA identifier\n"
+msgstr "  -i ID\t\tຕົວລະບຸ CA\n"
+
+#: src/getcert.c:5127
+msgid "  -R FILE\tfile containing CA's certificate\n"
+msgstr "  -R FILE\tໄຟລ໌ທີ່ບັນຈຸໃບຢັ້ງຢືນຂອງ CA\n"
+
+#: src/getcert.c:5128
+msgid "  -r FILE\tfile containing RA's certificate\n"
+msgstr "  -r FILE\tໄຟລ໌ທີ່ບັນຈຸໃບຢັ້ງຢືນຂອງ RA\n"
+
+#: src/getcert.c:5129
+msgid "  -I FILE\tfile containing certificates in RA's certifying chain\n"
+msgstr "  -I FILE\tໄຟລ໌ທີ່ບັນຈຸໃບຢັ້ງຢືນໃນລະບົບໂສ້ການຢັ້ງຢືນຂອງ RA\n"
+
+#: src/getcert.c:5130
+msgid "  -n\tprefer not to use the SCEP Renewal feature\n"
+msgstr "  -n\tບໍ່ຕ້ອງການໃຊ້ຟີເຈີການຕໍ່ອາຍຸຂອງ SCEP\n"
+
+#: src/getcert.c:5139
+#, c-format
+msgid "Usage: %s modify-ca [options]\n"
+msgstr "ວິທີໃຊ້: %s modify-ca [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5143
+msgid "  -c CA\t\tnickname of the CA configuration\n"
+msgstr "  -c CA\t\tຊື່ອ້າງອີງຂອງການຕັ້ງຄ່າ CA\n"
+
+#: src/getcert.c:5144
+msgid "  -e CMD\tupdated helper command to run to communicate with CA\n"
+msgstr "  -e CMD\tຄຳສັ່ງຕົວຊ່ວຍທີ່ອັບເດດແລ້ວເພື່ອໃຊ້ສື່ສານກັບ CA\n"
+
+#: src/getcert.c:5153
+#, c-format
+msgid "Usage: %s remove-ca [options]\n"
+msgstr "ວິທີໃຊ້: %s remove-ca [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5157
+msgid "  -c CA\tnickname of CA configuration to remove\n"
+msgstr "  -c CA\tຊື່ອ້າງອີງຂອງການຕັ້ງຄ່າ CA ທີ່ຈະລຶບອອກ\n"
+
+#: src/getcert.c:5172
+#, c-format
+msgid "Usage: %s command [options]\n"
+msgstr "ວິທີໃຊ້: %s command [ຕົວເລືອກ]\n"
+
+#: src/getcert.c:5174
+msgid "request a new certificate from a CA\n"
+msgstr "ຮ້ອງຂໍໃບຢັ້ງຢືນໃໝ່ຈາກ CA\n"
+
+#: src/getcert.c:5176
+msgid "begin monitoring an already-issued certificate\n"
+msgstr "ເລີ່ມຕິດຕາມໃບຢັ້ງຢືນທີ່ໄດ້ອອກໃຫ້ແລ້ວ\n"
+
+#: src/getcert.c:5178
+msgid "stop monitoring a certificate\n"
+msgstr "ຢຸດການຕິດຕາມໃບຢັ້ງຢືນ\n"
+
+#: src/getcert.c:5180
+msgid "resubmit an in-progress enrollment request, or start a new one\n"
+msgstr "ສົ່ງຄຳຮ້ອງຂໍລົງທະບຽນທີ່ກຳລັງດຳເນີນການຢູ່ອີກຄັ້ງ ຫຼື ເລີ່ມຄຳຮ້ອງຂໍໃໝ່\n"
+
+#: src/getcert.c:5182
+msgid "generate a new private key and replace a certificate\n"
+msgstr "ສ້າງຄີສ່ວນຕົວໃໝ່ ແລະ ປ່ຽນແທນໃບຢັ້ງຢືນ\n"
+
+#: src/getcert.c:5184
+msgid "check on the status of an in-progress enrollment request\n"
+msgstr "ກວດສອບສະຖານະຂອງຄຳຮ້ອງຂໍລົງທະບຽນທີ່ກຳລັງດຳເນີນການຢູ່\n"
+
+#: src/getcert.c:5186
+msgid "list certificates being monitored and requested\n"
+msgstr "ສະແດງລາຍການໃບຢັ້ງຢືນທີ່ກຳລັງຖືກຕິດຕາມ ແລະ ຖືກຮ້ອງຂໍຢູ່\n"
+
+#: src/getcert.c:5188
+msgid "check the status of a certificate being monitored or requested\n"
+msgstr "ກວດສອບສະຖານະຂອງໃບຢັ້ງຢືນທີ່ກຳລັງຖືກຕິດຕາມ ຫຼື ຖືກຮ້ອງຂໍຢູ່\n"
+
+#: src/getcert.c:5191
+msgid "add a CA configuration\n"
+msgstr "ເພີ່ມການຕັ້ງຄ່າ CA\n"
+
+#: src/getcert.c:5193
+msgid "add an SCEP CA configuration\n"
+msgstr "ເພີ່ມການຕັ້ງຄ່າ SCEP CA\n"
+
+#: src/getcert.c:5196
+msgid "list known CA configurations\n"
+msgstr "ສະແດງລາຍການການຕັ້ງຄ່າ CA ທີ່ຮູ້ຈັກ\n"
+
+#: src/getcert.c:5199
+msgid "modify a CA configuration\n"
+msgstr "ແກ້ໄຂການຕັ້ງຄ່າ CA\n"
+
+#: src/getcert.c:5202
+msgid "refresh cache of all information obtained from a CA\n"
+msgstr "ຣີເຟຣຊແຄຊ (cache) ຂອງຂໍ້ມູນທັງໝົດທີ່ໄດ້ຮັບຈາກ CA\n"
+
+#: src/getcert.c:5205
+msgid "remove a CA configuration\n"
+msgstr "ລຶບການຕັ້ງຄ່າ CA ອອກ\n"
+
+#: src/getcert.c:5273
+#, c-format
+msgid "%s: unrecognized command\n"
+msgstr "%s: ບໍ່ຮູ້ຈັກຄຳສັ່ງ\n"
+
+#: src/ipa.c:144
+#, c-format
+msgid "Unable to determine location of IPA LDAP server.\n"
+msgstr "ບໍ່ສາມາດລະບຸທີ່ຕັ້ງຂອງເຊີເວີ IPA LDAP ໄດ້.\n"
+
+#: src/ipa.c:149
+#, c-format
+msgid "Unable to contact an IPA LDAP server.\n"
+msgstr "ບໍ່ສາມາດຕິດຕໍ່ເຊີເວີ IPA LDAP ໄດ້.\n"
+
+#: src/ipa.c:233 src/ipa.c:533
+#, c-format
+msgid "Unable to determine base DN of domain information on IPA server.\n"
+msgstr "ບໍ່ສາມາດລະບຸ base DN ຂອງຂໍ້ມູນໂດເມນໃນເຊີເວີ IPA ໄດ້.\n"
+
+#: src/ipa.c:369
+#, c-format
+msgid "Error setting up for XMLRPC on the client.\n"
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າ XMLRPC ຢູ່ຝັ່ງໄຄລເອັນ.\n"
+
+#: src/ipa.c:658
+#, c-format
+msgid "The -t option can not be used with the -K option.\n"
+msgstr "ບໍ່ສາມາດໃຊ້ຕົວເລືອກ -t ຮ່ວມກັບຕົວເລືອກ -K ໄດ້.\n"
+
+#: src/ipa.c:667
+#, c-format
+msgid "The -k option can not be used with the -K option.\n"
+msgstr "ບໍ່ສາມາດໃຊ້ຕົວເລືອກ -k ຮ່ວມກັບຕົວເລືອກ -K ໄດ້.\n"
+
+#: src/ipa.c:676
+#, c-format
+msgid "The -K option can not be used with either the -k or the -t option.\n"
+msgstr "ບໍ່ສາມາດໃຊ້ຕົວເລືອກ -K ຮ່ວມກັບຕົວເລືອກ -k ຫຼື -t ໄດ້.\n"
+
+#: src/ipa.c:758
+#, c-format
+msgid "Unable to determine principal name for signing request.\n"
+msgstr "ບໍ່ສາມາດລະບຸຊື່ principal ສຳລັບຄຳຮ້ອງຂໍລົງລາຍເຊັນໄດ້.\n"
+
+#: src/ipa.c:831
+#, c-format
+msgid "No IPA domain configured, and none specified.\n"
+msgstr "ບໍ່ໄດ້ຕັ້ງຄ່າໂດເມນ IPA ແລະ ບໍ່ມີການລະບຸໄວ້.\n"
+
+#: src/ipa.c:868
+#, c-format
+msgid ""
+"Error setting up ccache for \"host\" service on client using default keytab: "
+"%s.\n"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າ ccache ສຳລັບບໍລິການ \"host\" ຢູ່ຝັ່ງໄຄລເອັນໂດຍໃຊ້ keytab ເລີ່ມຕົ້ນ: "
+"%s.\n"
+
+#: src/ipa.c:872
+#, c-format
+msgid ""
+"Error setting up ccache for \"%s\" on client using default keytab: %s.\n"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າ ccache ສຳລັບ \"%s\" ຢູ່ຝັ່ງໄຄລເອັນໂດຍໃຊ້ keytab ເລີ່ມຕົ້ນ: %s.\n"
+
+#: src/ipa.c:879
+#, c-format
+msgid ""
+"Error setting up ccache for \"host\" service on client using keytab \"%s\": "
+"%s.\n"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າ ccache ສຳລັບບໍລິການ \"host\" ຢູ່ຝັ່ງໄຄລເອັນໂດຍໃຊ້ keytab \"%s\": "
+"%s.\n"
+
+#: src/ipa.c:883
+#, c-format
+msgid "Error setting up ccache for \"%s\" on client using keytab \"%s\": %s.\n"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າ ccache ສຳລັບ \"%s\" ຢູ່ຝັ່ງໄຄລເອັນໂດຍໃຊ້ keytab \"%s\": %s.\n"
+
+#: src/local.c:556
+#, c-format
+msgid "Unable to read signing request.\n"
+msgstr "ບໍ່ສາມາດອ່ານຄຳຮ້ອງຂໍລົງລາຍເຊັນໄດ້.\n"
+
+#: src/main.c:74
+msgid "use session bus"
+msgstr "ໃຊ້ session bus"
+
+#: src/main.c:75
+msgid "use system bus"
+msgstr "ໃຊ້ system bus"
+
+#: src/main.c:76
+msgid "start a dedicated listening socket"
+msgstr "ເລີ່ມຕົ້ນ listening socket ແບບສະເພາະ"
+
+#: src/main.c:77
+msgid "only use a dedicated listening socket"
+msgstr "ໃຊ້ສະເພາະ listening socket ແບບສະເພາະເທົ່ານັ້ນ"
+
+#: src/main.c:78
+msgid "specify the dedicated listening socket"
+msgstr "ລະບຸ listening socket ແບບສະເພາະ"
+
+#: src/main.c:78
+msgid "PATHNAME"
+msgstr "ຊື່ເສັ້ນທາງ"
+
+#: src/main.c:79
+msgid "don't become a daemon"
+msgstr "ບໍ່ຕ້ອງເຮັດວຽກເປັນເດມອນ"
+
+#: src/main.c:80
+msgid "do become a daemon"
+msgstr "ໃຫ້ເຮັດວຽກເປັນເດມອນ"
+
+#: src/main.c:81
+msgid "bus-activated, idle timeout"
+msgstr "ເປີດໃຊ້ງານໂດຍ bus, ກຳນົດເວລາໝົດອາຍຸເມື່ອບໍ່ມີການເຄື່ອນໄຫວ"
+
+#: src/main.c:81
+msgid "SECONDS"
+msgstr "ວິນາທີ"
+
+#: src/main.c:82
+msgid "don't use an idle timeout"
+msgstr "ບໍ່ຕ້ອງໃຊ້ການກຳນົດເວລາໝົດອາຍຸເມື່ອບໍ່ມີການເຄື່ອນໄຫວ"
+
+#: src/main.c:83
+msgid "set debugging level (implies -n)"
+msgstr "ກຳນົດລະດັບການດີບັກ (debugging) (ໝາຍເຖິງການໃຊ້ -n ໄປໃນຕົວ)"
+
+#: src/main.c:83
+msgid "NUMBER"
+msgstr "ຕົວເລກ"
+
+#: src/main.c:84 src/main.c:86
+msgid "start COMMAND and exit when it does"
+msgstr "ເລີ່ມຕົ້ນ ຄຳສັ່ງ ແລະ ອອກຈາກໂປຣແກຣມເມື່ອຄຳສັ່ງນັ້ນສິ້ນສຸດ"
+
+#: src/main.c:87
+msgid "write service PID to file"
+msgstr "ຂຽນ PID ຂອງບໍລິການລົງໃນໄຟລ໌"
+
+#: src/main.c:88
+msgid "force NSS into FIPS mode"
+msgstr "ບັງຄັບໃຫ້ NSS ເຂົ້າສູ່ໂໝດ FIPS"
+
+#: src/main.c:90
+msgid "print version information"
+msgstr "ສະແດງຂໍ້ມູນເວີຊັນ"
+
+#: src/main.c:174
+#, c-format
+msgid "Usage: %s [-s|-S] [-n|-f] [-d LEVEL] [-p FILE] [-F] [-v]\n"
+msgstr "ວິທີໃຊ້: %s [-s|-S] [-n|-f] [-d LEVEL] [-p FILE] [-F] [-v]\n"
+
+#: src/main.c:177
+msgid "\t-s         use session bus\n"
+msgstr "\t-s         ໃຊ້ session bus\n"
+
+#: src/main.c:178
+msgid "\t-S         use system bus\n"
+msgstr "\t-S         ໃຊ້ system bus\n"
+
+#: src/main.c:179
+msgid "\t-l         start a dedicated listening socket\n"
+msgstr "\t-l         ເລີ່ມຕົ້ນ listening socket ແບບສະເພາະ\n"
+
+#: src/main.c:180
+msgid "\t-L         only use a dedicated listening socket\n"
+msgstr "\t-L         ໃຊ້ສະເພາະ listening socket ແບບສະເພາະເທົ່ານັ້ນ\n"
+
+#: src/main.c:181
+msgid "\t-P PATH    specify the dedicated listening socket\n"
+msgstr "\t-P PATH    ລະບຸ listening socket ແບບສະເພາະ\n"
+
+#: src/main.c:182
+msgid "\t-n         don't become a daemon\n"
+msgstr "\t-n         ບໍ່ຕ້ອງເຮັດວຽກເປັນເດມອນ\n"
+
+#: src/main.c:183
+msgid "\t-f         do become a daemon\n"
+msgstr "\t-f         ໃຫ້ເຮັດວຽກເປັນເດມອນ\n"
+
+#: src/main.c:184
+msgid "\t-b TIMEOUT bus-activated, idle timeout\n"
+msgstr ""
+"\t-b TIMEOUT ເປີດໃຊ້ງານໂດຍ bus, ກຳນົດເວລາໝົດອາຍຸເມື່ອບໍ່ມີການເຄື່ອນໄຫວ\n"
+
+#: src/main.c:185
+msgid "\t-B         don't use an idle timeout\n"
+msgstr "\t-B         ບໍ່ຕ້ອງໃຊ້ການກຳນົດເວລາໝົດອາຍຸເມື່ອບໍ່ມີການເຄື່ອນໄຫວ\n"
+
+#: src/main.c:186
+msgid "\t-d LEVEL   set debugging level (implies -n)\n"
+msgstr "\t-d LEVEL   ກຳນົດລະດັບການດີບັກ (ໝາຍເຖິງການໃຊ້ -n ໄປໃນຕົວ)\n"
+
+#: src/main.c:187
+msgid "\t-c COMMAND start COMMAND and exit when it does\n"
+msgstr "\t-c COMMAND ເລີ່ມຕົ້ນ ຄຳສັ່ງ ແລະ ອອກຈາກໂປຣແກຣມເມື່ອຄຳສັ່ງນັ້ນສິ້ນສຸດ\n"
+
+#: src/main.c:188
+msgid "\t-p FILE    write service PID to file\n"
+msgstr "\t-p FILE    ຂຽນ PID ຂອງບໍລິການລົງໃນໄຟລ໌\n"
+
+#: src/main.c:189
+msgid "\t-F         force NSS into FIPS mode\n"
+msgstr "\t-F         ບັງຄັບໃຫ້ NSS ເຂົ້າສູ່ໂໝດ FIPS\n"
+
+#: src/main.c:190
+msgid "\t-v         print version information and exit\n"
+msgstr "\t-v         ສະແດງຂໍ້ມູນເວີຊັນແລ້ວອອກຈາກໂປຣແກຣມ\n"
+
+#: src/scep.c:352
+#, c-format
+msgid "No SCEP URL (-u) given, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸ URL ຂອງ SCEP (-u) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/scep.c:356
+#, c-format
+msgid "No SCEP operation (-c/-C/-g/-p) given, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸການເຮັດວຽກຂອງ SCEP (-c/-C/-g/-p) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/scep.c:376 src/scep.c:395
+#, c-format
+msgid "No RA certificate (-r) given, and no default known.\n"
+msgstr "ບໍ່ໄດ້ລະບຸໃບຢັ້ງຢືນ RA (-r) ແລະ ບໍ່ມີຄ່າເລີ່ມຕົ້ນ.\n"
+
+#: src/scep.c:386 src/scep.c:540
+#, c-format
+msgid ""
+"Error reading request.  Expected PKCS7 data containing a GetInitialCert "
+"pkiMessage, got nothing.\n"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນການອ່ານຄຳຮ້ອງຂໍ. ຕ້ອງການຂໍ້ມູນ PKCS7 ທີ່ມີ GetInitialCert pkiMessage ແຕ່ບໍ່ພົບຂໍ້ມູ"
+"ນໃດໆ.\n"
+
+#: src/scep.c:405 src/scep.c:565
+#, c-format
+msgid ""
+"Error reading request.  Expected PKCS7 data containing a PKCSReq pkiMessage, "
+"got nothing.\n"
+msgstr ""
+"ເກີດຂໍ້ຜິດພາດໃນການອ່ານຄຳຮ້ອງຂໍ. ຕ້ອງການຂໍ້ມູນ PKCS7 ທີ່ມີ PKCSReq pkiMessage ແຕ່ບໍ່ພົບຂໍ້ມູນໃດໆ.\n"
+
+#: src/scep.c:433 src/scep.c:459
+#, c-format
+msgid "Warning: request is neither a PKCSReq nor a GetInitialCert request.\n"
+msgstr "ຄຳເຕືອນ: ຄຳຮ້ອງຂໍບໍ່ແມ່ນທັງ PKCSReq ຫຼື GetInitialCert.\n"
+
+#: src/scep.c:437 src/scep.c:463
+#, c-format
+msgid ""
+"Warning: request type \"%s\"is neither a PKCSReq nor a GetInitialCert "
+"request.\n"
+msgstr "ຄຳເຕືອນ: ປະເພດຄຳຮ້ອງຂໍ \"%s\" ບໍ່ແມ່ນທັງ PKCSReq ຫຼື GetInitialCert.\n"
+
+#: src/scep.c:470
+#, c-format
+msgid "Warning: request is missing transactionId.\n"
+msgstr "ຄຳເຕືອນ: ຄຳຮ້ອງຂໍຂາດ transactionId.\n"
+
+#: src/scep.c:474
+#, c-format
+msgid "Warning: request is missing senderNonce.\n"
+msgstr "ຄຳເຕືອນ: ຄຳຮ້ອງຂໍຂາດ senderNonce.\n"
+
+#: src/scep.c:637
+#, c-format
+msgid "Got response code %d from %s, not 200.\n"
+msgstr "ໄດ້ຮັບລະຫັດການຕອບກັບ %d ຈາກ %s, ເຊິ່ງບໍ່ແມ່ນ 200.\n"
+
+#: src/scep.c:685 src/scep.c:1121
+#, c-format
+msgid "Server reply was of unexpected MIME type \"%s\".\n"
+msgstr "ການຕອບກັບຈາກເຊີເວີມີປະເພດ MIME \"%s\" ທີ່ບໍ່ຄາດຄິດ.\n"
+
+#: src/scep.c:930
+#, c-format
+msgid "Error: failed to verify signature on server response.\n"
+msgstr "ຂໍ້ຜິດພາດ: ບໍ່ສາມາດກວດສອບລາຍເຊັນໃນການຕອບກັບຈາກເຊີເວີ.\n"
+
+#: src/scep.c:946
+#, c-format
+msgid "Error: reply was not a CertRep (%s).\n"
+msgstr "ຂໍ້ຜິດພາດ: ການຕອບກັບບໍ່ແມ່ນ CertRep (%s).\n"
+
+#: src/scep.c:951
+#, c-format
+msgid "Error: reply is missing transactionId.\n"
+msgstr "ຂໍ້ຜິດພາດ: ການຕອບກັບຂາດ transactionId.\n"
+
+#: src/scep.c:956
+#, c-format
+msgid "Error: reply contains a different transactionId.\n"
+msgstr "ຂໍ້ຜິດພາດ: ການຕອບກັບມີ transactionId ທີ່ແຕກຕ່າງກັນ.\n"
+
+#: src/scep.c:962
+#, c-format
+msgid "Error: reply is missing pkiStatus.\n"
+msgstr "ຂໍ້ຜິດພາດ: ການຕອບກັບຂາດ pkiStatus.\n"
+
+#: src/scep.c:966
+#, c-format
+msgid "Error: reply is missing recipientNonce.\n"
+msgstr "ຂໍ້ຜິດພາດ: ການຕອບກັບຂາດ recipientNonce.\n"
+
+#: src/scep.c:972
+#, c-format
+msgid "Error: reply nonce doesn't match request.\n"
+msgstr "ຂໍ້ຜິດພາດ: ຄ່າ nonce ໃນການຕອບກັບບໍ່ກົງກັບຄຳຮ້ອງຂໍ.\n"
+
+#: src/scep.c:976
+#, c-format
+msgid "Error: reply is missing senderNonce.\n"
+msgstr "ຂໍ້ຜິດພາດ: ການຕອບກັບຂາດ senderNonce.\n"
+
+#: src/scep.c:994
+#, c-format
+msgid "Unspecified failure at server.\n"
+msgstr "ເກີດຄວາມລົ້ມເຫຼວທີ່ບໍ່ໄດ້ລະບຸຢູ່ຝັ່ງເຊີເວີ.\n"
+
+#: src/scep.c:997
+#, c-format
+msgid "Unrecognized or unsupported algorithm identifier in client request.\n"
+msgstr "ພົບຕົວລະບຸອັນກໍຣິທຶມທີ່ບໍ່ຮູ້ຈັກ ຫຼື ບໍ່ຮອງຮັບໃນຄຳຮ້ອງຂໍຂອງໄຄລເອັນ.\n"
+
+#: src/scep.c:1000
+#, c-format
+msgid "Integrity check of client request failed at server.\n"
+msgstr ""
+"ການກວດສອບຄວາມຖືກຕ້ອງ (integrity) ຂອງຄຳຮ້ອງຂໍໄຄລເອັນລົ້ມເຫຼວຢູ່ຝັ່ງເຊີເວີ.\n"
+
+#: src/scep.c:1003
+#, c-format
+msgid "Transaction either is not permitted or is not supported by server.\n"
+msgstr "ທຸລະກຳບໍ່ໄດ້ຮັບອະນຸຍາດ ຫຼື ບໍ່ຮອງຮັບໂດຍເຊີເວີ.\n"
+
+#: src/scep.c:1006
+#, c-format
+msgid "Clock skew too great.\n"
+msgstr "ເວລາຂອງໂມງແຕກຕ່າງກັນຫຼາຍເກີນໄປ.\n"
+
+#: src/scep.c:1009
+#, c-format
+msgid "Unsupported extension.\n"
+msgstr "ສ່ວນຂະຫຍາຍທີ່ບໍ່ຮອງຮັບ.\n"
+
+#: src/scep.c:1012
+#, c-format
+msgid "Must archive keys.\n"
+msgstr "ຕ້ອງເຮັດການເກັບຮັກສາຄີ (archive keys).\n"
+
+#: src/scep.c:1015
+#, c-format
+msgid "Bad identity.\n"
+msgstr "ຕົວຕົນ (identity) ບໍ່ຖືກຕ້ອງ.\n"
+
+#: src/scep.c:1018
+#, c-format
+msgid "Proof of possession required.\n"
+msgstr "ຕ້ອງການຫຼັກຖານການຄອບຄອງ.\n"
+
+#: src/scep.c:1021
+#, c-format
+msgid "Proof of possession failed.\n"
+msgstr "ການກວດສອບຫຼັກຖານການຄອບຄອງລົ້ມເຫຼວ.\n"
+
+#: src/scep.c:1024
+#, c-format
+msgid "No key reuse.\n"
+msgstr "ບໍ່ໃຫ້ໃຊ້ຄີຊ້ຳ.\n"
+
+#: src/scep.c:1027
+#, c-format
+msgid "Internal CA error.\n"
+msgstr "ຂໍ້ຜິດພາດພາຍໃນຂອງ CA.\n"
+
+#: src/scep.c:1030
+#, c-format
+msgid "Try later.\n"
+msgstr "ກະລຸນາລອງໃໝ່ໃນພາຍຫຼັງ.\n"
+
+#: src/scep.c:1032
+#, c-format
+msgid "Server returned failure code \"%s\".\n"
+msgstr "ເຊີເວີສົ່ງຄືນລະຫັດຄວາມລົ້ມເຫຼວ \"%s\".\n"
+
+#: src/scep.c:1044
+#, c-format
+msgid "Error: couldn't parse signed-data.\n"
+msgstr "ຂໍ້ຜິດພາດ: ບໍ່ສາມາດວິເຄາະ signed-data ໄດ້.\n"
+
+#: src/scep.c:1059 src/scep.c:1074
+#, c-format
+msgid "Error: signed-data payload is not enveloped-data.\n"
+msgstr "ຂໍ້ຜິດພາດ: ເພໂຫຼດ (payload) ຂອງ signed-data ບໍ່ແມ່ນ enveloped-data.\n"
+
+#: src/scep.c:1092
+#, c-format
+msgid "Error: enveloped-data payload is not data.\n"
+msgstr "ຂໍ້ຜິດພາດ: ເພໂຫຼດຂອງ enveloped-data ບໍ່ແມ່ນຂໍ້ມູນ (data).\n"
+
+#: src/scep.c:1116
+#, c-format
+msgid "Error: pkiStatus \"%s\" not recognized.\n"
+msgstr "ຂໍ້ຜິດພາດ: ບໍ່ຮູ້ຈັກ pkiStatus \"%s\".\n"
+
+#: src/tdbush.c:119 src/tdbush.c:1944 src/tdbush.c:2351
+msgid "An internal error has occurred."
+msgstr "ເກີດຂໍ້ຜິດພາດພາຍໃນຂຶ້ນ."
+
+#: src/tdbush.c:183
+msgid "No matching entry found.\n"
+msgstr "ບໍ່ພົບລາຍການທີ່ກົງກັນ.\n"
+
+#: src/tdbush.c:345
+#, c-format
+msgid "There is already a CA with the nickname \"%s\"."
+msgstr "ມີ CA ທີ່ໃຊ້ຊື່ອ້າງອີງ \"%s\" ຢູ່ແລ້ວ."
+
+#: src/tdbush.c:439
+msgid "Certificate storage type not specified."
+msgstr "ບໍ່ໄດ້ລະບຸປະເພດບ່ອນເກັບໃບຢັ້ງຢືນ."
+
+#: src/tdbush.c:452
+#, c-format
+msgid "Certificate storage type \"%s\" not supported."
+msgstr "ບໍ່ຮອງຮັບປະເພດບ່ອນເກັບໃບຢັ້ງຢືນ \"%s\"."
+
+#: src/tdbush.c:489 src/tdbush.c:522 src/tdbush.c:581 src/tdbush.c:766
+#: src/tdbush.c:825 src/tdbush.c:928 src/tdbush.c:973 src/tdbush.c:1028
+#: src/tdbush.c:1073 src/tdbush.c:1128 src/tdbush.c:1173 src/tdbush.c:1592
+#: src/tdbush.c:3230 src/tdbush.c:3382
+#, c-format
+msgid "The location \"%s\" must be an absolute path."
+msgstr "ທີ່ຕັ້ງ \"%s\" ຕ້ອງເປັນເສັ້ນທາງເຕັມ (absolute path)."
+
+#: src/tdbush.c:516 src/tdbush.c:575 src/tdbush.c:644
+msgid "Certificate storage location not specified."
+msgstr "ບໍ່ໄດ້ລະບຸທີ່ຕັ້ງບ່ອນເກັບໃບຢັ້ງຢືນ."
+
+#: src/tdbush.c:534 src/tdbush.c:778 src/tdbush.c:985 src/tdbush.c:1085
+#: src/tdbush.c:1185
+#, c-format
+msgid ""
+"The parent of location \"%s\" could not be accessed due to insufficient "
+"permissions."
+msgstr ""
+"ບໍ່ສາມາດເຂົ້າເຖິງໂຟນເດີແມ່ຂອງ \"%s\" ໄດ້ ເນື່ອງຈາກສິດການເຂົ້າເຖິງບໍ່ພຽງພໍ."
+
+#: src/tdbush.c:542 src/tdbush.c:786 src/tdbush.c:993 src/tdbush.c:1093
+#: src/tdbush.c:1193
+#, c-format
+msgid "The parent of location \"%s\" must be a valid directory."
+msgstr "ໂຟນເດີແມ່ຂອງ \"%s\" ຕ້ອງເປັນໄດເຣັກທໍຣີທີ່ຖືກຕ້ອງ."
+
+#: src/tdbush.c:553 src/tdbush.c:797 src/tdbush.c:1004 src/tdbush.c:1104
+#: src/tdbush.c:1204
+#, c-format
+msgid "The location \"%s\" must be a file."
+msgstr "ທີ່ຕັ້ງ \"%s\" ຕ້ອງເປັນໄຟລ໌."
+
+#: src/tdbush.c:593 src/tdbush.c:940 src/tdbush.c:1040 src/tdbush.c:1140
+#, c-format
+msgid ""
+"The location \"%s\" could not be accessed due to insufficient permissions."
+msgstr "ບໍ່ສາມາດເຂົ້າເຖິງທີ່ຕັ້ງ \"%s\" ໄດ້ ເນື່ອງຈາກສິດການເຂົ້າເຖິງບໍ່ພຽງພໍ."
+
+#: src/tdbush.c:601 src/tdbush.c:834 src/tdbush.c:948 src/tdbush.c:1048
+#: src/tdbush.c:1148
+#, c-format
+msgid "The location \"%s\" must be a directory."
+msgstr "ທີ່ຕັ້ງ \"%s\" ຕ້ອງເປັນໄດເຣັກທໍຣີ."
+
+#: src/tdbush.c:622
+msgid "Certificate nickname not specified."
+msgstr "ບໍ່ໄດ້ລະບຸຊື່ອ້າງອີງໃບຢັ້ງຢືນ."
+
+#: src/tdbush.c:665 src/tdbush.c:3055
+#, c-format
+msgid "There is already a request with the nickname \"%s\"."
+msgstr "ມີຄຳຮ້ອງຂໍທີ່ໃຊ້ຊື່ອ້າງອີງ \"%s\" ຢູ່ແລ້ວ."
+
+#: src/tdbush.c:701
+#, c-format
+msgid ""
+"Certificate at same location is already used by request with nickname \"%s\"."
+msgstr ""
+"ໃບຢັ້ງຢືນຢູ່ທີ່ຕັ້ງດຽວກັນຖືກໃຊ້ໂດຍຄຳຮ້ອງຂໍທີ່ມີຊື່ອ້າງອີງ \"%s\" ຢູ່ແລ້ວ."
+
+#: src/tdbush.c:734
+#, c-format
+msgid "Key storage type \"%s\" not supported."
+msgstr "ບໍ່ຮອງຮັບປະເພດບ່ອນເກັບຄີ \"%s\"."
+
+#: src/tdbush.c:760 src/tdbush.c:819
+msgid "Key storage location not specified."
+msgstr "ບໍ່ໄດ້ລະບຸທີ່ຕັ້ງບ່ອນເກັບຄີ."
+
+#: src/tdbush.c:853
+msgid "Key nickname not specified."
+msgstr "ບໍ່ໄດ້ລະບຸຊື່ອ້າງອີງຄີ."
+
+#: src/tdbush.c:909
+#, c-format
+msgid "Key at same location is already used by request with nickname \"%s\"."
+msgstr "ຄີຢູ່ທີ່ຕັ້ງດຽວກັນຖືກໃຊ້ໂດຍຄຳຮ້ອງຂໍທີ່ມີຊື່ອ້າງອີງ \"%s\" ຢູ່ແລ້ວ."
+
+#: src/tdbush.c:1313 src/tdbush.c:3102
+#, c-format
+msgid "No support for key type \"%s\"."
+msgstr "ບໍ່ຮອງຮັບປະເພດຄີ \"%s\"."
+
+#: src/tdbush.c:1400
+msgid "No such CA."
+msgstr "ບໍ່ມີ CA ດັ່ງກ່າວ."
+
+#: src/tdbush.c:3073
+#, c-format
+msgid "Certificate authority \"%s\" not known."
+msgstr "ບໍ່ຮູ້ຈັກຜູ້ອອກໃບຢັ້ງຢືນຊີເອ \"%s\"."
+
+#: src/tdbush.c:3518
+msgid "Unrecognized parameter or wrong value type."
+msgstr "ພາຣາມິເຕີທີ່ບໍ່ຮູ້ຈັກ ຫຼື ປະເພດຄ່າບໍ່ຖືກຕ້ອງ."
+
+#: src/tdbush.c:5070
+msgid "Error parsing arguments."
+msgstr "ເກີດຂໍ້ຜິດພາດໃນການວິເຄາະອາກິວເມນ."
+
+#: src/tdbush.c:5124
+msgid "Unrecognized property name."
+msgstr "ບໍ່ຮູ້ຈັກຊື່ຄຸນສົມບັດ (property name)."
+
+#: src/tdbusm.c:2156
+msgid "Insufficient access.  Please retry operation as root.\n"
+msgstr "ສິດການເຂົ້າເຖິງບໍ່ພຽງພໍ. ກະລຸນາລອງໃໝ່ໃນຖານະ root.\n"
+
+#: src/tdbusm.c:2160
+msgid "Please verify that the certmonger service has been started.\n"
+msgstr "ກະລຸນາກວດສອບວ່າບໍລິການ certmonger ໄດ້ຖືກເລີ່ມຕົ້ນແລ້ວ.\n"
+
+#: src/tdbusm.c:2163
+msgid "Please verify that the certmonger service is still running.\n"
+msgstr "ກະລຸນາກວດສອບວ່າບໍລິການ certmonger ຍັງຄົງເຮັດວຽກຢູ່.\n"
