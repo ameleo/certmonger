@@ -9,13 +9,14 @@
 # Nalin Dahyabhai <nalin@fedoraproject.org>, 2011
 # Roman Spirgi <bigant@fedoraproject.org>, 2012-2013
 # Joachim Philipp <joachim.philipp@gmail.com>, 2022.
+# Beni Gyuelveszi <gyulveszibenjamin@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: certmonger 0.78.6\n"
 "Report-Msgid-Bugs-To: certmonger-devel@lists.fedorahosted.org\n"
 "POT-Creation-Date: 2017-02-26 02:20-0500\n"
-"PO-Revision-Date: 2022-04-21 10:17+0000\n"
-"Last-Translator: Joachim Philipp <joachim.philipp@gmail.com>\n"
+"PO-Revision-Date: 2025-10-18 13:54+0000\n"
+"Last-Translator: Beni Gyuelveszi <gyulveszibenjamin@gmail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/"
 "certmonger/master/de/>\n"
 "Language: de\n"
@@ -23,7 +24,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: src/casave.c:322 src/casave.c:361 src/dogtag.c:233 src/dogtag.c:238
 #: src/dogtag.c:256 src/dogtag.c:261 src/getcert.c:291
@@ -424,6 +425,7 @@ msgstr "nicht versuchen, kurz vor Ablauf das Zertifikat zu erneuern (Standard)"
 #: src/getcert.c:789 src/getcert.c:1866
 msgid "use the specified CA configuration rather than the default"
 msgstr ""
+"verwende die angegebene CA-Konfiguration statt der Standardkonfiguration"
 
 #: src/getcert.c:791 src/getcert.c:1868 src/getcert.c:2521
 msgid "ask the CA to process the request using the named profile or template"
