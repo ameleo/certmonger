@@ -622,6 +622,10 @@ retry_gen:
 
 	/* Retry with the optimum key size. */
 	if (privkey == NULL) {
+		if (cm_key_size == -1) {
+			cm_log(1, "Error generating key pair.\n");
+			_exit(CM_SUB_STATUS_INTERNAL_ERROR);
+		}
 		cm_key_size = PK11_GetBestKeyLength(slot, pmech);
 		if (cm_key_size != cm_requested_key_size) {
 			cm_log(1,
