@@ -341,8 +341,8 @@ int
 cm_submit_u_delta_from_string(const char *deltas, time_t now, time_t *delta)
 {
 	struct tm now_tm, *pnow;
-	time_t start;
-	int multiple, i, val, done, digits;
+	time_t start, val;
+	int multiple, i, done, digits;
 	unsigned char c;
 	val = 0;
 	digits = 0;

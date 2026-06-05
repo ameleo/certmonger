@@ -159,7 +159,11 @@ cm_prefs_preferred_digest(void)
 static int
 cm_prefs_compare_ttl_values(const void *a, const void *b)
 {
-	return *(time_t *)a - *(time_t *) b;
+	time_t ta = *(const time_t *)a;
+	time_t tb = *(const time_t *)b;
+	if (ta < tb) return -1;
+	if (ta > tb) return 1;
+	return 0;
 }
 
 static int
