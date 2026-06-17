@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <glob.h>
+#include <libgen.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -2337,6 +2338,22 @@ cm_store_create_containing_dir(const char *path, int mode)
 	}
 }
 
+static void
+cm_store_fsync_parent_dir(const char *filepath)
+{
+	char dir[PATH_MAX];
+	int dfd;
+	if (strlen(filepath) >= sizeof(dir)) {
+		return;
+	}
+	strcpy(dir, filepath);
+	dfd = open(dirname(dir), O_RDONLY);
+	if (dfd != -1) {
+		fsync(dfd);
+		close(dfd);
+	}
+}
+
 int
 cm_store_entry_save(struct cm_store_entry *entry)
 {
@@ -2402,6 +2419,13 @@ cm_store_entry_save(struct cm_store_entry *entry)
 	fp = fopen(path, "w");
 	if (fp != NULL) {
 		if (cm_store_entry_write(fp, entry) == 0) {
+			if (fflush(fp) != 0 || fsync(fileno(fp)) != 0) {
+				cm_log(0, "Error syncing \"%s\": %s.\n",
+				       path, strerror(errno));
+				fclose(fp);
+				remove(path);
+				return -1;
+			}
 			fclose(fp);
 			dest = (const char *) entry->cm_store_private;
 			cm_log(0, "Wrote to %s\n", dest);
@@ -2410,6 +2434,7 @@ cm_store_entry_save(struct cm_store_entry *entry)
 				       "%s.\n", path, dest, strerror(errno));
 				return -1;
 			}
+			cm_store_fsync_parent_dir(dest);
 			return 0;
 		} else {
 			fclose(fp);
@@ -2663,6 +2688,13 @@ cm_store_ca_save(struct cm_store_ca *ca)
 	fp = fopen(path, "w");
 	if (fp != NULL) {
 		if (cm_store_ca_write(fp, ca) == 0) {
+			if (fflush(fp) != 0 || fsync(fileno(fp)) != 0) {
+				cm_log(0, "Error syncing \"%s\": %s.\n",
+				       path, strerror(errno));
+				fclose(fp);
+				remove(path);
+				return -1;
+			}
 			fclose(fp);
 			dest = (const char *) ca->cm_store_private;
 			if (rename(path, dest) != 0) {
@@ -2670,6 +2702,7 @@ cm_store_ca_save(struct cm_store_ca *ca)
 				       "%s.\n", path, dest, strerror(errno));
 				return -1;
 			}
+			cm_store_fsync_parent_dir(dest);
 			return 0;
 		} else {
 			fclose(fp);
