@@ -145,7 +145,9 @@ CLEANFILES = \
 	040-pem/actual.out \
 	040-pem/actual.err \
 	041-submit-from-file/actual.out \
-	041-submit-from-file/actual.err
+	041-submit-from-file/actual.err \
+	042-timestamp/actual.out \
+	042-timestamp/actual.err
 EXTRA_DIST = \
 	run-tests.sh functions certmonger.conf tools/cachain.sh \
 	001-keyiread/run.sh \
@@ -406,7 +408,9 @@ EXTRA_DIST = \
 	040-pem/good.lets_encrypt_chain.pem \
 	040-pem/run.sh \
 	041-submit-from-file/run.sh \
-	041-submit-from-file/expected.out
+	041-submit-from-file/expected.out \
+	042-timestamp/run.sh \
+	042-timestamp/expected.out
 
 subdirs = \
 	001-keyiread \
@@ -443,7 +447,8 @@ subdirs = \
 	038-ms-v2-template \
 	039-fromfile \
 	040-pem \
-	041-submit-from-file
+	041-submit-from-file \
+	042-timestamp
 
 if HAVE_DBM_NSSDB
 subdirs += \

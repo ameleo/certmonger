@@ -1,0 +1,19 @@
+[Tests begin.]
+good "19700101000000": OK
+good "20000229120000": OK
+good "20260820123456": OK
+good "99991231235959": OK
+OK
+bad "abcd0101000000": correctly rejected
+bad "-9990101000000": correctly rejected
+bad "19700099000000": correctly rejected
+bad "19701301000000": correctly rejected
+bad "19700132000000": correctly rejected
+bad "19700101250000": correctly rejected
+bad "19700101006000": correctly rejected
+bad "19700101000061": correctly rejected
+bad "99999999235959": correctly rejected
+OK
+overflow-guard 12026: OK ("12026010100000", "12026-01-01 00:00:00 UTC")
+OK
+[Test complete.]

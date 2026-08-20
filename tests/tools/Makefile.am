@@ -17,7 +17,7 @@ noinst_PROGRAMS = keyiread keygen csrgen submit certread certsave oid2name \
 		  name2oid iterate prefs dates listnicks pem2base base2pem \
 		  dparse payload checksig base64 cadata citerate casave hooks \
 		  libexecdir canon srv addcinfo ls json json-utf8 printenv fromfile \
-		  pem validate_sm_fromfile
+		  pem timestamp validate_sm_fromfile
 noinst_LIBRARIES = libtools.a
 if HAVE_OPENSSL
 noinst_PROGRAMS += pk7parse pk7env scepgen pk7verify pk7decrypt
@@ -36,6 +36,9 @@ dparse_LDADD = $(top_srcdir)/src/submit-d.c $(LDADD) $(XML_LIBS) $(JANSSON_LIBS)
 
 citerate_SOURCES = citerate.c
 citerate_LDADD = $(top_srcdir)/src/store-gen.c $(LDADD)
+
+timestamp_SOURCES = timestamp.c
+timestamp_LDADD = $(top_srcdir)/src/store-gen.c $(LDADD)
 
 srv_SOURCES = srv.c
 srv_LDADD = $(top_srcdir)/src/srvloc.c $(LDADD)

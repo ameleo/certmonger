@@ -122,4 +122,5 @@ actual.out
 /tests/tools/scepgen
 /tests/tools/srv
 /tests/tools/submit
+/tests/tools/timestamp
 /tests/tools/validate_sm_fromfile

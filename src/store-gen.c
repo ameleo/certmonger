@@ -317,13 +317,29 @@ cm_store_ca_new(void *parent)
 	return ca;
 }
 
+static int
+timestamp_field(const char *buf, int min, int max, int *value)
+{
+	size_t i;
+	for (i = 0; buf[i] != '\0'; i++) {
+		if (!isdigit((unsigned char) buf[i])) {
+			return -1;
+		}
+	}
+	*value = atoi(buf);
+	if ((*value < min) || (*value > max)) {
+		return -1;
+	}
+	return 0;
+}
+
 time_t
 cm_store_time_from_timestamp(const char *timestamp)
 {
 	struct tm stamp;
 	char buf[5];
 	time_t t;
-	int i;
+	int i, value;
 	if (strlen(timestamp) < 12) {
 		return 0;
 	}
@@ -332,13 +348,19 @@ cm_store_time_from_timestamp(const char *timestamp)
 		memcpy(buf, timestamp, 4);
 		i = 4;
 		buf[i] = '\0';
-		stamp.tm_year = atoi(buf) - 1900;
+		if (timestamp_field(buf, 0, 9999, &value) != 0) {
+			return 0;
+		}
+		stamp.tm_year = value - 1900;
 	} else {
 		if ((strlen(timestamp) == 12) || (strlen(timestamp) == 13)) {
 			memcpy(buf, timestamp, 2);
 			i = 2;
 			buf[i] = '\0';
-			stamp.tm_year = atoi(buf);
+			if (timestamp_field(buf, 0, 99, &value) != 0) {
+				return 0;
+			}
+			stamp.tm_year = value;
 			if (stamp.tm_year < 50) {
 				stamp.tm_year += 100;
 			}
@@ -349,22 +371,37 @@ cm_store_time_from_timestamp(const char *timestamp)
 	memcpy(buf, timestamp + i, 2);
 	i += 2;
 	buf[2] = '\0';
-	stamp.tm_mon = atoi(buf) - 1;
+	if (timestamp_field(buf, 1, 12, &value) != 0) {
+		return 0;
+	}
+	stamp.tm_mon = value - 1;
 	memcpy(buf, timestamp + i, 2);
 	i += 2;
 	buf[2] = '\0';
-	stamp.tm_mday = atoi(buf);
+	if (timestamp_field(buf, 1, 31, &value) != 0) {
+		return 0;
+	}
+	stamp.tm_mday = value;
 	memcpy(buf, timestamp + i, 2);
 	i += 2;
 	buf[2] = '\0';
-	stamp.tm_hour = atoi(buf);
+	if (timestamp_field(buf, 0, 23, &value) != 0) {
+		return 0;
+	}
+	stamp.tm_hour = value;
 	memcpy(buf, timestamp + i, 2);
 	i += 2;
 	buf[2] = '\0';
-	stamp.tm_min = atoi(buf);
+	if (timestamp_field(buf, 0, 59, &value) != 0) {
+		return 0;
+	}
+	stamp.tm_min = value;
 	memcpy(buf, timestamp + i, 2);
 	buf[2] = '\0';
-	stamp.tm_sec = atoi(buf);
+	if (timestamp_field(buf, 0, 60, &value) != 0) {
+		return 0;
+	}
+	stamp.tm_sec = value;
 	t = timegm(&stamp);
 	return t;
 }
@@ -374,7 +411,7 @@ cm_store_timestamp_from_time(time_t when, char timestamp[15])
 {
 	struct tm tm;
 	if ((when != 0) && (gmtime_r(&when, &tm) == &tm)) {
-		sprintf(timestamp, "%04hu%02hu%02hu%02hu%02hu%02hu",
+		snprintf(timestamp, 15, "%04hu%02hu%02hu%02hu%02hu%02hu",
 			tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
 			tm.tm_hour, tm.tm_min, tm.tm_sec);
 	} else {
@@ -388,11 +425,14 @@ cm_store_local_timestamp_from_time_for_display(time_t when)
 {
 	char *timestamp;
 	struct tm tm;
+	size_t len;
 	tzset();
 	if ((when != 0) && (localtime_r(&when, &tm) == &tm)) {
-		timestamp = malloc(24 + strlen(tm.tm_zone));
+		len = 24 + strlen(tm.tm_zone);
+		timestamp = malloc(len);
 		if (timestamp != NULL) {
-			sprintf(timestamp, "%04hu-%02hu-%02hu %02hu:%02hu:%02hu %s",
+			snprintf(timestamp, len,
+				"%04hu-%02hu-%02hu %02hu:%02hu:%02hu %s",
 				tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
 				tm.tm_hour, tm.tm_min, tm.tm_sec, tm.tm_zone);
 		}
@@ -410,7 +450,7 @@ cm_store_timestamp_from_time_for_display(time_t when, char timestamp[25])
 {
 	struct tm tm;
 	if ((when != 0) && (gmtime_r(&when, &tm) == &tm)) {
-		sprintf(timestamp, "%04hu-%02hu-%02hu %02hu:%02hu:%02hu UTC",
+		snprintf(timestamp, 25, "%04hu-%02hu-%02hu %02hu:%02hu:%02hu UTC",
 			tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
 			tm.tm_hour, tm.tm_min, tm.tm_sec);
 	} else {
