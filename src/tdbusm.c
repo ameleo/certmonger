@@ -569,24 +569,35 @@ cm_tdbusm_get_ssv(DBusMessage *msg, void *parent, char **s1, char **s2,
 	*s1 = NULL;
 	*s2 = NULL;
 	if (!dbus_message_iter_init(msg, &iter)) {
+		errno = EINVAL;
 		return -1;
 	}
 
 	if (dbus_message_iter_get_arg_type(&iter) != DBUS_TYPE_STRING) {
+		errno = EINVAL;
 		return -1;
 	}
 	dbus_message_iter_get_basic(&iter, s1);
 
 	if (!dbus_message_iter_has_next(&iter) ||
 	    !dbus_message_iter_next(&iter)) {
+		errno = EINVAL;
 		return -1;
 	}
 	d = cm_tdbusm_get_d_item(&iter, parent);
 	if (d == NULL) {
+		errno = EINVAL;
 		return -1;
 	}
+
 	*s1 = *s1 ? talloc_strdup(parent, *s1) : NULL;
 	*s2 = talloc_strdup(parent, d->key);
+
+	if (*s1 == NULL || *s2 == NULL) {
+		errno = ENOMEM;
+		return -1;
+	}
+
 	*type = d->value_type;
 	*value = d->value;
 	return 0;

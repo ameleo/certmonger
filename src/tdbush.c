@@ -5554,6 +5554,13 @@ cm_tdbush_property_set(DBusConnection *conn,
 	parent = talloc_new(NULL);
 	if (cm_tdbusm_get_ssv(msg, parent, &interface, &property,
 			      &value_type, &v) != 0) {
+
+		if (errno == ENOMEM) {
+			cm_log(0, "Out of memory.\n");
+			talloc_free(parent);
+			return send_internal_base_error(conn, msg);
+		}
+
 		cm_log(1, "Error parsing arguments.\n");
 		talloc_free(parent);
 		return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
