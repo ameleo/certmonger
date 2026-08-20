@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include <talloc.h>
 
@@ -403,12 +404,20 @@ cm_tdbusm_get_ss(DBusMessage *msg, void *parent, char **s1, char **s2)
 				  DBUS_TYPE_INVALID)) {
 		*s1 = *s1 ? talloc_strdup(parent, *s1) : NULL;
 		*s2 = *s2 ? talloc_strdup(parent, *s2) : NULL;
+
+		if (*s1 == NULL || *s2 == NULL) {
+			errno = ENOMEM;
+			return -1;
+		}
+
 		return 0;
 	} else {
 		if (dbus_error_is_set(&err)) {
 			dbus_error_free(&err);
 			dbus_error_init(&err);
 		}
+
+		errno = EINVAL;
 		return -1;
 	}
 }

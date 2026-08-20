@@ -5288,6 +5288,13 @@ cm_tdbush_property_get(DBusConnection *conn,
 
 	parent = talloc_new(NULL);
 	if (cm_tdbusm_get_ss(msg, parent, &interface, &property) != 0) {
+
+		if (errno == ENOMEM) {
+			cm_log(0, "Out of memory.\n");
+			talloc_free(parent);
+			return send_internal_base_error(conn, msg);
+		}
+
 		cm_log(1, "Error parsing arguments.\n");
 		rep = dbus_message_new_error(msg,
 					     CM_DBUS_ERROR_REQUEST_BAD_ARG,
