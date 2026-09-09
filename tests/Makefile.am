@@ -352,6 +352,7 @@ EXTRA_DIST = \
 	035-json/run.sh \
 	035-json/bad.1 \
 	035-json/bad.15 \
+	035-json/bad.16 \
 	035-json/bad.1a \
 	035-json/bad.1b \
 	035-json/bad.1c \
