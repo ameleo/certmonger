@@ -50,7 +50,7 @@ $toolsdir/iterate ca.self entry.openssl NEED_TO_READ_CERT,READING_CERT,SAVED_CER
 $toolsdir/iterate ca.self entry.openssl NEED_TO_NOTIFY_ISSUED_SAVED,NOTIFYING_ISSUED_SAVED
 
 # Now kick it and see what we decide to do next.  Expect NEED_CSR/HAVE_KEY_PAIR.
-echo key_generated_date=20000000000000 >> entry.openssl
+echo key_generated_date=20000101000000 >> entry.openssl
 $toolsdir/iterate ca.self entry.openssl MONITORING
 
 rm -f ca.self entry.openssl keyfile certfile
@@ -97,7 +97,7 @@ $toolsdir/iterate ca.self entry.openssl NEED_TO_READ_CERT,READING_CERT,SAVED_CER
 $toolsdir/iterate ca.self entry.openssl NEED_TO_NOTIFY_ISSUED_SAVED,NOTIFYING_ISSUED_SAVED
 
 # Now kick it and see what we decide to do next.  Expect NEED_KEY_PAIR.
-echo key_generated_date=20000000000000 >> entry.openssl
+echo key_generated_date=20000101000000 >> entry.openssl
 $toolsdir/iterate ca.self entry.openssl MONITORING
 
 rm -f ca.self entry.openssl keyfile certfile
@@ -146,7 +146,7 @@ $toolsdir/iterate ca.self entry.openssl NEED_TO_READ_CERT,READING_CERT,SAVED_CER
 $toolsdir/iterate ca.self entry.openssl NEED_TO_NOTIFY_ISSUED_SAVED,NOTIFYING_ISSUED_SAVED
 
 # Now kick it and see what we decide to do next.  Expect NEED_CSR/HAVE_KEY_PAIR.
-echo key_generated_date=20000000000000 >> entry.openssl
+echo key_generated_date=20000101000000 >> entry.openssl
 $toolsdir/iterate ca.self entry.openssl MONITORING
 
 rm -f ca.self entry.openssl keyfile certfile
@@ -194,7 +194,7 @@ $toolsdir/iterate ca.self entry.openssl NEED_TO_READ_CERT,READING_CERT,SAVED_CER
 $toolsdir/iterate ca.self entry.openssl NEED_TO_NOTIFY_ISSUED_SAVED,NOTIFYING_ISSUED_SAVED
 
 # Now kick it and see what we decide to do next.  Expect NEED_KEY_PAIR.
-echo key_generated_date=20000000000000 >> entry.openssl
+echo key_generated_date=20000101000000 >> entry.openssl
 $toolsdir/iterate ca.self entry.openssl MONITORING
 
 rm -f ca.self entry.openssl keyfile certfile
