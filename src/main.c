@@ -262,7 +262,7 @@ main(int argc, const char **argv)
 			cm_env_lock_file(), strerror(errno));
 		exit(1);
 	}
-	if (lockf(lfd, F_LOCK, 0) != 0) {
+	if (lockf(lfd, F_TLOCK, 0) != 0) {
 		fprintf(stderr, "Error locking lockfile \"%s\": %s\n",
 			cm_env_lock_file(), strerror(errno));
 		close(lfd);
