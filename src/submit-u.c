@@ -396,6 +396,11 @@ cm_submit_u_delta_from_string(const char *deltas, time_t now, time_t *delta)
 						       * with DST for the time
 						       * in this structure */
 				now = mktime(&now_tm);
+				if (now == (time_t)-1) {
+					cm_log(1, "Delta \"%s\" overflows.\n",
+					       deltas);
+					return -1;
+				}
 			}
 			val = 0;
 			break;
@@ -407,6 +412,11 @@ cm_submit_u_delta_from_string(const char *deltas, time_t now, time_t *delta)
 			} else {
 				now_tm.tm_year += val;
 				now = mktime(&now_tm);
+				if (now == (time_t)-1) {
+					cm_log(1, "Delta \"%s\" overflows.\n",
+					       deltas);
+					return -1;
+				}
 			}
 			val = 0;
 			break;
