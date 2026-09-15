@@ -27,7 +27,7 @@
 %bcond_with xmlrpc
 
 Name:		certmonger
-Version:	0.79.21
+Version:	0.80
 Release:	1%{?dist}
 Summary:	Certificate status monitor and PKI enrollment client
 
@@ -263,6 +263,25 @@ exit 0
 %endif
 
 %changelog
+* Tue Sep 15 2026 Fraser Tweedale <ftweedal@redhat.com> - 0.80-1
+- Update to 0.80
+  - Add initial ML-DSA (post-quantum) support for OpenSSL 3.5+ and NSS 3.112+
+  - Replace deprecated OpenSSL 3.0.0 function calls
+  - Fix stack buffer overflow in store-gen.c timestamp formatting
+  - Fix NULL deref on OOM in D-Bus property get/set handlers
+  - Fix NULL deref on OOM in parse_encryption_certs
+  - Fix integer overflow in JSON surrogate pair decoding
+  - Fix qsort comparator integer overflow in prefs.c
+  - Check mktime return value for overflow in submit-u.c
+  - Use non-blocking lock to prevent deadlock during RPM upgrade
+  - Initialize UID/PID when using a private listening socket
+  - Fail gracefully if NSS key generation fails
+  - Encode non-printable CSR subjects as UTF8String
+  - Rewrite cm_submit_u_from_file for correctness and efficiency
+  - Fix invalid timestamps in tests
+  - Updated translations from Weblate
+  - Force the request and ca buffers to be flushed to disk on write
+
 * Fri Sep  5 2025 Rob Crittenden <rcritten@redhat.com> - 0.79.21-1
 - Update to 0.79.21
   - Allow the use of the IPA API by default for dogtag requests
