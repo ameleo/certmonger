@@ -149,7 +149,9 @@ CLEANFILES = \
 	042-timestamp/actual.out \
 	042-timestamp/actual.err \
 	043-getcert-mldsa-rekey/actual.out \
-	043-getcert-mldsa-rekey/actual.err
+	043-getcert-mldsa-rekey/actual.err \
+	044-getcert-mldsa-resubmit/actual.out \
+	044-getcert-mldsa-resubmit/actual.err
 EXTRA_DIST = \
 	run-tests.sh functions certmonger.conf tools/cachain.sh \
 	001-keyiread/run.sh \
@@ -415,7 +417,10 @@ EXTRA_DIST = \
 	042-timestamp/expected.out \
 	043-getcert-mldsa-rekey/prequal.sh \
 	043-getcert-mldsa-rekey/run.sh \
-	043-getcert-mldsa-rekey/expected.out
+	043-getcert-mldsa-rekey/expected.out \
+	044-getcert-mldsa-resubmit/prequal.sh \
+	044-getcert-mldsa-resubmit/run.sh \
+	044-getcert-mldsa-resubmit/expected.out
 
 subdirs = \
 	001-keyiread \
@@ -501,7 +506,8 @@ subdirs += \
 	003-csrgen-mldsa \
 	004-selfsign-mldsa \
 	030-rekey-mldsa \
-	043-getcert-mldsa-rekey
+	043-getcert-mldsa-rekey \
+	044-getcert-mldsa-resubmit
 endif
 
 check: all

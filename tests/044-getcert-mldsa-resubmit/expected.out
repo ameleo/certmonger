@@ -1,0 +1,5 @@
+OK (G-only initial): ML-DSA-65
+OK (G-only after resubmit): key preserved, cert renewed
+OK (G-and-g initial): ML-DSA-65
+OK (G-and-g after resubmit): key preserved, cert renewed
+Test complete.

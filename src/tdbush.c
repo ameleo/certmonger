@@ -1354,7 +1354,8 @@ base_add_request(DBusConnection *conn, DBusMessage *msg,
 	if (param != NULL) {
 		new_entry->cm_key_type.cm_key_gen_size = param->value.n;
 	} else {
-		new_entry->cm_key_type.cm_key_gen_size = cm_prefs_preferred_rsa_key_size();
+		new_entry->cm_key_type.cm_key_gen_size =
+			cm_prefs_default_key_gen_size(new_entry->cm_key_type.cm_key_gen_algorithm);
 	}
 	switch (new_entry->cm_key_type.cm_key_gen_algorithm) {
 	case cm_key_rsa:
@@ -1380,9 +1381,15 @@ base_add_request(DBusConnection *conn, DBusMessage *msg,
 	case cm_key_ml_dsa_44:
 	case cm_key_ml_dsa_65:
 	case cm_key_ml_dsa_87:
-		if (new_entry->cm_key_type.cm_key_gen_size < CM_MINIMUM_ML_DSA_KEY_SIZE)
-		{
-			new_entry->cm_key_type.cm_key_gen_size = CM_MINIMUM_ML_DSA_KEY_SIZE;
+		/* Map NIST parameter-set IDs (44/65/87) from -g to the
+		 * EVP_PKEY_bits()-style sizes keyiread reports, so resubmit
+		 * does not spuriously regenerate the key. */
+		if ((new_entry->cm_key_type.cm_key_gen_size == 44) ||
+		    (new_entry->cm_key_type.cm_key_gen_size == 65) ||
+		    (new_entry->cm_key_type.cm_key_gen_size == 87) ||
+		    (new_entry->cm_key_type.cm_key_gen_size < CM_MINIMUM_ML_DSA_KEY_SIZE)) {
+			new_entry->cm_key_type.cm_key_gen_size =
+				cm_prefs_default_key_gen_size(new_entry->cm_key_type.cm_key_gen_algorithm);
 		}
 		break;
 #endif
