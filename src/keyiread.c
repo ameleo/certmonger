@@ -260,11 +260,12 @@ cm_keyiread_read_data_from_buffer(struct cm_store_entry *entry, const char *p)
 	} else {
 		/* Next type not provided or incomplete: default next algorithm to
 		 * the current key's algorithm. Only sync gen from algorithm when
-		 * the current key type is known; otherwise a stub reader line
-		 * (no key file yet) would clear gen and force default RSA keygen. */
+		 * gen is still unspecified; otherwise a rekey modify that set a
+		 * new KEY_TYPE would be undone when the existing key is reread. */
 		entry->cm_key_next_type.cm_key_algorithm =
 			entry->cm_key_type.cm_key_algorithm;
-		if (entry->cm_key_type.cm_key_algorithm != cm_key_unspecified) {
+		if ((entry->cm_key_type.cm_key_algorithm != cm_key_unspecified) &&
+		    (entry->cm_key_type.cm_key_gen_algorithm == cm_key_unspecified)) {
 			entry->cm_key_type.cm_key_gen_algorithm =
 				entry->cm_key_type.cm_key_algorithm;
 		}
