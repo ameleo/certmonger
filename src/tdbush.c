@@ -393,6 +393,41 @@ base_add_known_ca(DBusConnection *conn, DBusMessage *msg,
 	}
 }
 
+#ifdef CM_ENABLE_ML_DSA
+/* For ML-DSA the only meaningful "size" is the parameter-set identifier
+ * (44/65/87), which is fixed by the chosen key type.  If the client
+ * explicitly requested a size it must match "want"; reject the request
+ * otherwise rather than silently ignoring it.  On success record the
+ * EVP_PKEY_bits()-style size keyiread reports, so that resubmit never sees a
+ * mismatch that would spuriously regenerate the key.  Returns 0 on success,
+ * or -1 after queueing an error reply (*ret holds the handler result). */
+static int
+base_add_request_ml_dsa_size(DBusConnection *conn, DBusMessage *msg,
+			     struct cm_store_entry *entry, void *parent,
+			     const struct cm_tdbusm_dict *param, long want,
+			     DBusHandlerResult *ret)
+{
+	if ((param != NULL) && (param->value.n != want)) {
+		cm_log(1, "Invalid key size %ld for ML-DSA-%ld; "
+		       "the only valid size is %ld.\n",
+		       param->value.n, want, want);
+		/* send_internal_base_bad_arg_error() substitutes a single %s
+		 * (the offending value), so bake the variant name and the one
+		 * valid dimension into the format string first. */
+		*ret = send_internal_base_bad_arg_error(conn, msg,
+			talloc_asprintf(parent,
+				_("Invalid key size \"%%s\" for ML-DSA-%ld; the only valid size is %ld."),
+				want, want),
+			talloc_asprintf(parent, "%ld", param->value.n),
+			"KEY_SIZE");
+		return -1;
+	}
+	entry->cm_key_type.cm_key_gen_size =
+		cm_prefs_default_key_gen_size(entry->cm_key_type.cm_key_gen_algorithm);
+	return 0;
+}
+#endif
+
 /* org.fedorahosted.certmonger.add_request */
 static DBusHandlerResult
 base_add_request(DBusConnection *conn, DBusMessage *msg,
@@ -1379,17 +1414,24 @@ base_add_request(DBusConnection *conn, DBusMessage *msg,
 #endif
 #ifdef CM_ENABLE_ML_DSA
 	case cm_key_ml_dsa_44:
+		if (base_add_request_ml_dsa_size(conn, msg, new_entry, parent,
+						 param, 44, &ret) != 0) {
+			talloc_free(parent);
+			return ret;
+		}
+		break;
 	case cm_key_ml_dsa_65:
+		if (base_add_request_ml_dsa_size(conn, msg, new_entry, parent,
+						 param, 65, &ret) != 0) {
+			talloc_free(parent);
+			return ret;
+		}
+		break;
 	case cm_key_ml_dsa_87:
-		/* Map NIST parameter-set IDs (44/65/87) from -g to the
-		 * EVP_PKEY_bits()-style sizes keyiread reports, so resubmit
-		 * does not spuriously regenerate the key. */
-		if ((new_entry->cm_key_type.cm_key_gen_size == 44) ||
-		    (new_entry->cm_key_type.cm_key_gen_size == 65) ||
-		    (new_entry->cm_key_type.cm_key_gen_size == 87) ||
-		    (new_entry->cm_key_type.cm_key_gen_size < CM_MINIMUM_ML_DSA_KEY_SIZE)) {
-			new_entry->cm_key_type.cm_key_gen_size =
-				cm_prefs_default_key_gen_size(new_entry->cm_key_type.cm_key_gen_algorithm);
+		if (base_add_request_ml_dsa_size(conn, msg, new_entry, parent,
+						 param, 87, &ret) != 0) {
+			talloc_free(parent);
+			return ret;
 		}
 		break;
 #endif
