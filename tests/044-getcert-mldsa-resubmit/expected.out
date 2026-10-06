@@ -1,5 +1,20 @@
-OK (G-only initial): ML-DSA-65
-OK (G-only after resubmit): key preserved, cert renewed
-OK (G-and-g initial): ML-DSA-65
-OK (G-and-g after resubmit): key preserved, cert renewed
+OK (G-44 initial): ML-DSA-44
+OK (G-44 after resubmit): key preserved, cert renewed
+OK (Gg-44 initial): ML-DSA-44
+OK (Gg-44 after resubmit): key preserved, cert renewed
+OK (G-65 initial): ML-DSA-65
+OK (G-65 after resubmit): key preserved, cert renewed
+OK (Gg-65 initial): ML-DSA-65
+OK (Gg-65 after resubmit): key preserved, cert renewed
+OK (G-87 initial): ML-DSA-87
+OK (G-87 after resubmit): key preserved, cert renewed
+OK (Gg-87 initial): ML-DSA-87
+OK (Gg-87 after resubmit): key preserved, cert renewed
+OK (rekey initial): ML-DSA-65
+OK (rekey after rekey): key replaced to ML-DSA-65
+OK (retype initial): ML-DSA-65
+OK (retype after rekey): key replaced to ML-DSA-87
+OK (G-44-g65 rejected): Invalid key size "65" for ML-DSA-44; the only valid size is 44.
+OK (G-44-g64 rejected): Invalid key size "64" for ML-DSA-44; the only valid size is 44.
+OK (G-mldsa-g2048 rejected): Invalid key size "2048" for ML-DSA-65; the only valid size is 65.
 Test complete.
