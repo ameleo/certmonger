@@ -113,6 +113,34 @@ helper is called.
   * CERTMONGER_CA_ISSUER
     The requested issuer for enrollment.
 
+  These may also be present starting with version 0.81:
+
+  * CERTMONGER_CHALLENGE_PASSWORD
+    The challenge password which was supplied for the request, either
+    directly or in a file, which a helper might use to authenticate to the
+    CA.
+  * CERTMONGER_KEY_STORAGE_TYPE
+    Where the private key is stored: "FILE" or "NSSDB".
+  * CERTMONGER_KEY_STORAGE_LOCATION
+    The name of the file which holds the private key, or the location of
+    the NSS database.
+  * CERTMONGER_KEY_TOKEN
+    The name of the token which holds the private key, if it is stored in an
+    NSS database.
+  * CERTMONGER_KEY_NICKNAME
+    The nickname of the private key, if it is stored in an NSS database.
+  * CERTMONGER_KEY_PIN
+    The PIN which protects the private key, if one was supplied directly.
+  * CERTMONGER_KEY_PIN_FILE
+    The name of a file which holds the PIN which protects the private key.
+
+  A helper can use the location of the private key, together with the
+  certificate in CERTMONGER_CERTIFICATE, to authenticate to the CA when
+  renewing that certificate, for example using TLS client authentication.
+  If the daemon is attempting to change keys, the request is for the new
+  key, and the private key described here is still the one which matches
+  the current certificate.
+
   The helper is expected to use this information, along with whatever
   credentials it has or is passed on the command line, to send the signing
   request to the CA.

@@ -41,6 +41,8 @@
 #include <openssl/pem.h>
 #include <openssl/x509.h>
 
+#include "csrgen.h"
+#include "csrgen-int.h"
 #include "env.h"
 #include "json.h"
 #include "log.h"
@@ -843,13 +845,25 @@ maybe_setenv(const char *var, const char *val)
 	return setenv(var, val, 1);
 }
 
+/* Like maybe_setenv(), but don't log the value. */
+static int
+maybe_setenv_secret(const char *var, const char *val)
+{
+	if ((var == NULL) || (val == NULL) || (strlen(val) == 0)) {
+		return -1;
+	}
+	cm_log(2, "Setting \"%s\" for child.\n", var);
+	return setenv(var, val, 1);
+}
+
 static int
 cm_submit_e_helper_main(int fd, struct cm_store_ca *ca,
 			struct cm_store_entry *entry, void *userdata)
 {
 	struct cm_submit_e_helper_args *args = userdata;
 	char **argv;
-	const char *error, *key_type;
+	const char *error, *key_type, *key_storage;
+	char *password;
 	unsigned char u;
 
 	maybe_setenv(CM_SUBMIT_REQ_SUBJECT_ENV,
@@ -930,6 +944,32 @@ cm_submit_e_helper_main(int fd, struct cm_store_ca *ca,
 	maybe_setenv(CM_SUBMIT_REQ_IP_ADDRESS_ENV,
 		     cm_submit_maybe_joinv(NULL, "\n",
 					   entry->cm_template_ipaddress));
+	/* Tell the helper where the key is, so that it can use it with the
+	 * current certificate to authenticate to the CA when renewing. */
+	key_storage = NULL;
+	switch (entry->cm_key_storage_type) {
+	case cm_key_storage_none:
+		break;
+	case cm_key_storage_file:
+		key_storage = "FILE";
+		break;
+	case cm_key_storage_nssdb:
+		key_storage = "NSSDB";
+		break;
+	}
+	maybe_setenv(CM_SUBMIT_KEY_STORAGE_TYPE_ENV, key_storage);
+	maybe_setenv(CM_SUBMIT_KEY_STORAGE_LOCATION_ENV,
+		     entry->cm_key_storage_location);
+	maybe_setenv(CM_SUBMIT_KEY_TOKEN_ENV, entry->cm_key_token);
+	maybe_setenv(CM_SUBMIT_KEY_NICKNAME_ENV, entry->cm_key_nickname);
+	maybe_setenv(CM_SUBMIT_KEY_PIN_FILE_ENV, entry->cm_key_pin_file);
+	maybe_setenv_secret(CM_SUBMIT_KEY_PIN_ENV, entry->cm_key_pin);
+	/* The challenge password, which a helper may need to authenticate
+	 * to the CA. */
+	if ((cm_csrgen_read_challenge_password(entry, &password) == 0) &&
+	    (password != NULL)) {
+		maybe_setenv_secret(CM_SUBMIT_CHALLENGE_PASSWORD_ENV, password);
+	}
 	if (dup2(fd, STDOUT_FILENO) == -1) {
 		u = errno;
 		cm_log(1, "Error redirecting standard out for "
