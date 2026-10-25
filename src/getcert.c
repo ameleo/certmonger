@@ -4823,6 +4823,151 @@ add_scep_ca(const char *argv0, int argc, const char **argv)
 }
 
 static int
+add_est_ca(const char *argv0, int argc, const char **argv)
+{
+	enum cm_tdbus_type bus = CM_DBUS_DEFAULT_BUS;
+	char *caname = NULL, *url = NULL, *path = NULL, *label = NULL;
+	char *root = NULL, *username = NULL, *password_file = NULL;
+	char *nickname, *command;
+	int c, verbose = 0;
+	dbus_bool_t b;
+	static DBusMessage *req, *rep;
+	const char *poptarg;
+	poptContext pctx;
+	struct poptOption popts[] = {
+		{"ca", 'c', POPT_ARG_STRING, &caname, 0, _("nickname to give to the new CA configuration"), HELP_TYPE_NAME},
+		{"url", 'u', POPT_ARG_STRING, &url, 0, _("location of EST server"), HELP_TYPE_URL},
+		{"label", 'i', POPT_ARG_STRING, &label, 0, _("CA label"), HELP_TYPE_ID},
+		{"ca-cert", 'R', POPT_ARG_STRING, NULL, 'R', _("file containing certificate of the CA which issued the EST server's certificate"), HELP_TYPE_FILENAME},
+		{"username", 'U', POPT_ARG_STRING, &username, 0, _("user name for enrollment"), HELP_TYPE_NAME},
+		{"password-file", 'W', POPT_ARG_STRING, &password_file, 0, _("file containing password for enrollment"), HELP_TYPE_FILENAME},
+		{"session", 's', POPT_ARG_NONE, NULL, 's', _("connect to the certmonger service on the session bus"), NULL},
+		{"system", 'S', POPT_ARG_NONE, NULL, 'S', _("connect to the certmonger service on the system bus"), NULL},
+		{"verbose", 'v', POPT_ARG_NONE, NULL, 'v', NULL, NULL},
+		{"autohelp", 'H', POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, NULL, 'H', NULL, NULL},
+		POPT_TABLEEND
+	};
+
+	if ((getenv(CERTMONGER_PVT_ADDRESS_ENV) != NULL) &&
+	    (strlen(getenv(CERTMONGER_PVT_ADDRESS_ENV)) > 0)) {
+		bus = cm_tdbus_private;
+	}
+
+	pctx = poptGetContext(argv0, argc, argv, popts, 0);
+	if (pctx == NULL) {
+		help(argv0, "add-est-ca");
+		return 1;
+	}
+	while ((c = poptGetNextOpt(pctx)) > 0) {
+		poptarg = poptGetOptArg(pctx);
+		switch (c) {
+		case 's':
+			bus = cm_tdbus_session;
+			break;
+		case 'S':
+			bus = cm_tdbus_system;
+			break;
+		case 'v':
+			verbose++;
+			break;
+		case 'H':
+			poptPrintHelp(pctx, stdout, 0);
+			return 1;
+			break;
+		case 'R':
+			if (validate_pem(globals.tctx, poptarg) != 0) {
+				printf("The root certificate(s) in %s is not valid PEM\n", poptarg);
+				return 1;
+			}
+			root = ensure_path_is_absolute(globals.tctx, poptarg);
+			break;
+		}
+	}
+	if (c != -1) {
+		printf("%s\n", make_popt_error(pctx, c));
+		help(argv0, "add-est-ca");
+		return 1;
+	}
+	if (caname == NULL) {
+		printf(_("CA nickname not specified.\n"));
+		help(argv0, "add-est-ca");
+		return 1;
+	}
+	if (url == NULL) {
+		printf(_("server URL not specified.\n"));
+		help(argv0, "add-est-ca");
+		return 1;
+	}
+	if (strncasecmp(url, "https://", 8) != 0) {
+		printf(_("EST requires an HTTPS URL.\n"));
+		help(argv0, "add-est-ca");
+		return 1;
+	}
+	if (password_file != NULL) {
+		password_file = ensure_path_is_absolute(globals.tctx,
+							password_file);
+	}
+	if (poptPeekArg(pctx) != NULL) {
+		printf(_("Error: unused extra arguments were supplied.\n"));
+		help(argv0, "add-est-ca");
+		return 1;
+	}
+	command = talloc_asprintf(globals.tctx, "%s -u %s",
+				  shell_escape(globals.tctx,
+					       CM_EST_HELPER_PATH),
+				  shell_escape(globals.tctx, url));
+	if (label != NULL) {
+		command = talloc_asprintf_append(command, " -i %s",
+						 shell_escape(globals.tctx,
+							      label));
+	}
+	if (root != NULL) {
+		command = talloc_asprintf_append(command, " -R %s",
+						 shell_escape(globals.tctx,
+							      root));
+	}
+	if (username != NULL) {
+		command = talloc_asprintf_append(command, " -U %s",
+						 shell_escape(globals.tctx,
+							      username));
+	}
+	if (password_file != NULL) {
+		command = talloc_asprintf_append(command, " -W %s",
+						 shell_escape(globals.tctx,
+							      password_file));
+	}
+	for (c = 0; c < verbose; c++) {
+		command = talloc_strdup_append(command, " -v");
+	}
+	if (command == NULL) {
+		printf(_("Error building command line.\n"));
+		exit(1);
+	}
+	prep_bus(bus, "add-est-ca", verbose, argc, argv);
+	req = prep_req(bus, CM_DBUS_BASE_PATH, CM_DBUS_BASE_INTERFACE,
+		       "add_known_ca");
+	if (cm_tdbusm_set_ssoas(req, caname, command, NULL) != 0) {
+		printf(_("Error setting request arguments.\n"));
+		exit(1);
+	}
+	rep = send_req(req, verbose);
+	if (cm_tdbusm_get_bp(rep, globals.tctx, &b, &path) != 0) {
+		printf(_("Error parsing server response.\n"));
+		exit(1);
+	}
+	dbus_message_unref(rep);
+	if (b) {
+		nickname = find_ca_name(globals.tctx, bus, path, verbose);
+		printf(_("New CA \"%s\" added.\n"),
+		       nickname ? nickname : path);
+	} else {
+		printf(_("New CA could not be added.\n"));
+		exit(1);
+	}
+	return 0;
+}
+
+static int
 modify_ca(const char *argv0, int argc, const char **argv)
 {
 	enum cm_tdbus_type bus = CM_DBUS_DEFAULT_BUS;
@@ -5014,6 +5159,7 @@ static struct {
 #ifndef FORCE_CA
 	{"add-ca", add_ca},
 	{"add-scep-ca", add_scep_ca},
+	{"add-est-ca", add_est_ca},
 #endif
 	{"list-cas", list_cas},
 #ifndef FORCE_CA
@@ -5551,6 +5697,28 @@ help(const char *twopartcmd, const char *category)
 		N_("  -v, --verbose		report all details of errors\n"),
 		NULL,
 	};
+	const char *add_est_ca_help[] = {
+		N_("Usage: %s add-est-ca [options]\n"),
+		"\n",
+		N_("Optional arguments:\n"),
+		N_("* General options:\n"),
+		N_("  -c CA, --ca=NAME	use the specified CA rather than the default\n"),
+		N_("  -u URL, --URL URL	location of EST server\n"),
+		N_("  -i LABEL, --label LABEL\n"),
+		N_("			CA label\n"),
+		N_("  -R FILE, --ca-cert=FILE\n"),
+		N_("			file containing web server's CA certificate\n"),
+		N_("  -U NAME, --username=NAME\n"),
+		N_("			user name for enrollment\n"),
+		N_("  -W FILE, --password-file=FILE\n"),
+		N_("			file containing password for enrollment\n"),
+		N_("* Bus options:\n"),
+		N_("  -S, --system		connect to the certmonger service on the system bus\n"),
+		N_("  -s, --session		connect to the certmonger service on the session bus\n"),
+		N_("* Other options:\n"),
+		N_("  -v, --verbose		report all details of errors\n"),
+		NULL,
+	};
 	const char *modify_ca_help[] = {
 		N_("Usage: %s modify-ca [options]\n"),
 		"\n",
@@ -5607,6 +5775,8 @@ help(const char *twopartcmd, const char *category)
 		 N_("add a CA configuration\n")},
 		{"add-scep-ca", add_scep_ca_help,
 		 N_("add an SCEP CA configuration\n")},
+		{"add-est-ca", add_est_ca_help,
+		 N_("add an EST CA configuration\n")},
 #endif
 		{"list-cas", list_cas_help,
 		 N_("list known CA configurations\n")},

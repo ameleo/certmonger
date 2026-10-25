@@ -1,0 +1,91 @@
+.TH CERTMONGER 1 "October 25, 2026" "certmonger Manual"
+
+.SH NAME
+getcert
+
+.SH SYNOPSIS
+getcert add\-est\-ca [options]
+
+.SH DESCRIPTION
+Adds a CA configuration to \fIcertmonger\fR, which can subsequently be used to
+enroll certificates using Enrollment over Secure Transport (EST), as
+described in RFC 7030.  The configuration will use the bundled
+\fIest\-submit\fR helper.  The \fIadd\-est\-ca\fR command is more or less a
+wrapper for the \fIadd\-ca\fR command.
+
+A first certificate is requested using the server's \fIsimpleenroll\fR
+interface.  If the server requires a user name and password, the challenge
+password given to \fBgetcert request\fR using its \fB\-L\fR or \fB\-l\fR
+option is used as the password.  When no user name is set for the CA, a
+challenge password of the form \fINAME\fR:\fIPASSWORD\fR provides both.
+Renewals use the server's \fIsimplereenroll\fR interface, authenticated with
+the current certificate and its private key.
+
+.SH OPTIONS
+.TP
+All user\-provided certificate files must be in PEM format.
+.TP
+\fB\-c\fR \fINAME\fR, \fB\-\-ca\fR=\fINAME\fR
+The nickname to give to this CA configuration.  This same value can later be
+passed in to \fIgetcert\fR's \fIrequest\fR, \fIresubmit\fR, and
+\fIstart\-tracking\fR commands using the \fB\-c\fR flag.
+.TP
+\fB\-u\fR \fIURL\fR, \fB\-\-url\fR=\fIURL\fR
+The location of the EST server, which must be an \fIhttps\fR URL.  The
+\fI/.well\-known/est\fR path is appended to it if the URL does not include
+it.  This option must be specified.
+.TP
+\fB\-i\fR \fILABEL\fR, \fB\-\-label\fR=\fILABEL\fR
+The label which the server uses to tell the CA from others which it serves.
+.TP
+\fB\-R\fR \fIFILE\fR, \fB\-\-ca\-cert\fR=\fIFILE\fR
+The location of a PEM\-formatted copy of the certificate(s) of the CA which
+issued the EST server's certificate.  If this option is not given, the
+system's trusted CA certificates are used to verify the server's
+certificate.
+.TP
+\fB\-U\fR \fINAME\fR, \fB\-\-username\fR=\fINAME\fR
+The user name to use for HTTP Basic authentication when enrolling.
+.TP
+\fB\-W\fR \fIFILE\fR, \fB\-\-password\-file\fR=\fIFILE\fR
+The location of a file containing a password to use for HTTP Basic
+authentication when enrolling, for requests which are not given a challenge
+password.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Be verbose about errors.  Normally, the details of an error received from
+the daemon will be suppressed if the client can make a diagnostic suggestion.
+
+.SH EXAMPLES
+.TP
+getcert add\-est\-ca \-c EST \-u https://est.example.com/ \-R /etc/pki/est\-ca.pem
+.TP
+getcert request \-c EST \-k /etc/pki/tls/private/host.key \-f /etc/pki/tls/certs/host.crt \-G EC \-g 256 \-N CN=host.example.com \-L device1:secret
+
+.SH BUGS
+Please file tickets for any that you find at https://codeberg.org/freeipa/certmonger/issues
+
+.SH SEE ALSO
+\fBcertmonger\fR(8)
+\fBgetcert\fR(1)
+\fBgetcert\-add\-ca\fR(1)
+\fBgetcert\-add\-scep\-ca\fR(1)
+\fBgetcert\-list\-cas\fR(1)
+\fBgetcert\-list\fR(1)
+\fBgetcert\-modify\-ca\fR(1)
+\fBgetcert\-refresh\-ca\fR(1)
+\fBgetcert\-refresh\fR(1)
+\fBgetcert\-rekey\fR(1)
+\fBgetcert\-remove\-ca\fR(1)
+\fBgetcert\-request\fR(1)
+\fBgetcert\-resubmit\fR(1)
+\fBgetcert\-status\fR(1)
+\fBgetcert\-stop\-tracking\fR(1)
+\fBcertmonger\-certmaster\-submit\fR(8)
+\fBcertmonger\-dogtag\-ipa\-renew\-agent\-submit\fR(8)
+\fBcertmonger\-dogtag\-submit\fR(8)
+\fBcertmonger\-est\-submit\fR(8)
+\fBcertmonger\-ipa\-submit\fR(8)
+\fBcertmonger\-local\-submit\fR(8)
+\fBcertmonger\-scep\-submit\fR(8)
+\fBcertmonger_selinux\fR(8)

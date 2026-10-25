@@ -14,6 +14,7 @@ getcert
  getcert status [options]
  getcert add\-ca [options]
  getcert add\-scep-ca [options]
+ getcert add\-est\-ca [options]
  getcert list\-cas [options]
  getcert modify\-ca [options]
  getcert refresh\-ca [options]
@@ -59,6 +60,7 @@ Please file tickets for any that you find at https://fedorahosted.org/certmonger
 \fBcertmonger\fR(8)
 \fBgetcert\-add\-ca\fR(1)
 \fBgetcert\-add\-scep\-ca\fR(1)
+\fBgetcert\-add\-est\-ca\fR(1)
 \fBgetcert\-list\-cas\fR(1)
 \fBgetcert\-list\fR(1)
 \fBgetcert\-modify\-ca\fR(1)
@@ -74,6 +76,7 @@ Please file tickets for any that you find at https://fedorahosted.org/certmonger
 \fBcertmonger\-certmaster\-submit\fR(8)
 \fBcertmonger\-dogtag\-ipa\-renew\-agent\-submit\fR(8)
 \fBcertmonger\-dogtag\-submit\fR(8)
+\fBcertmonger\-est\-submit\fR(8)
 \fBcertmonger\-ipa\-submit\fR(8)
 \fBcertmonger\-local\-submit\fR(8)
 \fBcertmonger\-scep\-submit\fR(8)

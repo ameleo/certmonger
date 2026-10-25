@@ -18,7 +18,7 @@ man_MANS = certmonger.8 getcert.1 getcert-request.1 getcert-list.1 \
 	   certmonger-dogtag-submit.8 certmonger-scep-submit.8 \
 	   getcert-add-ca.1 getcert-add-scep-ca.1 getcert-modify-ca.1 \
 	   getcert-remove-ca.1 getcert-rekey.1 \
-	   certmonger-est-submit.8
+	   certmonger-est-submit.8 getcert-add-est-ca.1
 if WITH_XMLRPC
 man_MANS += certmaster-getcert.1 certmonger-certmaster-submit.8
 endif
