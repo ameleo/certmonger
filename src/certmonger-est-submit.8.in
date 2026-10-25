@@ -1,0 +1,159 @@
+.TH CERTMONGER 8 "October 25, 2026" "certmonger Manual"
+
+.SH NAME
+est\-submit
+
+.SH SYNOPSIS
+est\-submit \-u SERVER\-URL
+[\-i label]
+[\-R ca\-cert\-file]
+[\-U username]
+[\-W password\-file]
+[\-v]
+[\-C|\-e|\-r]
+[csr\-filename]
+
+.SH DESCRIPTION
+\fIest\-submit\fR is the helper which \fIcertmonger\fR can use to
+transmit certificate enrollment and renewal requests to servers using
+Enrollment over Secure Transport (EST), as described in RFC 7030.  It is
+not normally run interactively, but it can be for troubleshooting
+purposes.
+
+When called by \fIcertmonger\fR, \fIest\-submit\fR uses the server's
+\fIcacerts\fR interface to retrieve copies of the CA's certificates, and
+submits signing requests using either its \fIsimpleenroll\fR or its
+\fIsimplereenroll\fR interface.
+
+A first enrollment is made with \fIsimpleenroll\fR.  If the server
+requires the client to authenticate itself, HTTP Basic authentication is
+used.  The password is the challenge password given to \fBgetcert
+request\fR using its \fB\-L\fR or \fB\-l\fR option, or, if none was given,
+the contents of the file named with the \fB\-W\fR option.  The user name is
+the one given with the \fB\-U\fR option.  If no user name was given and the
+password contains a colon (":"), the part before the first colon is used as
+the user name, and the rest as the password.  Note that \fIcertmonger\fR
+also includes the challenge password in the signing request.
+
+Once a certificate has been issued, it is renewed using
+\fIsimplereenroll\fR, and the client authenticates to the server using TLS
+client authentication with the current certificate and its private key,
+without a password.  The private key can be stored in a PEM file, in an NSS
+database, or in a token which is accessible through an NSS database, such
+as a hardware token or a TPM.  If the current certificate has expired, or
+if the server refuses to renew it and a password is available, a new
+enrollment is attempted using \fIsimpleenroll\fR.
+
+If the server replies that the request has been accepted but is waiting
+for approval, \fIest\-submit\fR tells \fIcertmonger\fR to resubmit the same
+request after the delay suggested by the server's \fIRetry\-After\fR
+header.
+
+When run interactively, the signing request which is to be submitted
+should be a PEM\-encoded PKCS#10 request in a file whose name is given as
+an argument.  Re\-enrollment then needs the \fBCERTMONGER_CERTIFICATE\fR,
+\fBCERTMONGER_KEY_STORAGE_TYPE\fR and \fBCERTMONGER_KEY_STORAGE_LOCATION\fR
+variables to be set in the environment, as \fIcertmonger\fR does.
+
+.SH MODES
+.TP
+\fB\-C\fR, \fB\-\-retrieve\-ca\-certificates\fR
+\fIest\-submit\fR will issue a \fIcacerts\fR request to the server and print
+the CA's certificates.  This mode is used when \fIcertmonger\fR asks the
+helper for the CA's root certificates.
+.TP
+\fB\-e\fR, \fB\-\-enroll\fR
+\fIest\-submit\fR will issue a \fIsimpleenroll\fR request to the server.
+.TP
+\fB\-r\fR, \fB\-\-reenroll\fR
+\fIest\-submit\fR will issue a \fIsimplereenroll\fR request to the server.
+.TP
+If no mode is specified, \fIest\-submit\fR re\-enrolls if it has been given
+a certificate which is still valid and the location of its key, and
+otherwise enrolls.
+
+.SH OPTIONS
+.TP
+\fB\-u\fR \fIURL\fR, \fB\-\-url\fR=\fIURL\fR
+The location of the EST server, which must be an \fIhttps\fR URL, for
+example \fIhttps://\fBSERVER\fP/\fR or
+\fIhttps://\fBSERVER\fP:\fBPORT\fP/.well\-known/est\fR.  If the URL does
+not include the \fI/.well\-known/est\fR path, it is appended.  This option
+is always required.
+.TP
+\fB\-i\fR \fILABEL\fR, \fB\-\-label\fR=\fILABEL\fR
+The label which the server uses to tell one of the CAs which it serves from
+another.  It is added to the path, as in
+\fI/.well\-known/est/\fBLABEL\fP/simpleenroll\fR.
+.TP
+\fB\-R\fR \fIFILE\fR, \fB\-\-cacert\fR=\fIFILE\fR
+The location of the certificate(s), in PEM form, of the CA which issued
+the EST server's certificate.  Only these certificates are trusted when
+verifying the server's certificate.  If this option is not given, the
+system's trusted CA certificates are used, or, when the key is stored in an
+NSS database, the certificates trusted in that database.
+.TP
+\fB\-U\fR \fINAME\fR, \fB\-\-username\fR=\fINAME\fR
+The user name to use for HTTP Basic authentication when enrolling.
+.TP
+\fB\-W\fR \fIFILE\fR, \fB\-\-password\-file\fR=\fIFILE\fR
+The location of a file containing the password to use for HTTP Basic
+authentication when enrolling, if no challenge password was given for the
+request.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Increases the logging level.  Use twice for more logging.  This option
+is mainly useful for troubleshooting.
+
+.SH EXIT STATUS
+.TP
+0
+if the certificate was issued.  The certificate will be printed in
+PEM\-encoded form.
+.TP
+1
+if the CA is still thinking.  A cookie (state) value will be printed.
+.TP
+2
+if the CA rejected the request, or the client's credentials.  An error
+message may be printed.
+.TP
+3
+if the CA was unreachable, or its certificate could not be verified.  An
+error message may be printed.
+.TP
+4
+if critical configuration information is missing.  An error message may be
+printed.
+.TP
+5
+if the CA is still thinking.  A suggested poll delay (specified in seconds) and
+a cookie (state) value will be printed.
+
+.SH BUGS
+Please file tickets for any that you find at https://codeberg.org/freeipa/certmonger/issues
+
+.SH SEE ALSO
+\fBcertmonger\fR(8)
+\fBgetcert\fR(1)
+\fBgetcert\-add\-ca\fR(1)
+\fBgetcert\-add\-est\-ca\fR(1)
+\fBgetcert\-list\-cas\fR(1)
+\fBgetcert\-list\fR(1)
+\fBgetcert\-modify\-ca\fR(1)
+\fBgetcert\-refresh\-ca\fR(1)
+\fBgetcert\-refresh\fR(1)
+\fBgetcert\-rekey\fR(1)
+\fBgetcert\-remove\-ca\fR(1)
+\fBgetcert\-request\fR(1)
+\fBgetcert\-resubmit\fR(1)
+\fBgetcert\-start\-tracking\fR(1)
+\fBgetcert\-status\fR(1)
+\fBgetcert\-stop\-tracking\fR(1)
+\fBcertmonger\-certmaster\-submit\fR(8)
+\fBcertmonger\-dogtag\-ipa\-renew\-agent\-submit\fR(8)
+\fBcertmonger\-dogtag\-submit\fR(8)
+\fBcertmonger\-ipa\-submit\fR(8)
+\fBcertmonger\-local\-submit\fR(8)
+\fBcertmonger\-scep\-submit\fR(8)
+\fBcertmonger_selinux\fR(8)

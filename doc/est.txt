@@ -1,0 +1,41 @@
+Certificates can be requested from servers which implement Enrollment over
+Secure Transport (EST), as described in RFC 7030, using the bundled
+"est-submit" helper.  Like SCEP, there's no concept of a "default" EST
+server for the system, so a CA configuration needs to be added:
+
+  getcert add-est-ca -c exampleESTca -u https://est.example.com/ \
+    -R /etc/pki/est-server-ca.pem
+
+The "-R" option names a file containing the certificate of the CA which
+issued the EST server's TLS certificate.  If it is not given, the system's
+trusted CA certificates are used.  If the server serves more than one CA
+under different labels, the label can be given with the "-i" option.
+
+The helper uses the server's "cacerts" interface to retrieve the CA's
+certificates, its "simpleenroll" interface to obtain a first certificate,
+and its "simplereenroll" interface to renew it.
+
+Servers usually require a client to authenticate itself before they issue
+it a first certificate.  The helper supports HTTP Basic authentication, and
+uses the challenge password given to "getcert request" with its -L or -l
+option as the password.  When no user name is set with the "-U" option of
+"getcert add-est-ca", a challenge password of the form "name:password"
+supplies both:
+
+  getcert request -c exampleESTca -k /etc/pki/tls/private/host.key \
+    -f /etc/pki/tls/certs/host.crt -G EC -g 256 -N CN=host.example.com \
+    -L device1:onetimesecret
+
+A password which is the same for every request can instead be stored in a
+file named with the "-W" option of "getcert add-est-ca".
+
+Renewal requests are authenticated using TLS client authentication with the
+current certificate and its private key, so no password is needed once a
+certificate has been issued.  To make this possible, the daemon tells the
+helper where the private key is stored (see helpers.txt).  Keys in PEM files
+are used through libcurl, and keys in NSS databases, including keys in
+hardware tokens or TPMs which are accessible through an NSS database, are
+used through NSS.
+
+If the server answers that a request is awaiting approval, the helper asks
+the daemon to send it again after the delay which the server suggests.

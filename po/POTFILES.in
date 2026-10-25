@@ -2,6 +2,7 @@
 src/casave.c
 src/certmaster.c
 src/dogtag.c
+src/est.c
 src/getcert.c
 src/ipa.c
 src/local.c

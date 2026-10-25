@@ -17,7 +17,8 @@ man_MANS = certmonger.8 getcert.1 getcert-request.1 getcert-list.1 \
 	   certmonger-local-submit.8 getcert-status.1 \
 	   certmonger-dogtag-submit.8 certmonger-scep-submit.8 \
 	   getcert-add-ca.1 getcert-add-scep-ca.1 getcert-modify-ca.1 \
-	   getcert-remove-ca.1 getcert-rekey.1
+	   getcert-remove-ca.1 getcert-rekey.1 \
+	   certmonger-est-submit.8
 if WITH_XMLRPC
 man_MANS += certmaster-getcert.1 certmonger-certmaster-submit.8
 endif
@@ -221,6 +222,7 @@ pkglibexec_PROGRAMS += dogtag-ipa-renew-agent-submit dogtag-submit
 if HAVE_OPENSSL
 pkglibexec_PROGRAMS += local-submit
 pkglibexec_PROGRAMS += scep-submit
+pkglibexec_PROGRAMS += est-submit
 endif
 noinst_PROGRAMS += submit-h submit-d
 ipa_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS) $(CURL_CFLAGS) $(JANSSON_CFLAGS)
@@ -279,6 +281,14 @@ scep_submit_SOURCES = scep.c scep.h \
 scep_submit_LDADD = $(CURL_LIBS) $(XML_LIBS) $(NSS_LIBS) \
 		      $(OPENSSL_LIBS) $(TALLOC_LIBS) \
 		      $(GMP_LIBS) $(UUID_LIBS) $(LTLIBICONV) $(POPT_LIBS)
+est_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS) $(CURL_CFLAGS) \
+		    $(OPENSSL_CFLAGS)
+est_submit_SOURCES = est.c est-n.c est.h \
+		submit-h.c submit-h.h submit-u.c submit-u.h submit-e.h \
+		util-o.c util-o.h util.c util.h log.c log.h json.c json.h \
+		store.h store-gen.c tm.c tm.h
+est_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_LIBS) $(TALLOC_LIBS) \
+		   $(KRB5_LIBS) $(UUID_LIBS) $(LTLIBICONV) $(POPT_LIBS)
 local_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS)
 local_submit_SOURCES = local.c env.h store.h store-gen.c submit-o.c submit-o.h \
 		       submit-u.c submit-u.h env-system.c env-shared.c log.c \
