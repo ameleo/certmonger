@@ -1,0 +1,24 @@
+[re-enroll, EC key in an NSS database protected by a PIN]
+exit: 0
+certificate is for the key
+POST simplereenroll 200 certificate ec
+[re-enroll, RSA key in an NSS database without a PIN]
+exit: 0
+certificate is for the key
+POST simplereenroll 200 certificate rsa
+[re-enroll, key in an NSS database, wrong PIN]
+exit: 3
+Error preparing TLS client authentication: error finding the key for the current certificate: SEC_ERROR_BAD_PASSWORD (The security password entered is incorrect.).
+[re-enroll, key in an NSS database, untrusted server]
+exit: 3
+Error 60 connecting to https://localhost/.well-known/est/simplereenroll: SSL peer certificate or SSH remote key was not OK.
+[getcert add-est-ca]
+New CA "EST" added.
+[getcert request, RSA, NSS database]
+	status: MONITORING
+POST simpleenroll 200 user user
+[getcert resubmit, NSS database]
+	status: MONITORING
+POST simplereenroll 200 certificate nss
+same key
+OK

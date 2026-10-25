@@ -146,32 +146,6 @@ est env CERTMONGER_OPERATION=SUBMIT CERTMONGER_CSR="`cat rsa.key.csr`" \
 matches rsa.key out
 lastlog
 
-echo "[re-enroll, key in an NSS database]"
-mkdir db
-echo dbpin > dbpin
-certutil -N -d db -f dbpin
-openssl pkcs12 -export -inkey ec.key -in ec.crt -name ec -passout pass:p12 \
-	-out ec.p12
-pk12util -i ec.p12 -d db -k dbpin -W p12 > /dev/null
-est env CERTMONGER_OPERATION=SUBMIT CERTMONGER_CSR="`cat ec.key.csr`" \
-	CERTMONGER_CERTIFICATE="`cat ec.crt`" \
-	CERTMONGER_KEY_STORAGE_TYPE=NSSDB \
-	CERTMONGER_KEY_STORAGE_LOCATION="$tmpdir"/db \
-	CERTMONGER_KEY_NICKNAME=ec \
-	CERTMONGER_KEY_PIN_FILE="$tmpdir"/dbpin \
-	"$EST" -u $url -R ca/root.crt
-matches ec.key out
-lastlog
-
-echo "[re-enroll, key in an NSS database, untrusted server]"
-est env CERTMONGER_OPERATION=SUBMIT CERTMONGER_CSR="`cat ec.key.csr`" \
-	CERTMONGER_CERTIFICATE="`cat ec.crt`" \
-	CERTMONGER_KEY_STORAGE_TYPE=NSSDB \
-	CERTMONGER_KEY_STORAGE_LOCATION="$tmpdir"/db \
-	CERTMONGER_KEY_PIN_FILE="$tmpdir"/dbpin \
-	"$EST" -u $url -R ca/other.crt
-cat out
-
 echo "[enroll, pending]"
 start_server --pending 1 --retry-after 42 --label lab
 est env CERTMONGER_OPERATION=SUBMIT CERTMONGER_CSR="`cat ec.key.csr`" \
@@ -221,20 +195,6 @@ run "$builddir"/../src/getcert resubmit -i files -w --wait-timeout=$timeout > /d
 status files
 matches files/key files/cert
 cmp -s files/cert files/cert.first && echo ERROR: certificate was not replaced
-lastlog
-
-echo "[getcert request, RSA, NSS database]"
-mkdir -p "$tmpdir"/files/db
-certutil -N -d "$tmpdir"/files/db --empty-password
-run "$builddir"/../src/getcert request -c EST -I nss -w --wait-timeout=$timeout \
-	-G RSA -g 2048 -N CN=nss -L user:secret \
-	-d "$tmpdir"/files/db -n nss > /dev/null
-status nss
-lastlog
-
-echo "[getcert resubmit, NSS database]"
-run "$builddir"/../src/getcert resubmit -i nss -w --wait-timeout=$timeout > /dev/null
-status nss
 lastlog
 
 echo "[getcert request, bad password]"

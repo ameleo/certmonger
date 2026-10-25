@@ -287,7 +287,7 @@ est_submit_SOURCES = est.c est-n.c est.h \
 		submit-h.c submit-h.h submit-u.c submit-u.h submit-e.h \
 		util-o.c util-o.h util.c util.h log.c log.h json.c json.h \
 		store.h store-gen.c tm.c tm.h
-est_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_LIBS) $(TALLOC_LIBS) \
+est_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_SSL_LIBS) $(TALLOC_LIBS) \
 		   $(KRB5_LIBS) $(UUID_LIBS) $(LTLIBICONV) $(POPT_LIBS)
 local_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS)
 local_submit_SOURCES = local.c env.h store.h store-gen.c submit-o.c submit-o.h \

@@ -32,10 +32,18 @@ file named with the "-W" option of "getcert add-est-ca".
 Renewal requests are authenticated using TLS client authentication with the
 current certificate and its private key, so no password is needed once a
 certificate has been issued.  To make this possible, the daemon tells the
-helper where the private key is stored (see helpers.txt).  Keys in PEM files
-are used through libcurl, and keys in NSS databases, including keys in
-hardware tokens or TPMs which are accessible through an NSS database, are
-used through NSS.
+helper where the private key is stored (see helpers.txt).  The helper
+always connects using libcurl, built with OpenSSL.  Keys in PEM files are
+read by libcurl itself.  Keys in NSS databases, including keys in hardware
+tokens or TPMs which are accessible through an NSS database, are located
+using NSS and then used through OpenSSL's PKCS#11 provider (the
+"pkcs11-provider" package, which requires OpenSSL 3), which loads the same
+PKCS#11 module that NSS uses for them: the NSS software token for keys in
+the database itself, or the token's module.  The helper loads and
+configures the provider by itself, so no change to the system's OpenSSL
+configuration is needed.  Either way, the server's certificate is verified
+by OpenSSL, against the CA certificates given with "-R", or, if none were,
+those which libcurl trusts by default.
 
 If the server answers that a request is awaiting approval, the helper asks
 the daemon to send it again after the delay which the server suggests.

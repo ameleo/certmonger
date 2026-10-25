@@ -30,13 +30,20 @@
 #include <unistd.h>
 
 #include <openssl/bio.h>
+#include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/objects.h>
 #include <openssl/pem.h>
 #include <openssl/pkcs7.h>
+#include <openssl/ssl.h>
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/provider.h>
+#include <openssl/store.h>
+#include <openssl/ui.h>
+#endif
 
 #include <krb5.h>
 
@@ -66,6 +73,16 @@
 #define CM_CADATA_OTHERS "other"
 #define CM_CADATA_CERTIFICATE "certificate"
 #define CM_CADATA_NICKNAME "nickname"
+
+/* The name under which we load OpenSSL's PKCS#11 provider. */
+#define EST_PKCS11_PROVIDER "certmonger-pkcs11"
+
+/* A client certificate and a private key which libcurl can't load by
+ * itself, which we hand to OpenSSL directly. */
+struct est_client_key {
+	X509 *cert;
+	EVP_PKEY *key;
+};
 
 enum known_ops {
 	op_unset,
@@ -364,27 +381,268 @@ print_server_text(const struct cm_est_response *response)
 	       (response->body[len - 1] == '\n') ? "" : "\n");
 }
 
-/* The CA certificates which libcurl trusts when it isn't told which ones to
- * trust, so that we can trust the same ones when we use NSS. */
-static const char *
-default_cainfo(void *parent)
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+/* Quote a value for an OpenSSL configuration file. */
+static char *
+conf_quote(void *parent, const char *value)
 {
-	const char *ret = NULL;
-#if HAVE_DECL_CURLINFO_CAINFO
-	CURL *curl;
-	char *path = NULL;
+	char *ret;
 
-	curl = curl_easy_init();
-	if (curl != NULL) {
-		if ((curl_easy_getinfo(curl, CURLINFO_CAINFO,
-				       &path) == CURLE_OK) &&
-		    (path != NULL) && (access(path, R_OK) == 0)) {
-			ret = talloc_strdup(parent, path);
+	ret = talloc_strdup(parent, "\"");
+	for (; (ret != NULL) && (*value != '\0'); value++) {
+		if ((*value == '\n') || (*value == '\r')) {
+			return NULL;
 		}
-		curl_easy_cleanup(curl);
+		ret = talloc_asprintf_append(ret, "%s%c",
+					     ((*value == '"') ||
+					      (*value == '\\')) ? "\\" : "",
+					     *value);
 	}
-#endif
+	return ret ? talloc_strdup_append(ret, "\"") : NULL;
+}
+
+/* Keep using the other providers for everything but our key: otherwise
+ * OpenSSL may pick the PKCS#11 provider for, among other things, verifying
+ * the server's signatures, and the token may not be able to do that.
+ * Operations which involve the key still go to the provider which holds
+ * it.  Keep any default properties which the system's configuration set. */
+static int
+prefer_other_providers(void)
+{
+	const char *ours = "?provider!=pkcs11";
+#if OPENSSL_VERSION_NUMBER >= 0x30200000L
+	char *current, *merged;
+	int ret;
+
+	current = EVP_get1_default_properties(NULL);
+	if ((current == NULL) || (strlen(current) == 0)) {
+		OPENSSL_free(current);
+		return (EVP_set_default_properties(NULL, ours) == 1) ? 0 : -1;
+	}
+	merged = talloc_asprintf(NULL, "%s,%s", current, ours);
+	OPENSSL_free(current);
+	if (merged == NULL) {
+		return -1;
+	}
+	ret = (EVP_set_default_properties(NULL, merged) == 1) ? 0 : -1;
+	talloc_free(merged);
 	return ret;
+#else
+	int fips;
+
+	fips = EVP_default_properties_is_fips_enabled(NULL);
+	if (EVP_set_default_properties(NULL, ours) != 1) {
+		return -1;
+	}
+	if (fips && (EVP_default_properties_enable_fips(NULL, 1) != 1)) {
+		return -1;
+	}
+	return 0;
+#endif
+}
+
+/* Load OpenSSL's PKCS#11 provider, set up to use the module which holds the
+ * key.  The daemon runs us with an almost empty environment, and the
+ * system's OpenSSL configuration normally doesn't load the provider, so we
+ * configure it ourselves, from memory, under a name of our own so that our
+ * settings apply even if the system's configuration loads it too. */
+static int
+load_pkcs11_provider(void *parent, const struct cm_est_key_location *location,
+		     const char **error)
+{
+	CONF *conf = NULL;
+	BIO *bio = NULL;
+	EVP_MD *md;
+	char *text, *module, *init_args = NULL;
+	long line = -1;
+	int ret = -1;
+
+	/* Activate the providers which the system's configuration asks
+	 * for, or the default provider if it asks for none, before we add
+	 * ours, because once ours is active, OpenSSL wouldn't fall back to
+	 * the default provider any more. */
+	md = EVP_MD_fetch(NULL, "SHA2-256", NULL);
+	EVP_MD_free(md);
+
+	module = conf_quote(parent, location->module);
+	if (location->init_args != NULL) {
+		init_args = conf_quote(parent, location->init_args);
+		if (init_args == NULL) {
+			*error = "can't pass the PKCS#11 module's "
+				 "initialization arguments to OpenSSL";
+			return -1;
+		}
+	}
+	text = talloc_asprintf(parent,
+			       "openssl_conf = est_init\n"
+			       "[est_init]\n"
+			       "providers = est_providers\n"
+			       "[est_providers]\n"
+			       EST_PKCS11_PROVIDER " = est_pkcs11\n"
+			       "[est_pkcs11]\n"
+			       "module = pkcs11.so\n"
+			       "pkcs11-module-path = %s\n"
+			       "%s%s%s"
+			       "activate = 1\n",
+			       module ? module : "\"\"",
+			       init_args ? "pkcs11-module-init-args = " : "",
+			       init_args ? init_args : "",
+			       init_args ? "\n" : "");
+	if ((module == NULL) || (text == NULL)) {
+		*error = "out of memory";
+		return -1;
+	}
+	cm_log(2, "Loading OpenSSL's PKCS#11 provider with:\n%s", text);
+	conf = NCONF_new(NULL);
+	bio = BIO_new_mem_buf(text, -1);
+	if ((conf == NULL) || (bio == NULL) ||
+	    (NCONF_load_bio(conf, bio, &line) <= 0) ||
+	    (CONF_modules_load(conf, NULL, 0) <= 0) ||
+	    !OSSL_PROVIDER_available(NULL, EST_PKCS11_PROVIDER)) {
+		cm_log_errors(1, "Error loading the PKCS#11 provider.\n");
+		*error = "error loading OpenSSL's PKCS#11 provider "
+			 "(pkcs11-provider)";
+		goto done;
+	}
+	if (prefer_other_providers() != 0) {
+		cm_log_errors(1, "Error setting default properties.\n");
+		*error = "error setting OpenSSL's default properties";
+		goto done;
+	}
+	ret = 0;
+done:
+	BIO_free(bio);
+	NCONF_free(conf);
+	return ret;
+}
+
+static int
+pin_callback(char *buf, int size, int rwflag, void *data)
+{
+	const char *pin = data;
+	int len;
+
+	(void) rwflag;
+	if (pin == NULL) {
+		return -1;
+	}
+	len = strlen(pin);
+	if (len >= size) {
+		return -1;
+	}
+	memcpy(buf, pin, len + 1);
+	return len;
+}
+
+/* Load the private key named by a PKCS#11 URI through the provider. */
+static EVP_PKEY *
+load_pkcs11_key(const char *uri, const char *pin)
+{
+	OSSL_STORE_CTX *store;
+	OSSL_STORE_INFO *info;
+	UI_METHOD *ui;
+	EVP_PKEY *key = NULL;
+
+	ui = UI_UTIL_wrap_read_pem_callback(pin_callback, 0);
+	if (ui == NULL) {
+		return NULL;
+	}
+	store = OSSL_STORE_open_ex(uri, NULL, NULL, ui, (void *) pin,
+				   NULL, NULL, NULL);
+	if (store != NULL) {
+		OSSL_STORE_expect(store, OSSL_STORE_INFO_PKEY);
+		while ((key == NULL) && !OSSL_STORE_eof(store)) {
+			info = OSSL_STORE_load(store);
+			if (info == NULL) {
+				if (OSSL_STORE_error(store)) {
+					break;
+				}
+				continue;
+			}
+			if (OSSL_STORE_INFO_get_type(info) ==
+			    OSSL_STORE_INFO_PKEY) {
+				key = OSSL_STORE_INFO_get1_PKEY(info);
+			}
+			OSSL_STORE_INFO_free(info);
+		}
+		OSSL_STORE_close(store);
+	}
+	UI_destroy_method(ui);
+	return key;
+}
+#endif
+
+/* Prepare to authenticate with the current certificate and a key which is
+ * stored in an NSS database, or in a token which is accessible through
+ * one: find the key using NSS, and then load it through OpenSSL's PKCS#11
+ * provider, using the module which NSS uses for it. */
+static int
+nss_client_key(void *parent, const char *dbdir, const char *token,
+	       const char *cert_pem, const char *pin, int verbose,
+	       struct est_client_key *client_key, const char **error)
+{
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	struct cm_est_key_location location;
+	BIO *bio;
+
+	memset(client_key, 0, sizeof(*client_key));
+	if (cm_est_n_key_location(parent, dbdir, token, cert_pem, pin,
+				  &location, error) != 0) {
+		return -1;
+	}
+	if (verbose > 0) {
+		fprintf(stderr, "Using key \"%s\" from module \"%s\".\n",
+			location.uri, location.module);
+	}
+	if (load_pkcs11_provider(parent, &location, error) != 0) {
+		return -1;
+	}
+	client_key->key = load_pkcs11_key(location.uri, pin);
+	if (client_key->key == NULL) {
+		cm_log_errors(1, "Error loading the key.\n");
+		*error = talloc_asprintf(parent,
+					 "error loading key \"%s\" through "
+					 "OpenSSL's PKCS#11 provider",
+					 location.uri);
+		return -1;
+	}
+	bio = BIO_new_mem_buf(cert_pem, -1);
+	if (bio != NULL) {
+		client_key->cert = PEM_read_bio_X509(bio, NULL, NULL, NULL);
+		BIO_free(bio);
+	}
+	if (client_key->cert == NULL) {
+		*error = "error parsing the current certificate";
+		return -1;
+	}
+	return 0;
+#else
+	(void) parent;
+	(void) dbdir;
+	(void) token;
+	(void) cert_pem;
+	(void) pin;
+	(void) verbose;
+	memset(client_key, 0, sizeof(*client_key));
+	*error = "using keys in NSS databases requires OpenSSL 3 and its "
+		 "PKCS#11 provider";
+	return -1;
+#endif
+}
+
+/* Hand our certificate and key to OpenSSL when libcurl sets up TLS. */
+static int
+use_client_key(void *ssl_ctx, void *data)
+{
+	struct est_client_key *client_key = data;
+
+	if ((SSL_CTX_use_certificate(ssl_ctx, client_key->cert) != 1) ||
+	    (SSL_CTX_use_PrivateKey(ssl_ctx, client_key->key) != 1)) {
+		cm_log_errors(1, "Error setting the client certificate and "
+			      "key.\n");
+		return -1;
+	}
+	return 0;
 }
 
 /* Make a request using libcurl. */
@@ -394,6 +652,7 @@ curl_request(void *parent, const char *method, const char *url,
 	     const char *cainfo,
 	     const char *username, const char *password,
 	     const char *sslcert_pem, const char *sslkey, const char *sslpin,
+	     struct est_client_key *client_key,
 	     int verbose, struct cm_est_response *response)
 {
 	struct cm_submit_h_context *hctx;
@@ -405,7 +664,7 @@ curl_request(void *parent, const char *method, const char *url,
 				cainfo, NULL, NULL, sslkey, sslpin,
 				cm_submit_h_negotiate_off,
 				cm_submit_h_delegate_off,
-				sslcert_pem ?
+				(sslcert_pem || client_key) ?
 				cm_submit_h_clientauth_on :
 				cm_submit_h_clientauth_off,
 				cm_submit_h_env_modify_off,
@@ -419,6 +678,10 @@ curl_request(void *parent, const char *method, const char *url,
 	}
 	if (sslcert_pem != NULL) {
 		cm_submit_h_set_sslcert_pem(hctx, sslcert_pem);
+	}
+	if (client_key != NULL) {
+		cm_submit_h_set_ssl_ctx_function(hctx, use_client_key,
+						 client_key);
 	}
 	if ((username != NULL) || (password != NULL)) {
 		cm_submit_h_set_basic_auth(hctx, username, password);
@@ -459,6 +722,8 @@ main(int argc, const char **argv)
 	const char *username = NULL, *password_file = NULL;
 	const char *csr, *cert, *cookie, *method, *ctype, *opname;
 	const char *key_storage, *key_location, *key_token, *key_pin_file;
+	const char *error;
+	struct est_client_key client_key = { NULL, NULL };
 	char *password = NULL, *key_pin = NULL, *b64, *p, *full_url;
 	char *pem;
 	struct cm_est_response response;
@@ -680,22 +945,31 @@ again:
 
 	if ((op == op_reenroll) &&
 	    (strcasecmp(key_storage, "NSSDB") == 0)) {
-		cm_est_n_request(ctx, method, full_url, ctype, b64,
-				 cainfo ? cainfo : default_cainfo(ctx),
-				 key_location, key_token,
-				 cert, key_pin, verbose, &response);
+		if (nss_client_key(ctx, key_location, key_token, cert,
+				   key_pin, verbose, &client_key,
+				   &error) == 0) {
+			curl_request(ctx, method, full_url, ctype, b64,
+				     cainfo, NULL, NULL,
+				     NULL, NULL, NULL, &client_key,
+				     verbose, &response);
+		} else {
+			printf(_("Error preparing TLS client authentication: "
+				 "%s.\n"), error);
+			rval = CM_SUBMIT_STATUS_UNREACHABLE;
+			goto done;
+		}
 	} else
 	if (op == op_reenroll) {
 		curl_request(ctx, method, full_url, ctype, b64,
 			     cainfo, NULL, NULL,
-			     cert, key_location, key_pin,
+			     cert, key_location, key_pin, NULL,
 			     verbose, &response);
 	} else {
 		curl_request(ctx, method, full_url, ctype, b64,
 			     cainfo,
 			     (op == op_enroll) ? username : NULL,
 			     (op == op_enroll) ? password : NULL,
-			     NULL, NULL, NULL,
+			     NULL, NULL, NULL, NULL,
 			     verbose, &response);
 	}
 	if (verbose > 0) {
@@ -852,6 +1126,12 @@ again:
 	PKCS7_free(p7);
 
 done:
+	if (client_key.key != NULL) {
+		EVP_PKEY_free(client_key.key);
+	}
+	if (client_key.cert != NULL) {
+		X509_free(client_key.cert);
+	}
 	if (password != NULL) {
 		memset(password, '\0', strlen(password));
 	}

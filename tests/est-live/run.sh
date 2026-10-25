@@ -10,6 +10,7 @@
 #   -R FILE       CA certificate(s) for verifying the server
 #   -1 FILE       credentials ("name:password") for the EC enrollment
 #   -2 FILE       credentials for the RSA enrollment in an NSS database
+#                 (re-enrollment then needs OpenSSL's PKCS#11 provider)
 #   -s NAME       DNS name to request in the first enrollment
 #   -t NAME       DNS name to request in the second enrollment
 #   -k            also try to change keys ("getcert rekey")

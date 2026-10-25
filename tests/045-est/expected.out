@@ -36,13 +36,6 @@ POST simplereenroll 200 certificate ec
 exit: 0
 certificate is for the key
 POST simplereenroll 200 certificate rsa
-[re-enroll, key in an NSS database]
-exit: 0
-certificate is for the key
-POST simplereenroll 200 certificate ec
-[re-enroll, key in an NSS database, untrusted server]
-exit: 3
-Error -8172 connecting to https://localhost/.well-known/est/simplereenroll: TLS handshake failed: SEC_ERROR_UNTRUSTED_ISSUER (Peer's certificate issuer has been marked as not trusted by the user.).
 [enroll, pending]
 exit: 5
 42
@@ -64,12 +57,6 @@ subject=CN=EST Test Root CA
 	status: MONITORING
 certificate is for the key
 POST simplereenroll 200 certificate files
-[getcert request, RSA, NSS database]
-	status: MONITORING
-POST simpleenroll 200 user user
-[getcert resubmit, NSS database]
-	status: MONITORING
-POST simplereenroll 200 certificate nss
 [getcert request, bad password]
 	status: CA_REJECTED
 	ca-error: Server at https://localhost/.well-known/est/simpleenroll rejected our credentials.

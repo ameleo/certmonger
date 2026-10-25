@@ -40,7 +40,10 @@ Once a certificate has been issued, it is renewed using
 client authentication with the current certificate and its private key,
 without a password.  The private key can be stored in a PEM file, in an NSS
 database, or in a token which is accessible through an NSS database, such
-as a hardware token or a TPM.  If the current certificate has expired, or
+as a hardware token or a TPM.  Keys in NSS databases and tokens are used
+through OpenSSL's PKCS#11 provider (\fIpkcs11\-provider\fR), which
+\fIest\-submit\fR loads and configures by itself, using the PKCS#11 module
+which NSS uses for the key.  If the current certificate has expired, or
 if the server refuses to renew it and a password is available, a new
 enrollment is attempted using \fIsimpleenroll\fR.
 
@@ -90,8 +93,7 @@ another.  It is added to the path, as in
 The location of the certificate(s), in PEM form, of the CA which issued
 the EST server's certificate.  Only these certificates are trusted when
 verifying the server's certificate.  If this option is not given, the
-system's trusted CA certificates are used, or, when the key is stored in an
-NSS database, the certificates trusted in that database.
+system's trusted CA certificates are used.
 .TP
 \fB\-U\fR \fINAME\fR, \fB\-\-username\fR=\fINAME\fR
 The user name to use for HTTP Basic authentication when enrolling.

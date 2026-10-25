@@ -27,7 +27,7 @@
 #define EST_CONTENT_TYPE_PKCS10 "application/pkcs10"
 #define EST_CONTENT_TYPE_PKCS7 "application/pkcs7-mime"
 
-/* What we got back from the server, no matter how we talked to it. */
+/* What we got back from the server. */
 struct cm_est_response {
 	int error;			/* nonzero if we couldn't get a reply */
 	const char *error_text;
@@ -38,17 +38,21 @@ struct cm_est_response {
 	size_t length;
 };
 
-/* Send a request to an EST server over a TLS connection which uses a client
- * certificate and private key stored in an NSS database or a token which is
- * accessible through it.  Used when re-enrolling with a key that libcurl
- * can't use. */
-int cm_est_n_request(void *parent,
-		     const char *method, const char *url,
-		     const char *content_type, const char *body,
-		     const char *cainfo,
-		     const char *dbdir, const char *token,
-		     const char *cert_pem, const char *pin,
-		     int verbose,
-		     struct cm_est_response *response);
+/* Where the key which goes with the current certificate is, when it's
+ * stored in an NSS database or in a token which is accessible through one,
+ * in terms which OpenSSL's PKCS#11 provider understands. */
+struct cm_est_key_location {
+	char *module;			/* the PKCS#11 module which holds it */
+	char *init_args;		/* arguments for initializing it */
+	char *uri;			/* a PKCS#11 URI (RFC 7512) for it */
+};
+
+/* Find the key which goes with the current certificate in an NSS database,
+ * or in a token which is accessible through it, and describe its location. */
+int cm_est_n_key_location(void *parent,
+			  const char *dbdir, const char *token,
+			  const char *cert_pem, const char *pin,
+			  struct cm_est_key_location *location,
+			  const char **error);
 
 #endif
