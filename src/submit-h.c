@@ -55,6 +55,8 @@ struct cm_submit_h_context {
 	int result_length;
 	char *sslcert, *sslkey, *sslpass;
 	char *sslcert_pem;
+	int (*ssl_ctx_fn)(void *ssl_ctx, void *data);
+	void *ssl_ctx_data;
 	char *username, *password, **headers, *result_headers;
 	int n_headers;
 	enum cm_submit_h_opt_negotiate negotiate;
@@ -141,6 +143,27 @@ cm_submit_h_add_header(struct cm_submit_h_context *ctx, const char *header)
 	}
 }
 
+void
+cm_submit_h_set_ssl_ctx_function(struct cm_submit_h_context *ctx,
+				 int (*fn)(void *ssl_ctx, void *data),
+				 void *data)
+{
+	ctx->ssl_ctx_fn = fn;
+	ctx->ssl_ctx_data = data;
+}
+
+static CURLcode
+call_ssl_ctx_function(CURL *curl, void *ssl_ctx, void *arg)
+{
+	struct cm_submit_h_context *ctx = arg;
+
+	(void) curl;
+	if ((*ctx->ssl_ctx_fn)(ssl_ctx, ctx->ssl_ctx_data) != 0) {
+		return CURLE_SSL_CERTPROBLEM;
+	}
+	return CURLE_OK;
+}
+
 /* Collect response headers.  If we follow a redirect, we only keep the
  * ones from the last response. */
 static size_t
@@ -191,6 +214,7 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 {
 	struct curl_slist *headers = NULL;
 	char *uri, *header;
+	CURLcode setup = CURLE_OK;
 	int i;
 
 	if (ctx->curl != NULL) {
@@ -301,6 +325,16 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 						 CM_CURLOPT_PKI_PASSWD,
 						 ctx->sslpass);
 			}
+			if (ctx->ssl_ctx_fn != NULL) {
+				setup = curl_easy_setopt(ctx->curl,
+							 CURLOPT_SSL_CTX_FUNCTION,
+							 call_ssl_ctx_function);
+				if (setup == CURLE_OK) {
+					setup = curl_easy_setopt(ctx->curl,
+								 CURLOPT_SSL_CTX_DATA,
+								 ctx);
+				}
+			}
 		} else {
 			curl_easy_setopt(ctx->curl,
 					 CURLOPT_FOLLOWLOCATION,
@@ -364,7 +398,11 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 			talloc_free(ctx->result_headers);
 			ctx->result_headers = NULL;
 		}
-		ctx->ret = curl_easy_perform(ctx->curl);
+		if (setup != CURLE_OK) {
+			ctx->ret = setup;
+		} else {
+			ctx->ret = curl_easy_perform(ctx->curl);
+		}
 		curl_easy_getinfo(ctx->curl, CURLINFO_RESPONSE_CODE,
 				  &ctx->response_code);
 		if (headers != NULL) {

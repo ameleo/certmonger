@@ -63,6 +63,15 @@ void cm_submit_h_set_sslcert_pem(struct cm_submit_h_context *ctx,
 				 const char *pem);
 void cm_submit_h_add_header(struct cm_submit_h_context *ctx,
 			    const char *header);
+/* Have a function called with the TLS library's context (with OpenSSL, an
+ * SSL_CTX *) before connecting, for setting up things which can't be named
+ * using libcurl's options, such as a client key which only exists as an
+ * object.  The function returns 0 on success.  If libcurl doesn't support
+ * this, cm_submit_h_run() fails with CURLE_NOT_BUILT_IN or
+ * CURLE_UNKNOWN_OPTION. */
+void cm_submit_h_set_ssl_ctx_function(struct cm_submit_h_context *ctx,
+				      int (*fn)(void *ssl_ctx, void *data),
+				      void *data);
 void cm_submit_h_run(struct cm_submit_h_context *ctx);
 int cm_submit_h_response_code(struct cm_submit_h_context *ctx);
 int cm_submit_h_result_code(struct cm_submit_h_context *ctx);
