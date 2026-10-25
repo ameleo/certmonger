@@ -54,6 +54,9 @@ struct cm_submit_h_context {
 	char *method, *uri, *args, *accept, *ctype, *referer, *cainfo, *capath, *result;
 	int result_length;
 	char *sslcert, *sslkey, *sslpass;
+	char *sslcert_pem;
+	char *username, *password, **headers, *result_headers;
+	int n_headers;
 	enum cm_submit_h_opt_negotiate negotiate;
 	enum cm_submit_h_opt_delegate negotiate_delegate;
 	enum cm_submit_h_opt_clientauth client_auth;
@@ -104,6 +107,61 @@ cm_submit_h_init(void *parent,
 	return ctx;
 }
 
+/* Use HTTP Basic authentication with these credentials. */
+void
+cm_submit_h_set_basic_auth(struct cm_submit_h_context *ctx,
+			   const char *username, const char *password)
+{
+	ctx->username = username ? talloc_strdup(ctx, username) : NULL;
+	ctx->password = password ? talloc_strdup(ctx, password) : NULL;
+}
+
+/* Use this PEM-formatted client certificate instead of reading one from the
+ * sslcert file. */
+void
+cm_submit_h_set_sslcert_pem(struct cm_submit_h_context *ctx, const char *pem)
+{
+	ctx->sslcert_pem = pem ? talloc_strdup(ctx, pem) : NULL;
+}
+
+/* Add a header ("Name: value") to the ones we'll send. */
+void
+cm_submit_h_add_header(struct cm_submit_h_context *ctx, const char *header)
+{
+	char **headers;
+
+	headers = talloc_realloc(ctx, ctx->headers, char *,
+				 ctx->n_headers + 1);
+	if (headers != NULL) {
+		ctx->headers = headers;
+		ctx->headers[ctx->n_headers] = talloc_strdup(ctx, header);
+		if (ctx->headers[ctx->n_headers] != NULL) {
+			ctx->n_headers++;
+		}
+	}
+}
+
+/* Collect response headers.  If we follow a redirect, we only keep the
+ * ones from the last response. */
+static size_t
+append_header(char *in, size_t size, size_t nmemb,
+	      struct cm_submit_h_context *ctx)
+{
+	size_t n = size * nmemb;
+
+	if ((n >= 5) && (strncmp(in, "HTTP/", 5) == 0)) {
+		talloc_free(ctx->result_headers);
+		ctx->result_headers = NULL;
+	}
+	if (ctx->result_headers == NULL) {
+		ctx->result_headers = talloc_strndup(ctx, in, n);
+	} else {
+		ctx->result_headers = talloc_strndup_append(ctx->result_headers,
+							    in, n);
+	}
+	return n;
+}
+
 static uint
 append_result(char *in, uint size, uint nmemb, struct cm_submit_h_context *ctx)
 {
@@ -133,6 +191,8 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 {
 	struct curl_slist *headers = NULL;
 	char *uri, *header;
+	int i;
+
 	if (ctx->curl != NULL) {
 		curl_easy_cleanup(ctx->curl);
 	}
@@ -206,6 +266,26 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 			curl_easy_setopt(ctx->curl,
 					 CURLOPT_HTTPAUTH,
 					 CURLAUTH_NONE);
+			if (ctx->sslcert_pem != NULL) {
+#if HAVE_DECL_CURLOPT_SSLCERT_BLOB
+				struct curl_blob blob;
+
+				blob.data = ctx->sslcert_pem;
+				blob.len = strlen(ctx->sslcert_pem);
+				blob.flags = CURL_BLOB_COPY;
+				curl_easy_setopt(ctx->curl,
+						 CURLOPT_SSLCERT_BLOB,
+						 &blob);
+				curl_easy_setopt(ctx->curl,
+						 CURLOPT_SSLCERTTYPE,
+						 "PEM");
+#else
+				cm_log(-1,
+				       "warning: libcurl doesn't support "
+				       "reading client certificates from "
+				       "memory, continuing\n");
+#endif
+			} else
 			if (ctx->sslcert != NULL) {
 				curl_easy_setopt(ctx->curl,
 						 CURLOPT_SSLCERT,
@@ -228,6 +308,21 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 			curl_easy_setopt(ctx->curl,
 					 CURLOPT_HTTPAUTH,
 					 CURLAUTH_NONE);
+		}
+		if ((ctx->negotiate != cm_submit_h_negotiate_on) &&
+		    ((ctx->username != NULL) || (ctx->password != NULL))) {
+			curl_easy_setopt(ctx->curl,
+					 CURLOPT_HTTPAUTH,
+					 CURLAUTH_BASIC);
+			curl_easy_setopt(ctx->curl,
+					 CURLOPT_USERNAME,
+					 ctx->username ? ctx->username : "");
+			curl_easy_setopt(ctx->curl,
+					 CURLOPT_PASSWORD,
+					 ctx->password ? ctx->password : "");
+		}
+		for (i = 0; i < ctx->n_headers; i++) {
+			headers = curl_slist_append(headers, ctx->headers[i]);
 		}
 		if (ctx->accept != NULL) {
 			header = talloc_asprintf(ctx, "Accept: %s",
@@ -257,9 +352,17 @@ cm_submit_h_run(struct cm_submit_h_context *ctx)
 		curl_easy_setopt(ctx->curl, CURLOPT_WRITEFUNCTION,
 				 append_result);
 		curl_easy_setopt(ctx->curl, CURLOPT_WRITEDATA, ctx);
+		curl_easy_setopt(ctx->curl, CURLOPT_HEADERFUNCTION,
+				 append_header);
+		curl_easy_setopt(ctx->curl, CURLOPT_HEADERDATA, ctx);
 		if (ctx->result != NULL) {
 			talloc_free(ctx->result);
 			ctx->result = NULL;
+		}
+		ctx->result_length = 0;
+		if (ctx->result_headers != NULL) {
+			talloc_free(ctx->result_headers);
+			ctx->result_headers = NULL;
 		}
 		ctx->ret = curl_easy_perform(ctx->curl);
 		curl_easy_getinfo(ctx->curl, CURLINFO_RESPONSE_CODE,
@@ -306,6 +409,35 @@ cm_submit_h_result_type(struct cm_submit_h_context *ctx)
 		}
 	}
 	return ret;
+}
+
+/* Return the value of the named header from the response, if it had one. */
+const char *
+cm_submit_h_result_header(struct cm_submit_h_context *ctx, const char *name)
+{
+	const char *p, *q, *v;
+	size_t len;
+
+	if ((ctx->result_headers == NULL) || (name == NULL)) {
+		return NULL;
+	}
+	len = strlen(name);
+	p = ctx->result_headers;
+	while (*p != '\0') {
+		q = p + strcspn(p, "\r\n");
+		if ((((size_t) (q - p)) > len) &&
+		    (strncasecmp(p, name, len) == 0) &&
+		    (p[len] == ':')) {
+			v = p + len + 1;
+			v += strspn(v, " \t");
+			while ((q > v) && (strchr(" \t", q[-1]) != NULL)) {
+				q--;
+			}
+			return talloc_strndup(ctx, v, q - v);
+		}
+		p = q + strspn(q, "\r\n");
+	}
+	return NULL;
 }
 
 void

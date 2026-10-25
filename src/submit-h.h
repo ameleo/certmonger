@@ -56,12 +56,21 @@ struct cm_submit_h_context *cm_submit_h_init(void *parent,
 					     enum cm_submit_h_opt_clientauth cli,
 					     enum cm_submit_h_opt_env_modify env,
 					     enum cm_submit_h_opt_curl_verbose verbose);
+void cm_submit_h_set_basic_auth(struct cm_submit_h_context *ctx,
+				const char *username,
+				const char *password);
+void cm_submit_h_set_sslcert_pem(struct cm_submit_h_context *ctx,
+				 const char *pem);
+void cm_submit_h_add_header(struct cm_submit_h_context *ctx,
+			    const char *header);
 void cm_submit_h_run(struct cm_submit_h_context *ctx);
 int cm_submit_h_response_code(struct cm_submit_h_context *ctx);
 int cm_submit_h_result_code(struct cm_submit_h_context *ctx);
 const char *cm_submit_h_result_code_text(struct cm_submit_h_context *ctx);
 const char *cm_submit_h_results(struct cm_submit_h_context *ctx, int *length);
 const char *cm_submit_h_result_type(struct cm_submit_h_context *ctx);
+const char *cm_submit_h_result_header(struct cm_submit_h_context *ctx,
+				      const char *name);
 void cm_submit_h_cleanup(struct cm_submit_h_context *ctx);
 
 #endif
