@@ -151,7 +151,9 @@ CLEANFILES = \
 	043-getcert-mldsa-rekey/actual.out \
 	043-getcert-mldsa-rekey/actual.err \
 	044-getcert-mldsa-resubmit/actual.out \
-	044-getcert-mldsa-resubmit/actual.err
+	044-getcert-mldsa-resubmit/actual.err \
+	045-est/actual.out \
+	045-est/actual.err
 EXTRA_DIST = \
 	run-tests.sh functions certmonger.conf tools/cachain.sh \
 	001-keyiread/run.sh \
@@ -420,7 +422,11 @@ EXTRA_DIST = \
 	043-getcert-mldsa-rekey/expected.out \
 	044-getcert-mldsa-resubmit/prequal.sh \
 	044-getcert-mldsa-resubmit/run.sh \
-	044-getcert-mldsa-resubmit/expected.out
+	044-getcert-mldsa-resubmit/expected.out \
+	045-est/prequal.sh \
+	045-est/run.sh \
+	045-est/estserver.py \
+	045-est/expected.out
 
 subdirs = \
 	001-keyiread \
@@ -496,7 +502,8 @@ subdirs += \
 	001-keyiread-ec \
 	002-keygen-ec \
 	003-csrgen-ec \
-	004-selfsign-ec
+	004-selfsign-ec \
+	045-est
 endif
 
 if HAVE_ML_DSA

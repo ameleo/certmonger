@@ -1,0 +1,77 @@
+[identify]
+exit: 0
+EST
+[fetch roots]
+exit: 0
+roots EST Test Root CA -----BEGIN CERTIFICATE-----
+[fetch roots, untrusted server]
+exit: 3
+[fetch roots, plain http]
+exit: 4
+EST requires an https URL, not "http://localhost/".
+[enroll, EC P-256, no password]
+exit: 2
+Server at https://localhost/.well-known/est/simpleenroll requires authentication, and no password was given.
+authentication required
+POST simpleenroll 401 no credentials
+[enroll, EC P-256, bad password]
+exit: 2
+Server at https://localhost/.well-known/est/simpleenroll rejected our credentials.
+POST simpleenroll 401 bad credentials for user
+[enroll, EC P-256, untrusted server]
+exit: 3
+[enroll, EC P-256]
+exit: 0
+certificate is for the key
+POST simpleenroll 200 user user
+[enroll, RSA, credentials in the CA configuration]
+exit: 0
+certificate is for the key
+POST simpleenroll 200 user user
+[re-enroll, key in a file]
+exit: 0
+certificate is for the key
+POST simplereenroll 200 certificate ec
+[re-enroll, encrypted key in a file]
+exit: 0
+certificate is for the key
+POST simplereenroll 200 certificate rsa
+[re-enroll, key in an NSS database]
+exit: 0
+certificate is for the key
+POST simplereenroll 200 certificate ec
+[re-enroll, key in an NSS database, untrusted server]
+exit: 3
+Error -8172 connecting to https://localhost/.well-known/est/simplereenroll: TLS handshake failed: SEC_ERROR_UNTRUSTED_ISSUER (Peer's certificate issuer has been marked as not trusted by the user.).
+[enroll, pending]
+exit: 5
+42
+simpleenroll
+POST simpleenroll 202 user user
+[poll]
+exit: 0
+certificate is for the key
+POST simpleenroll 200 user user
+[getcert add-est-ca]
+New CA "EST" added.
+ca_external_helper=est-submit -u https://localhost -R $tmpdir/ca/root.crt
+[getcert request, EC P-256, files]
+	status: MONITORING
+certificate is for the key
+POST simpleenroll 200 user user
+subject=CN=EST Test Root CA
+[getcert resubmit, files]
+	status: MONITORING
+certificate is for the key
+POST simplereenroll 200 certificate files
+[getcert request, RSA, NSS database]
+	status: MONITORING
+POST simpleenroll 200 user user
+[getcert resubmit, NSS database]
+	status: MONITORING
+POST simplereenroll 200 certificate nss
+[getcert request, bad password]
+	status: CA_REJECTED
+	ca-error: Server at https://localhost/.well-known/est/simpleenroll rejected our credentials.
+POST simpleenroll 401 bad credentials for user
+OK
