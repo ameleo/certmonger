@@ -80,6 +80,10 @@ BuildRequires:	/usr/bin/which
 #  for dbus tests
 BuildRequires:	python3-dbus
 BuildRequires:	popt-devel
+#  for TPM attestation in the ACME helper
+BuildRequires:	tpm2-tss-devel, sqlite-devel
+#  for ACME tests
+BuildRequires:	python3-cryptography
 
 # we need a running system bus
 Requires:	dbus
