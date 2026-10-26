@@ -300,6 +300,11 @@ acme_submit_SOURCES = acme.c acme-jose.c acme.h \
 acme_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_LIBS) $(JANSSON_LIBS) \
 		    $(TALLOC_LIBS) $(KRB5_LIBS) $(UUID_LIBS) $(LTLIBICONV) \
 		    $(POPT_LIBS)
+if HAVE_TSS2
+acme_submit_CFLAGS += $(TSS2_CFLAGS)
+acme_submit_SOURCES += acme-tpm.c acme-tpm.h acme-tpm-p11.c
+acme_submit_LDADD += $(TSS2_LIBS)
+endif
 local_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS)
 local_submit_SOURCES = local.c env.h store.h store-gen.c submit-o.c submit-o.h \
 		       submit-u.c submit-u.h env-system.c env-shared.c log.c \

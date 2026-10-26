@@ -303,6 +303,23 @@ if ! ${configure_dist_target_only:-false} ; then
 	PKG_CHECK_MODULES(JANSSON,jansson)
 	have_jansson=true
 
+	AC_ARG_WITH([tpm2],
+		[AS_HELP_STRING([--with-tpm2], [support TPM device attestation in the ACME helper (default: when available)])],
+		[with_tpm2=${with_tpm2}],
+		[with_tpm2=check])
+	have_tss2=no
+	if test x"$with_tpm2" != xno ; then
+		PKG_CHECK_MODULES(TSS2,[tss2-esys tss2-mu tss2-rc tss2-tctildr sqlite3],
+				  [have_tss2=yes],[have_tss2=no])
+		if test x"$have_tss2" = xno && test x"$with_tpm2" = xyes ; then
+			AC_MSG_ERROR([tss2-esys, tss2-mu, tss2-rc, tss2-tctildr or sqlite3 not found])
+		fi
+	fi
+	if test x"$have_tss2" = xyes ; then
+		AC_DEFINE(HAVE_TSS2,1,[Define if the ACME helper can use a TPM for device attestation.])
+	fi
+	AM_CONDITIONAL(HAVE_TSS2,test x"$have_tss2" = xyes)
+
 	AC_ARG_WITH([xmlrpc],
 		[AC_HELP_STRING([--with-xmlrpc], [Enable XML-RPC support])],
 		[with_xmlrpc=${with_xmlrpc}],
@@ -959,6 +976,7 @@ else
 	AM_CONDITIONAL(WITH_XMLRPC,false)
 	AM_CONDITIONAL(WITH_LOCAL,false)
 	AM_CONDITIONAL(HAVE_UUID,false)
+	AM_CONDITIONAL(HAVE_TSS2,false)
 fi
 
 AC_CONFIG_COMMANDS(src_introspect_sh,[chmod +x src/introspect.sh])
@@ -1005,4 +1023,12 @@ AM_COND_IF([HAVE_ML_DSA], [
 ], [
     echo "\
         ML-DSA support enabled:   no"
+])
+
+AM_COND_IF([HAVE_TSS2], [
+    echo "\
+        TPM attestation (ACME):   yes"
+], [
+    echo "\
+        TPM attestation (ACME):   no"
 ])
