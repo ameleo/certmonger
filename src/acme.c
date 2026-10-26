@@ -16,7 +16,8 @@
  */
 
 /* An enrollment helper which speaks ACME (RFC 8555), with support for the
- * device-attest-01 challenge (draft-ietf-acme-device-attest) using a TPM. */
+ * dns-01 challenge, using DNS UPDATE, and for the device-attest-01
+ * challenge (draft-ietf-acme-device-attest) using a TPM. */
 
 #include "config.h"
 
@@ -78,6 +79,9 @@
 #define ACME_DEFAULT_POLL_DELAY 60
 /* How many times we retry a request which was refused for its nonce. */
 #define ACME_NONCE_RETRIES 3
+/* How long we wait for the server to check our TXT record, which we remove
+ * once it's done. */
+#define ACME_DNS_VALIDATION_WAIT 120
 
 enum attest_format {
 	attest_none,
@@ -840,11 +844,122 @@ answer_device_attest(struct acme_client *client,
 #endif
 }
 
+/* Wait for the server to finish checking an authorization's challenge.
+ * Returns 0 when the authorization is no longer pending, whatever its
+ * status, or -1 if the server takes too long. */
+static int
+wait_for_validation(struct acme_client *client, const char *url)
+{
+	struct cm_acme_response response;
+	json_t *authz;
+	const char *status;
+	time_t deadline;
+	long delay;
+	int ret;
+
+	deadline = time(NULL) + ACME_DNS_VALIDATION_WAIT;
+	for (;;) {
+		ret = acme_get(client, url, _("the authorization"), &authz,
+			       &response);
+		if (ret != 0) {
+			return ret;
+		}
+		status = json_str(authz, "status");
+		if ((status == NULL) || (strcmp(status, "pending") != 0)) {
+			json_decref(authz);
+			return 0;
+		}
+		json_decref(authz);
+		delay = retry_after(response.retry_after);
+		if ((delay <= 0) || (delay > ACME_MAX_INLINE_DELAY)) {
+			delay = ACME_DEFAULT_DELAY;
+		}
+		if (time(NULL) + delay > deadline) {
+			return -1;
+		}
+		if (client->verbose > 0) {
+			fprintf(stderr, "Waiting %ld seconds.\n", delay);
+		}
+		sleep(delay);
+	}
+}
+
+/* Answer a dns-01 challenge (RFC 8555 8.4): publish the digest of the key
+ * authorization in a TXT record at _acme-challenge.<name>, wait until the
+ * zone's servers serve it, tell the server, wait until it has checked it,
+ * and remove the record, whatever happened. */
+static int
+answer_dns01(struct acme_client *client, struct cm_acme_dns *dns,
+	     const char *authz_url, json_t *identifier,
+	     const char *challenge_url, const char *token)
+{
+	struct cm_acme_response response;
+	struct cm_acme_dns_record *record = NULL;
+	unsigned char md[SHA256_DIGEST_LENGTH];
+	const char *type, *domain;
+	char *key_authorization, *value;
+	int ret, removed;
+
+	type = json_str(identifier, "type");
+	domain = json_str(identifier, "value");
+	if ((type == NULL) || (strcmp(type, "dns") != 0) ||
+	    (domain == NULL)) {
+		printf(_("Can't answer a dns-01 challenge for an identifier "
+			 "which is not a DNS name.\n"));
+		return CM_SUBMIT_STATUS_REJECTED;
+	}
+	/* The authorization for a wildcard name is for the name without
+	 * its "*." label (RFC 8555 7.1.3), but don't count on it. */
+	if (strncmp(domain, "*.", 2) == 0) {
+		domain += 2;
+	}
+	if (!json_safe(token) || !json_safe(challenge_url)) {
+		printf(_("The server sent an unusable challenge.\n"));
+		return CM_SUBMIT_STATUS_UNREACHABLE;
+	}
+	key_authorization = talloc_asprintf(client->ctx, "%s.%s",
+					    token, client->thumbprint);
+	SHA256((const unsigned char *) key_authorization,
+	       strlen(key_authorization), md);
+	value = cm_acme_b64url_encode(client->ctx, md, sizeof(md));
+	if (value == NULL) {
+		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	}
+	ret = cm_acme_dns_publish(dns, domain, value, &record);
+	if (ret != 0) {
+		return ret;
+	}
+	ret = cm_acme_dns_wait(dns, record);
+	if (ret == 0) {
+		ret = acme_post(client, challenge_url, "{}", 0, &response);
+		if ((ret == 0) &&
+		    ((response.error != 0) ||
+		     (response.response_code != 200))) {
+			ret = failure_status(client, &response,
+					     _("the challenge"));
+		}
+	}
+	if (ret == 0) {
+		ret = wait_for_validation(client, authz_url);
+	}
+	removed = cm_acme_dns_remove(dns, record);
+	if (removed != 0) {
+		printf(_("The TXT record for \"%s\" could not be removed.\n"),
+		       domain);
+	}
+	/* The time we spent on the DNS isn't the server's. */
+	if (client->deadline < time(NULL) + ACME_INLINE_WAIT) {
+		client->deadline = time(NULL) + ACME_INLINE_WAIT;
+	}
+	return ret;
+}
+
 /* Get an authorization to valid, answering the challenge which we can
  * answer. */
 static int
 process_authorization(struct acme_client *client, const char *url,
-		      struct acme_attestation *attestation)
+		      struct acme_attestation *attestation,
+		      struct cm_acme_dns *dns)
 {
 	struct cm_acme_response response;
 	json_t *authz, *challenges, *challenge, *chosen, *identifier, *error;
@@ -906,6 +1021,11 @@ process_authorization(struct acme_client *client, const char *url,
 			    (attestation->format != attest_none)) {
 				chosen = challenge;
 			}
+			if ((strcmp(type, ACME_CHALLENGE_DNS) == 0) &&
+			    (dns != NULL) && (chosen == NULL) &&
+			    (attestation->format == attest_none)) {
+				chosen = challenge;
+			}
 		}
 		if (chosen == NULL) {
 			offered = strlen(list) ? list : _("none");
@@ -918,6 +1038,17 @@ process_authorization(struct acme_client *client, const char *url,
 			return CM_SUBMIT_STATUS_REJECTED;
 		}
 		status = json_str(chosen, "status");
+		if (((status == NULL) || (strcmp(status, "pending") == 0)) &&
+		    (strcmp(json_str(chosen, "type"),
+			    ACME_CHALLENGE_DNS) == 0)) {
+			ret = answer_dns01(client, dns, url, identifier,
+					   json_str(chosen, "url"),
+					   json_str(chosen, "token"));
+			if (ret != 0) {
+				json_decref(authz);
+				return ret;
+			}
+		} else
 		if ((status == NULL) || (strcmp(status, "pending") == 0)) {
 			ret = answer_device_attest(client, attestation,
 						   json_str(chosen, "url"),
@@ -1002,7 +1133,7 @@ download_certificate(struct acme_client *client, const char *url,
 static int
 process_order(struct acme_client *client, const char *order_url,
 	      json_t *order, X509_REQ *req, const char *csr_der_b64,
-	      struct acme_attestation *attestation)
+	      struct acme_attestation *attestation, struct cm_acme_dns *dns)
 {
 	struct cm_acme_response response;
 	json_t *authorizations, *error;
@@ -1030,7 +1161,7 @@ process_order(struct acme_client *client, const char *order_url,
 					continue;
 				}
 				ret = process_authorization(client, url,
-							    attestation);
+							    attestation, dns);
 				if (ret == -1) {
 					return come_back_later(&response,
 							       order_url);
@@ -1148,6 +1279,8 @@ main(int argc, const char **argv)
 	const char *eab_kid = NULL, *eab_key_file = NULL, *attest = NULL;
 	const char *permanent_identifier = NULL, *tcti = NULL;
 	const char *csr, *cookie, *key_pin_file, *p;
+	struct cm_acme_dns_params dns_params;
+	struct cm_acme_dns *dns = NULL;
 	struct acme_client client;
 	struct acme_attestation attestation;
 	struct cm_acme_response response;
@@ -1170,11 +1303,18 @@ main(int argc, const char **argv)
 		{"permanent-identifier", 'P', POPT_ARG_STRING, &permanent_identifier, 0, "the device's permanent identifier, to request", "VALUE"},
 		{"state-dir", 's', POPT_ARG_STRING, &state_base, 0, "directory for account and attestation data", "DIRECTORY"},
 		{"tcti", 'T', POPT_ARG_STRING, &tcti, 0, "TPM command transmission interface", "TCTI"},
+		{"tsig-key-file", '\0', POPT_ARG_STRING, &dns_params.tsig_key_file, 0, "answer dns-01 challenges with DNS updates signed with the TSIG key in the file", "FILENAME"},
+		{"dns-update-server", '\0', POPT_ARG_STRING, &dns_params.update_server, 0, "DNS server to send updates to, instead of the zone's primary server", "HOST[:PORT]"},
+		{"dns-zone", '\0', POPT_ARG_STRING, &dns_params.zone, 0, "zone to update, instead of the one found in the DNS", "ZONE"},
+		{"dns-resolver", '\0', POPT_ARG_STRING, &dns_params.resolver, 0, "DNS resolver to use instead of the system's", "ADDRESS[:PORT]"},
+		{"dns-check-servers", '\0', POPT_ARG_STRING, &dns_params.check_servers, 0, "DNS servers to check for the record, instead of the zone's name servers", "HOST[:PORT],..."},
+		{"dns-wait", '\0', POPT_ARG_LONG, &dns_params.wait, 0, "how long to wait for the zone's servers to serve the record", "SECONDS"},
 		{"verbose", 'v', POPT_ARG_NONE, NULL, 'v', NULL, NULL},
 		POPT_AUTOHELP
 		POPT_TABLEEND
 	};
 
+	memset(&dns_params, 0, sizeof(dns_params));
 	util_o_init();
 	ERR_load_crypto_strings();
 
@@ -1242,6 +1382,20 @@ main(int argc, const char **argv)
 		goto done;
 	}
 	client.directory_url = url;
+	if (dns_params.tsig_key_file != NULL) {
+		dns_params.verbose = verbose;
+		dns = cm_acme_dns_new(ctx, &dns_params);
+		if (dns == NULL) {
+			goto done;
+		}
+	} else
+	if ((dns_params.update_server != NULL) || (dns_params.zone != NULL) ||
+	    (dns_params.resolver != NULL) ||
+	    (dns_params.check_servers != NULL)) {
+		printf(_("DNS options were given without a TSIG key "
+			 "(--tsig-key-file).\n"));
+		goto done;
+	}
 	if (attest != NULL) {
 		if (strcasecmp(attest, "tpm") == 0) {
 			attestation.format = attest_tpm;
@@ -1438,7 +1592,7 @@ main(int argc, const char **argv)
 		}
 	}
 	rval = process_order(&client, order_url, order, req, csr_der_b64,
-			     &attestation);
+			     &attestation, dns);
 
 done:
 	if (eab_secret != NULL) {

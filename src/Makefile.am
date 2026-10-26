@@ -293,13 +293,13 @@ est_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_SSL_LIBS) $(TALLOC_LIBS) \
 		   $(KRB5_LIBS) $(UUID_LIBS) $(LTLIBICONV) $(POPT_LIBS)
 acme_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS) $(CURL_CFLAGS) \
 		     $(OPENSSL_CFLAGS) $(JANSSON_CFLAGS)
-acme_submit_SOURCES = acme.c acme-jose.c acme.h \
+acme_submit_SOURCES = acme.c acme-jose.c acme-dns.c acme.h \
 		submit-h.c submit-h.h submit-u.c submit-u.h submit-e.h \
 		util-o.c util-o.h util.c util.h log.c log.h \
 		store.h store-gen.c tm.c tm.h
 acme_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_LIBS) $(JANSSON_LIBS) \
 		    $(TALLOC_LIBS) $(KRB5_LIBS) $(UUID_LIBS) $(LTLIBICONV) \
-		    $(POPT_LIBS)
+		    $(POPT_LIBS) $(ACME_DNS_LIBS)
 if HAVE_TSS2
 acme_submit_CFLAGS += $(TSS2_CFLAGS)
 acme_submit_SOURCES += acme-tpm.c acme-tpm.h acme-tpm-p11.c

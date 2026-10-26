@@ -320,6 +320,33 @@ if ! ${configure_dist_target_only:-false} ; then
 	fi
 	AM_CONDITIONAL(HAVE_TSS2,test x"$have_tss2" = xyes)
 
+	dnl The ACME helper's DNS lookups, for dns-01.
+	AC_MSG_CHECKING([for the resolver functions which the ACME helper uses])
+	savedLIBS="$LIBS"
+	ACME_DNS_LIBS=no
+	for lib in "" -lresolv -lbind ; do
+		LIBS="$lib $savedLIBS"
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+			#include <sys/types.h>
+			#include <netinet/in.h>
+			#include <arpa/nameser.h>
+			#include <resolv.h>
+			]],[[
+			unsigned char msg[512];
+			char name[256];
+			res_init();
+			res_send(msg, sizeof(msg), msg, sizeof(msg));
+			dn_expand(msg, msg + sizeof(msg), msg, name, sizeof(name));
+			]])],
+			[ACME_DNS_LIBS="$lib"; break])
+	done
+	LIBS="$savedLIBS"
+	if test x"$ACME_DNS_LIBS" = xno ; then
+		AC_MSG_ERROR([res_send() and dn_expand() not found])
+	fi
+	AC_MSG_RESULT([yes${ACME_DNS_LIBS:+, using $ACME_DNS_LIBS}])
+	AC_SUBST(ACME_DNS_LIBS)
+
 	AC_ARG_WITH([xmlrpc],
 		[AC_HELP_STRING([--with-xmlrpc], [Enable XML-RPC support])],
 		[with_xmlrpc=${with_xmlrpc}],

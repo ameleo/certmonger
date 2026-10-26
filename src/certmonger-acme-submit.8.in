@@ -11,6 +11,12 @@ acme\-submit \-u DIRECTORY\-URL
 [\-P permanent\-identifier]
 [\-s state\-directory]
 [\-T tcti]
+[\-\-tsig\-key\-file file]
+[\-\-dns\-update\-server host[:port]]
+[\-\-dns\-zone zone]
+[\-\-dns\-resolver address[:port]]
+[\-\-dns\-check\-servers host[:port],...]
+[\-\-dns\-wait seconds]
 [\-v]
 [csr\-filename]
 
@@ -47,14 +53,27 @@ in the signing request's subjectAltName extension, or, if it has none, its
 subject's common name.  Authorizations must then be valid already (as they
 are when the server authorizes the account through its external account
 binding) or be satisfied by a challenge which \fIacme\-submit\fR can
-answer.  Challenges which require serving content (\fIhttp\-01\fR,
-\fIdns\-01\fR, \fItls\-alpn\-01\fR) are not supported.
+answer: \fIdns\-01\fR, if it is given a TSIG key to update the DNS with.  Challenges which require serving content (\fIhttp\-01\fR,
+\fItls\-alpn\-01\fR) are not supported.
 
 With device attestation, the order names the device's
 \fIpermanent\-identifier\fR (draft\-ietf\-acme\-device\-attest), which is the
 value given with the \fB\-P\fR option, or else the common name of the
 signing request's subject, and \fIacme\-submit\fR answers the
 \fIdevice\-attest\-01\fR challenge.
+
+.SS DNS challenges
+To answer a \fIdns\-01\fR challenge (RFC 8555, section 8.4) for a name,
+\fIacme\-submit\fR adds a TXT record holding the base64url\-encoded SHA\-256
+digest of the challenge's key authorization at \fI_acme\-challenge\fR.\fIname\fR
+(without the \fI*.\fR label of a wildcard name), or at the name which a
+CNAME record there points to, using a DNS UPDATE message (RFC 2136) signed
+with TSIG (RFC 8945).  The update goes to the
+primary server of the record's zone, which is found by looking up SOA
+records from the record's name upwards.  \fIacme\-submit\fR then asks each
+of the zone's name servers, directly, until they all serve the record,
+tells the server that the challenge can be checked, waits for it to be,
+and removes the record, whatever the outcome.  No other program is run.
 
 .SS TPM attestation
 With \fB\-a tpm\fR, the private key must have been generated in a TPM
@@ -120,6 +139,32 @@ example \fItabrmd\fR or \fIdevice:/dev/tpmrm0\fR.  The default is the value
 of the \fBTPM2_PKCS11_TCTI\fR environment variable, which \fItpm2\-pkcs11\fR
 also uses, then that of \fBTPM2TOOLS_TCTI\fR, then the TSS's default.
 .TP
+\fB\-\-tsig\-key\-file\fR=\fIFILE\fR
+Answer \fIdns\-01\fR challenges, signing updates with the TSIG key in the
+file, which holds a \fIkey\fR statement in the form which BIND's
+\fItsig\-keygen\fR writes, or a line in the form
+[\fIalgorithm\fR:]\fIname\fR:\fIsecret\fR, which \fInsupdate\fR's \fB\-y\fR
+option takes.  The algorithm is \fIhmac\-sha256\fR (the default),
+\fIhmac\-sha384\fR, \fIhmac\-sha512\fR or \fIhmac\-sha224\fR.
+.TP
+\fB\-\-dns\-update\-server\fR=\fIHOST\fR[:\fIPORT\fR]
+The server to send updates to.  The default is the zone's primary server,
+which its SOA record names.
+.TP
+\fB\-\-dns\-zone\fR=\fIZONE\fR
+The zone to update.  The default is the zone which the record's name is in.
+.TP
+\fB\-\-dns\-resolver\fR=\fIADDRESS\fR[:\fIPORT\fR]
+The DNS resolver to send lookups to.  The default is to use the system's.
+.TP
+\fB\-\-dns\-check\-servers\fR=\fIHOST\fR[:\fIPORT\fR],...
+The servers which must serve the record before the server is told to check
+it.  The default is the zone's name servers.
+.TP
+\fB\-\-dns\-wait\fR=\fISECONDS\fR
+How long to wait for those servers to serve the record.  The default is 120
+seconds.
+.TP
 \fB\-v\fR, \fB\-\-verbose\fR
 Increases the logging level.  Use twice or more for more logging.  This
 option is mainly useful for troubleshooting.  Secrets are never logged.
@@ -140,15 +185,19 @@ if the certificate was issued.  The certificate will be printed in
 PEM\-encoded form.
 .TP
 2
-if the CA rejected the request, an authorization or the attestation.  An
+if the CA rejected the request, an authorization, the attestation, or the
+challenge's TXT record.  An
 error message may be printed.
 .TP
 3
-if the CA was unreachable, or its certificate could not be verified.  An
+if the CA, or a DNS server, was unreachable, or the CA's certificate could
+not be verified, or the zone's servers did not serve the TXT record in
+time.  An
 error message may be printed.
 .TP
 4
-if critical configuration information is missing.  An error message may be
+if critical configuration information is missing, or a DNS server refused
+an update or its signature.  An error message may be
 printed.
 .TP
 5

@@ -44,15 +44,77 @@ Orders and challenges
 ---------------------
 An order names the DNS names and IP addresses (RFC 8738) in the signing
 request's subjectAltName extension, or its subject's common name if it has
-none.  The helper doesn't serve content, so it can't answer the "http-01",
-"dns-01" or "tls-alpn-01" challenges: it is meant for CAs which authorize
-accounts by other means, such as an external account binding, whose
-authorizations are valid as soon as the order is placed, and for device
-attestation.  The helper finalizes the order with the daemon's signing
+none.  The helper doesn't serve content, so it can't answer the "http-01"
+or "tls-alpn-01" challenges.  It answers "dns-01" challenges when it is
+given the means to update the DNS (see below), and "device-attest-01"
+challenges when it attests the device.  Otherwise it is meant for CAs which
+authorize accounts by other means, such as an external account binding,
+whose authorizations are valid as soon as the order is placed.  The helper
+finalizes the order with the daemon's signing
 request, waits for the certificate while the server processes the order,
 following its Retry-After suggestions, and, if that takes longer than a
 minute and a half, hands the order's URL back to the daemon as a cookie, so
 that it checks on the order again later.
+
+DNS challenges
+--------------
+With a TSIG key, the helper answers "dns-01" challenges (RFC
+8555, 8.4) itself, with DNS UPDATE messages (RFC 2136), without running
+any other program:
+
+  getcert add-acme-ca -c exampleACME -u https://acme.example.com/directory \
+    --tsig-key-file /etc/pki/acme-dns.key
+
+For each name of the order, it:
+
+* takes _acme-challenge.<name>, without the "*." label of a wildcard name,
+  and follows the CNAME there if there is one, so that the record can be
+  delegated to a zone which is set aside for the purpose;
+
+* finds the zone of that name, looking up SOA records from the name
+  upwards, or uses the one given with "--dns-zone";
+
+* sends an update which adds a TXT record holding the base64url-encoded
+  SHA-256 digest of the challenge's key authorization, with a TTL of 60
+  seconds, to the zone's primary server (the SOA record's MNAME), or to the
+  one given with "--dns-update-server HOST[:PORT]";
+
+* asks each of the zone's name servers (the NS records' names, each of
+  their addresses), or the servers given with "--dns-check-servers
+  HOST[:PORT],...", directly, until all of them serve the record, for at
+  most two minutes, or the time given with "--dns-wait SECONDS";
+
+* tells the CA that the challenge can be checked, and waits until it has;
+
+* removes the record, whatever happened, with another update.
+
+Lookups go to the system's resolvers, or to the one given with
+"--dns-resolver ADDRESS[:PORT]", which also serves to find the addresses of
+the servers named in the DNS.
+
+Updates are signed using TSIG (RFC 8945) with a shared key, read from the
+file given with "--tsig-key-file", in the form in which BIND's tsig-keygen
+and ddns-confgen write them:
+
+  key "acme" {
+          algorithm hmac-sha256;
+          secret "base64...";
+  };
+
+or, on one line, in the form which nsupdate's -y option takes:
+"[algorithm:]name:secret".  The algorithms are hmac-sha256 (the default),
+hmac-sha384, hmac-sha512 and hmac-sha224.  The file is read each time the
+helper runs, and the key never appears in its output.  With BIND, the key
+can be allowed to change only TXT records of the zone:
+
+  update-policy { grant acme zonesub TXT; };
+
+or only the names which it is meant for.
+
+The helper waits for the CA to check the record for up to two minutes; if
+the CA takes longer, the record is removed nonetheless, and the
+authorization will likely fail, and be tried again with a new order.  If
+the helper is killed while a record is published, the record stays.
 
 Device attestation with a TPM
 -----------------------------

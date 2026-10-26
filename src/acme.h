@@ -27,6 +27,7 @@
 #define ACME_ERROR_PREFIX "urn:ietf:params:acme:error:"
 
 #define ACME_CHALLENGE_DEVICE_ATTEST "device-attest-01"
+#define ACME_CHALLENGE_DNS "dns-01"
 #define ACME_IDENTIFIER_PERMANENT "permanent-identifier"
 
 /* Files in an account's state directory. */
@@ -104,5 +105,32 @@ int cm_acme_tpm_attest(void *parent, struct cm_acme_tpm_params *params,
 		       const char *key_authorization,
 		       unsigned char **att_obj, size_t *att_obj_length,
 		       const char **error);
+
+/* acme-dns.c: publishing dns-01 records (RFC 8555 8.4) with DNS UPDATE
+ * (RFC 2136), signed with TSIG (RFC 8945).  The
+ * functions print what went wrong, and return 0 or one of the
+ * CM_SUBMIT_STATUS_* values. */
+#define CM_ACME_DNS_DEFAULT_TTL 60
+#define CM_ACME_DNS_DEFAULT_WAIT 120
+struct cm_acme_dns_params {
+	const char *update_server;	/* HOST[:PORT], else the SOA's MNAME */
+	const char *zone;		/* else found with SOA queries */
+	const char *resolver;		/* ADDRESS[:PORT], else the system's */
+	const char *check_servers;	/* HOST[:PORT],..., else the NS set */
+	const char *tsig_key_file;
+	long ttl;
+	long wait;			/* for the servers to serve the record */
+	int verbose;
+};
+struct cm_acme_dns;
+struct cm_acme_dns_record;
+struct cm_acme_dns *cm_acme_dns_new(void *parent,
+				    const struct cm_acme_dns_params *params);
+int cm_acme_dns_publish(struct cm_acme_dns *dns, const char *domain,
+			const char *value, struct cm_acme_dns_record **record);
+int cm_acme_dns_wait(struct cm_acme_dns *dns,
+		     struct cm_acme_dns_record *record);
+int cm_acme_dns_remove(struct cm_acme_dns *dns,
+		       struct cm_acme_dns_record *record);
 
 #endif
