@@ -33,6 +33,7 @@ signing to:
   * [Dogtag](http://pki.fedoraproject.org/)
   * SCEP servers
   * EST (RFC 7030) servers
+  * ACME (RFC 8555) servers, with device attestation using a TPM
   * ADCS (either by using SCEP or [CEP/CES](https://github.com/openSUSE/cepces) helper application)
 
 I'd like for it to also be able to submit requests to:

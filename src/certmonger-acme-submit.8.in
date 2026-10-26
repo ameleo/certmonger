@@ -1,0 +1,173 @@
+.TH CERTMONGER 8 "October 26, 2026" "certmonger Manual"
+
+.SH NAME
+acme\-submit
+
+.SH SYNOPSIS
+acme\-submit \-u DIRECTORY\-URL
+[\-R ca\-cert\-file]
+[\-k eab\-kid \-K eab\-key\-file]
+[\-a tpm]
+[\-P permanent\-identifier]
+[\-s state\-directory]
+[\-T tcti]
+[\-v]
+[csr\-filename]
+
+.SH DESCRIPTION
+\fIacme\-submit\fR is the helper which \fIcertmonger\fR can use to
+obtain certificates from servers which implement the Automatic Certificate
+Management Environment (ACME) protocol, as described in RFC 8555.  It is
+not normally run interactively, but it can be for troubleshooting
+purposes.
+
+When called by \fIcertmonger\fR, \fIacme\-submit\fR reads the server's
+directory, creates an account if it does not already have one, places an
+order for the identifiers named in the signing request, answers the
+challenges of the order's authorizations, finalizes the order with the
+signing request which \fIcertmonger\fR generated, and prints the issued
+certificate.  If the server needs more time, \fIacme\-submit\fR tells
+\fIcertmonger\fR to check on the order again later, after the delay
+suggested by the server's \fIRetry\-After\fR header.
+
+The account key is an ECDSA P\-256 key, which \fIacme\-submit\fR generates
+the first time it uses a server, and keeps with the account's URL in a
+directory of its own under the state directory.  The account is reused for
+every later order, including renewals.
+
+If the server requires an external account binding (RFC 8555, section
+7.3.4), the key identifier and the MAC key which the CA issued are taken
+from the challenge password given to \fBgetcert request\fR using its
+\fB\-L\fR or \fB\-l\fR option, in the form \fIKID\fR:\fIKEY\fR, or else from
+the \fB\-k\fR and \fB\-K\fR options.  The MAC key is base64url\-encoded.
+
+.SS Identifiers and challenges
+Without device attestation, the order names the DNS names and IP addresses
+in the signing request's subjectAltName extension, or, if it has none, its
+subject's common name.  Authorizations must then be valid already (as they
+are when the server authorizes the account through its external account
+binding) or be satisfied by a challenge which \fIacme\-submit\fR can
+answer.  Challenges which require serving content (\fIhttp\-01\fR,
+\fIdns\-01\fR, \fItls\-alpn\-01\fR) are not supported.
+
+With device attestation, the order names the device's
+\fIpermanent\-identifier\fR (draft\-ietf\-acme\-device\-attest), which is the
+value given with the \fB\-P\fR option, or else the common name of the
+signing request's subject, and \fIacme\-submit\fR answers the
+\fIdevice\-attest\-01\fR challenge.
+
+.SS TPM attestation
+With \fB\-a tpm\fR, the private key must have been generated in a TPM
+through the \fItpm2\-pkcs11\fR PKCS#11 module, in a token which is
+accessible through an NSS database, using \fBgetcert request \-d
+\fIDATABASE\fR \-t \fITOKEN\fR\fR.  \fIacme\-submit\fR finds the key by the
+public key in the signing request, and answers the challenge with a WebAuthn
+attestation object of the \fItpm\fR format, in which an attestation key
+(AK) of the TPM certifies the key using TPM2_Certify.  The digest of the
+challenge's key authorization is the qualifying data of the certification.
+
+The AK is a restricted signing key which \fIacme\-submit\fR creates under
+the TPM's endorsement key (EK) the first time it is needed, and keeps in the
+account's directory.  Its certificate is obtained from the server's
+attestation key certification service, next to the ACME directory: the
+server encrypts an HMAC key to the EK, which the TPM imports and uses to
+certify the AK, proving that the AK and the EK belong to the same TPM.  The
+EK's certificate is read from the TPM's non\-volatile memory, along with the
+certificates of the CAs which issued it, which the TPM keeps there too, or
+else which the certificate names the location of.  The
+AK's certificate is renewed when less than 30 days of its validity remain.
+
+The key's PIN is the one given to \fBgetcert request\fR using its \fB\-p\fR
+or \fB\-P\fR option, which \fIcertmonger\fR passes to the helper.  The
+endorsement hierarchy must not be protected by a password.
+
+.SH OPTIONS
+.TP
+\fB\-u\fR \fIURL\fR, \fB\-\-directory\fR=\fIURL\fR
+The location of the server's ACME directory, which must be an \fIhttps\fR
+URL.  This option is always required.
+.TP
+\fB\-R\fR \fIFILE\fR, \fB\-\-cacert\fR=\fIFILE\fR
+The location of the certificate(s), in PEM form, of the CA which issued
+the server's certificate.  Only these certificates are trusted when
+verifying the server's certificate.  If this option is not given, the
+system's trusted CA certificates are used.
+.TP
+\fB\-k\fR \fIKID\fR, \fB\-\-eab\-kid\fR=\fIKID\fR
+The key identifier for the external account binding.
+.TP
+\fB\-K\fR \fIFILE\fR, \fB\-\-eab\-key\-file\fR=\fIFILE\fR
+The location of a file containing the MAC key for the external account
+binding, base64url\-encoded, used if no challenge password was given for the
+request.
+.TP
+\fB\-a\fR \fIFORMAT\fR, \fB\-\-attest\fR=\fIFORMAT\fR
+Request the device's permanent identifier, and answer \fIdevice\-attest\-01\fR
+challenges with an attestation of the given format.  The only format which
+is supported is \fItpm\fR.
+.TP
+\fB\-P\fR \fIVALUE\fR, \fB\-\-permanent\-identifier\fR=\fIVALUE\fR
+The permanent identifier of the device, as registered with the CA.
+.TP
+\fB\-s\fR \fIDIRECTORY\fR, \fB\-\-state\-dir\fR=\fIDIRECTORY\fR
+The directory under which account and attestation data are kept.  The
+default is the value of the \fBCERTMONGER_ACME_DIR\fR environment variable,
+or \fI@CM_STORE_ACME_DIRECTORY@\fR.
+.TP
+\fB\-T\fR \fITCTI\fR, \fB\-\-tcti\fR=\fITCTI\fR
+How to reach the TPM, in the form which the TSS's TCTI loader accepts, for
+example \fItabrmd\fR or \fIdevice:/dev/tpmrm0\fR.  The default is the value
+of the \fBTPM2_PKCS11_TCTI\fR environment variable, which \fItpm2\-pkcs11\fR
+also uses, then that of \fBTPM2TOOLS_TCTI\fR, then the TSS's default.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Increases the logging level.  Use twice or more for more logging.  This
+option is mainly useful for troubleshooting.  Secrets are never logged.
+
+.SH FILES
+.TP
+\fI@CM_STORE_ACME_DIRECTORY@/\fBHASH\fP/\fR
+The data kept for one ACME directory URL, where \fBHASH\fR is derived from
+the URL: \fIaccount.key\fR, \fIaccount.url\fR, and, for TPM attestation,
+\fIak.pub\fR, \fIak.priv\fR and \fIak.crt\fR.  The helper holds a lock on
+the \fIlock\fR file there while it runs, so that requests which use the
+same account are handled one at a time.
+
+.SH EXIT STATUS
+.TP
+0
+if the certificate was issued.  The certificate will be printed in
+PEM\-encoded form.
+.TP
+2
+if the CA rejected the request, an authorization or the attestation.  An
+error message may be printed.
+.TP
+3
+if the CA was unreachable, or its certificate could not be verified.  An
+error message may be printed.
+.TP
+4
+if critical configuration information is missing.  An error message may be
+printed.
+.TP
+5
+if the CA is still thinking.  A suggested poll delay (specified in seconds)
+and a cookie (the order's URL) will be printed.
+
+.SH BUGS
+Please file tickets for any that you find at https://codeberg.org/freeipa/certmonger/issues
+
+.SH SEE ALSO
+\fBcertmonger\fR(8)
+\fBgetcert\fR(1)
+\fBgetcert\-add\-acme\-ca\fR(1)
+\fBgetcert\-add\-ca\fR(1)
+\fBgetcert\-list\-cas\fR(1)
+\fBgetcert\-modify\-ca\fR(1)
+\fBgetcert\-remove\-ca\fR(1)
+\fBgetcert\-request\fR(1)
+\fBgetcert\-resubmit\fR(1)
+\fBcertmonger\-est\-submit\fR(8)
+\fBcertmonger\-scep\-submit\fR(8)
+\fBcertmonger_selinux\fR(8)

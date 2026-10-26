@@ -1,0 +1,142 @@
+Certificates can be requested from servers which implement the Automatic
+Certificate Management Environment (ACME) protocol, as described in RFC
+8555, using the bundled "acme-submit" helper.  Like SCEP and EST, there's no
+concept of a "default" ACME server for the system, so a CA configuration
+needs to be added, naming the server's directory:
+
+  getcert add-acme-ca -c exampleACME -u https://acme.example.com/directory \
+    -R /etc/pki/acme-server-ca.pem
+
+The "-R" option names a file containing the certificate of the CA which
+issued the server's TLS certificate.  If it is not given, the system's
+trusted CA certificates are used.
+
+Accounts
+--------
+The helper creates an account with the server the first time it is used,
+with an ECDSA P-256 account key which it generates, and reuses that account
+for every later order, renewals included.  The account key and the
+account's URL are kept in a directory of their own, named after a digest of
+the directory URL, under /var/lib/certmonger/acme (the value of the
+CERTMONGER_ACME_DIR environment variable, or the helper's "-s" option, can
+name another location).  The files are only readable by the daemon's user.
+
+Servers which only issue certificates to clients they know require an
+external account binding (RFC 8555, 7.3.4): the CA hands out a key
+identifier and a MAC key, and the client signs its account key with that MAC
+key when creating its account.  These can be configured for the CA:
+
+  getcert add-acme-ca -c exampleACME -u https://acme.example.com/directory \
+    --eab-kid kid1 --eab-key-file /etc/pki/acme-eab.key
+
+where the file holds the base64url-encoded MAC key, or given with each
+request, as its challenge password in the form "KID:KEY", which is useful
+when the CA issues them for one use only:
+
+  getcert request -c exampleACME -k /etc/pki/tls/private/host.key \
+    -f /etc/pki/tls/certs/host.crt -G EC -g 256 -N CN=host.example.com \
+    -D host.example.com -L kid1:b64urlmackey
+
+Note that the daemon also adds the challenge password to the signing
+request, which the helper sends to the same CA; a key file avoids that.
+
+Orders and challenges
+---------------------
+An order names the DNS names and IP addresses (RFC 8738) in the signing
+request's subjectAltName extension, or its subject's common name if it has
+none.  The helper doesn't serve content, so it can't answer the "http-01",
+"dns-01" or "tls-alpn-01" challenges: it is meant for CAs which authorize
+accounts by other means, such as an external account binding, whose
+authorizations are valid as soon as the order is placed, and for device
+attestation.  The helper finalizes the order with the daemon's signing
+request, waits for the certificate while the server processes the order,
+following its Retry-After suggestions, and, if that takes longer than a
+minute and a half, hands the order's URL back to the daemon as a cookie, so
+that it checks on the order again later.
+
+Device attestation with a TPM
+-----------------------------
+With "--attest tpm", the helper requests the device's permanent identifier
+(draft-ietf-acme-device-attest), which is the value given with
+"--permanent-identifier", or else the common name of the request's subject,
+and answers the server's "device-attest-01" challenge with a WebAuthn
+attestation object of the "tpm" format (WebAuthn, 8.3), which proves that the
+private key of the request was generated in, and never leaves, the device's
+TPM.
+
+The private key must be generated in the TPM by the daemon, through the
+tpm2-pkcs11 PKCS#11 module, in a token which is accessible through an NSS
+database:
+
+  modutil -dbdir /etc/pki/device -add tpm2 \
+    -libfile /usr/lib64/pkcs11/libtpm2_pkcs11.so
+  getcert add-acme-ca -c device -u https://acme.example.com/directory \
+    --attest tpm
+  getcert request -c device -d /etc/pki/device -t certmonger -n device \
+    -p /etc/pki/device/pin -G RSA -g 2048 -N CN=device42 \
+    -L kid1:b64urlmackey
+
+How it works:
+
+* An attestation key (AK), a restricted signing key, is created under the
+  TPM's endorsement key (EK) the first time it is needed, and kept in the
+  account's directory (ak.pub and ak.priv, which only that TPM can load).
+  It is an RSA-2048 key if the TPM has an RSA EK certificate, and a P-256
+  key otherwise.
+
+* The AK is certified by the CA's attestation key certification service,
+  next to the directory (<directory URL without its last segment>/attest/v1/
+  ak/begin and finish).  The helper sends the EK's certificate, read from the
+  TPM's non-volatile memory, the certificates of the CAs which issued it,
+  which the TPM keeps there too (TCG EK Credential Profile 2.0, 2.2.1.5), or
+  else which the certificate's authorityInfoAccess extension names, the AK's
+  public area, and a MAC of it with the external account binding's key.  The server answers with an HMAC key
+  which it encrypted to the EK: only that TPM can import it.  The helper
+  imports it under the EK, certifies the AK with it (TPM2_Certify, with the
+  server's nonce), and the server, having checked the statement, issues a
+  certificate for the AK.  This does not rely on TPM2_ActivateCredential,
+  so that a TPM which can be made to certify an external object (TCG VRT0010)
+  cannot fool it.  The AK's certificate is kept (ak.crt), and renewed when
+  less than 30 days of its validity remain.
+
+* For each order, the helper finds the request's key in the token, loads it
+  in the TPM, and has the AK certify it (TPM2_Certify), with the SHA-256
+  digest of the challenge's key authorization (RFC 8555, 8.1) as qualifying
+  data: draft-ietf-acme-device-attest uses the key authorization as
+  "attToBeSigned", and the attestation object has no "authData".  The
+  attestation statement carries the AK's certificate and chain ("x5c"), the
+  statement ("certInfo"), its signature ("sig"), and the key's public area
+  ("pubArea").  WebAuthn's text describes "sig" as a TPMT_SIGNATURE, but
+  authenticators and verifiers use the signature which it holds (the RSASSA
+  signature, or the DER encoding of an ECDSA signature), and so does the
+  helper.
+
+Getting hold of the key in the TPM: PKCS#11 has no notion of TPM2_Certify,
+which needs the authorization value of the key which is certified, and
+tpm2-pkcs11 gives each key a random one, encrypted with a token-wide
+wrapping key which is sealed in the TPM under the user PIN.  The helper
+reads the key's TPM blobs and encrypted authorization value through
+PKCS#11, where tpm2-pkcs11 exposes them as vendor attributes, and the
+token's primary key and sealed wrapping key from the module's store (an
+SQLite database), and then does what the module does when the user logs
+in.  This ties the helper to that store's format.  The alternative, having
+the helper generate the key itself and add it to the token, would tie it to
+the same format for writing, and would take key generation away from the
+daemon.  Tokens whose primary key is not persistent (tpm2_ptool init
+--transient-parent) are not supported.
+
+The TPM is reached using the TSS's TCTI loader: by default the TCTI named
+in the TPM2_PKCS11_TCTI environment variable, which tpm2-pkcs11 also uses,
+then TPM2TOOLS_TCTI, then the TSS's default (the resource manager, or
+/dev/tpmrm0).  The endorsement hierarchy must not have a password.  The key's
+authorization value is only ever used through HMAC sessions, and the
+wrapping key is unsealed through a session salted with the token's primary
+key, so that neither goes to the TPM in the clear.
+
+TPMs which don't keep their EK certificate in their non-volatile memory,
+such as some firmware TPMs whose manufacturer serves it online, are not
+supported yet.
+
+Building the helper with TPM support needs tpm2-tss (libtss2-esys,
+libtss2-mu, libtss2-rc and libtss2-tctildr) and SQLite; configure's
+--with-tpm2 option makes them required, --without-tpm2 leaves them out.

@@ -104,6 +104,7 @@ Please file tickets for any that you find at https://fedorahosted.org/certmonger
 \fBgetcert\-start\-tracking\fR(1)
 \fBgetcert\-status\fR(1)
 \fBgetcert\-stop\-tracking\fR(1)
+\fBcertmonger\-acme\-submit\fR(8)
 \fBcertmonger\-certmaster\-submit\fR(8)
 \fBcertmonger\-dogtag\-ipa\-renew\-agent\-submit\fR(8)
 \fBcertmonger\-dogtag\-submit\fR(8)
