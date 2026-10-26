@@ -1,0 +1,59 @@
+[getcert add-acme-ca]
+New CA "TPM" added.
+ca_external_helper=acme-submit -u https://localhost/directory -R $tmpdir/ca/root.crt -a tpm
+[getcert request, RSA key generated in the TPM]
+	status: MONITORING
+key is in the TPM token
+certificate is attested
+subject=CN=device42
+POST /new-account (eab)
+POST /new-order
+  identifiers: permanent-identifier:device42
+POST /attest/v1/ak/begin
+POST /attest/v1/ak/finish
+  attestation key certified
+POST /chall/2
+  attestation verified
+account.key
+account.url
+ak.crt
+ak.priv
+ak.pub
+directory
+lock
+TPM objects left: 0
+[getcert resubmit: the attestation key's certificate is reused]
+	status: MONITORING
+certificate is attested
+same key
+POST /new-order
+  identifiers: permanent-identifier:device42
+POST /chall/3
+  attestation verified
+TPM objects left: 0
+[getcert rekey: a new key in the TPM]
+	status: MONITORING
+certificate is attested
+key is in the TPM token
+POST /new-order
+  identifiers: permanent-identifier:device42
+POST /chall/4
+  attestation verified
+TPM objects left: 0
+[the attestation key's certificate is renewed when it expires soon]
+	status: MONITORING
+POST /attest/v1/ak/begin
+POST /attest/v1/ak/finish
+  attestation key certified
+POST /chall/2
+  attestation verified
+	status: MONITORING
+POST /attest/v1/ak/begin
+POST /attest/v1/ak/finish
+  attestation key certified
+POST /chall/3
+  attestation verified
+[the server doesn't know the device]
+	status: MONITORING
+	ca-error: Server refused the order (400, rejectedIdentifier): unknown device
+OK

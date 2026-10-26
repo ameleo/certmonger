@@ -155,7 +155,11 @@ CLEANFILES = \
 	045-est/actual.out \
 	045-est/actual.err \
 	046-est-nss/actual.out \
-	046-est-nss/actual.err
+	046-est-nss/actual.err \
+	047-acme/actual.out \
+	047-acme/actual.err \
+	048-acme-tpm/actual.out \
+	048-acme-tpm/actual.err
 EXTRA_DIST = \
 	run-tests.sh functions certmonger.conf tools/cachain.sh \
 	001-keyiread/run.sh \
@@ -431,7 +435,14 @@ EXTRA_DIST = \
 	045-est/expected.out \
 	046-est-nss/prequal.sh \
 	046-est-nss/run.sh \
-	046-est-nss/expected.out
+	046-est-nss/expected.out \
+	047-acme/prequal.sh \
+	047-acme/run.sh \
+	047-acme/acmeserver.py \
+	047-acme/expected.out \
+	048-acme-tpm/prequal.sh \
+	048-acme-tpm/run.sh \
+	048-acme-tpm/expected.out
 
 subdirs = \
 	001-keyiread \
@@ -509,7 +520,9 @@ subdirs += \
 	003-csrgen-ec \
 	004-selfsign-ec \
 	045-est \
-	046-est-nss
+	046-est-nss \
+	047-acme \
+	048-acme-tpm
 endif
 
 if HAVE_ML_DSA

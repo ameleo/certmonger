@@ -1,0 +1,90 @@
+[identify]
+exit: 0
+ACME
+[plain http]
+exit: 4
+ACME requires an https URL, not "http://localhost/directory".
+[untrusted server]
+exit: 3
+[no external account binding]
+exit: 4
+The server requires an external account binding, and none was given.
+[bad external account key]
+exit: 2
+Server refused the account creation (401, unauthorized): bad EAB MAC
+GET /directory
+POST /new-account (eab)
+  -> 401 unauthorized: bad EAB MAC
+[enroll, EC P-256, external account in the challenge password]
+exit: 0
+certificate is for the key
+GET /directory
+POST /new-account (eab)
+POST /new-order
+  identifiers: dns:ec.example.com, dns:www.example.com, ip:192.0.2.1
+POST /order/2/finalize
+POST /cert/2 (POST-as-GET)
+account.key
+account.url
+directory
+lock
+600
+[enroll, RSA, existing account]
+exit: 0
+certificate is for the key
+GET /directory
+POST /new-order
+  identifiers: dns:rsa.example.com
+POST /order/3/finalize
+POST /cert/3 (POST-as-GET)
+[enroll, external account key in a file]
+exit: 0
+certificate is for the key
+GET /directory
+POST /new-account (eab)
+0
+[enroll, nonce refused once]
+exit: 0
+certificate is for the key
+GET /directory
+  -> 400 badNonce: try again
+POST /new-account (eab)
+[enroll, the server takes a few seconds]
+exit: 0
+certificate is for the key
+POST /new-order
+POST /order/2/finalize
+POST /order/2 (POST-as-GET)
+POST /order/2 (POST-as-GET)
+[enroll, the server takes longer]
+exit: 5
+30
+https://localhost/order/2
+POST /new-order
+POST /order/2/finalize
+[poll]
+exit: 0
+certificate is for the key
+GET /directory
+POST /order/2 (POST-as-GET)
+POST /cert/2 (POST-as-GET)
+[challenges which we can't answer]
+exit: 2
+No challenge we can answer for ec.example.com (offered: http-01).
+exit: 2
+No challenge we can answer for device42 (offered: device-attest-01).
+  identifiers: permanent-identifier:device42
+[getcert add-acme-ca]
+New CA "ACME" added.
+ca_external_helper=acme-submit -u https://localhost/directory -R $tmpdir/ca/root.crt -k kid1 -K $tmpdir/files/eab.key
+[getcert request, EC P-256, files]
+	status: MONITORING
+certificate is for the key
+    DNS:files.example.com
+POST /new-account (eab)
+  identifiers: dns:files.example.com
+[getcert resubmit, files]
+	status: MONITORING
+certificate is for the key
+  identifiers: dns:files.example.com
+OK
