@@ -1,0 +1,94 @@
+.TH CERTMONGER 1 "October 26, 2026" "certmonger Manual"
+
+.SH NAME
+getcert
+
+.SH SYNOPSIS
+getcert add\-acme\-ca [options]
+
+.SH DESCRIPTION
+Adds a CA configuration to \fIcertmonger\fR, which can subsequently be used to
+obtain certificates using the Automatic Certificate Management Environment
+(ACME) protocol, as described in RFC 8555.  The configuration will use the
+bundled \fIacme\-submit\fR helper.  The \fIadd\-acme\-ca\fR command is more
+or less a wrapper for the \fIadd\-ca\fR command.
+
+An account is created with the server the first time a certificate is
+requested, and reused afterwards.  If the server requires an external
+account binding, the key identifier and MAC key which the CA issued can be
+given here, or, for each request, as the challenge password given to
+\fBgetcert request\fR using its \fB\-L\fR or \fB\-l\fR option, in the form
+\fIKID\fR:\fIKEY\fR.
+
+With \fB\-\-attest tpm\fR, requests are for the device's permanent identifier,
+and the server's \fIdevice\-attest\-01\fR challenges are answered with an
+attestation, made by the TPM, of the key in the request, which must have
+been generated in the TPM through the \fItpm2\-pkcs11\fR module.  See
+\fBcertmonger\-acme\-submit\fR(8).
+
+.SH OPTIONS
+.TP
+All user\-provided certificate files must be in PEM format.
+.TP
+\fB\-c\fR \fINAME\fR, \fB\-\-ca\fR=\fINAME\fR
+The nickname to give to this CA configuration.  This same value can later be
+passed in to \fIgetcert\fR's \fIrequest\fR, \fIresubmit\fR, and
+\fIstart\-tracking\fR commands using the \fB\-c\fR flag.
+.TP
+\fB\-u\fR \fIURL\fR, \fB\-\-directory\fR=\fIURL\fR
+The location of the server's ACME directory, which must be an \fIhttps\fR
+URL.  This option must be specified.
+.TP
+\fB\-R\fR \fIFILE\fR, \fB\-\-ca\-cert\fR=\fIFILE\fR
+The location of a PEM\-formatted copy of the certificate(s) of the CA which
+issued the server's certificate.  If this option is not given, the system's
+trusted CA certificates are used to verify the server's certificate.
+.TP
+\fB\-\-eab\-kid\fR=\fIKID\fR
+The key identifier for the external account binding.
+.TP
+\fB\-\-eab\-key\-file\fR=\fIFILE\fR
+The location of a file containing the base64url\-encoded MAC key for the
+external account binding.  The file is read by the helper each time it is
+needed, and should only be readable by the user which runs \fIcertmonger\fR.
+.TP
+\fB\-\-attest\fR=\fIFORMAT\fR
+Answer \fIdevice\-attest\-01\fR challenges with an attestation of the given
+format.  The only format which is supported is \fItpm\fR.
+.TP
+\fB\-\-permanent\-identifier\fR=\fIVALUE\fR
+The permanent identifier of the device, as registered with the CA.  If this
+option is not given, the common name of the request's subject is used.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Be verbose about errors.  Normally, the details of an error received from
+the daemon will be suppressed if the client can make a diagnostic suggestion.
+
+.SH EXAMPLES
+.TP
+getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-eab\-kid kid1 \-\-eab\-key\-file /etc/pki/acme\-eab.key
+.TP
+getcert request \-c ACME \-k /etc/pki/tls/private/host.key \-f /etc/pki/tls/certs/host.crt \-G EC \-g 256 \-N CN=host.example.com \-D host.example.com
+.TP
+getcert add\-acme\-ca \-c DEVICE \-u https://acme.example.com/directory \-\-attest tpm
+.TP
+getcert request \-c DEVICE \-d /etc/pki/device \-t tpm \-n device \-p /etc/pki/device/pin \-G RSA \-g 2048 \-N CN=device42 \-L kid1:b64urlkey
+
+.SH BUGS
+Please file tickets for any that you find at https://codeberg.org/freeipa/certmonger/issues
+
+.SH SEE ALSO
+\fBcertmonger\fR(8)
+\fBgetcert\fR(1)
+\fBgetcert\-add\-ca\fR(1)
+\fBgetcert\-add\-est\-ca\fR(1)
+\fBgetcert\-add\-scep\-ca\fR(1)
+\fBgetcert\-list\-cas\fR(1)
+\fBgetcert\-list\fR(1)
+\fBgetcert\-modify\-ca\fR(1)
+\fBgetcert\-remove\-ca\fR(1)
+\fBgetcert\-request\fR(1)
+\fBgetcert\-resubmit\fR(1)
+\fBcertmonger\-acme\-submit\fR(8)
+\fBcertmonger\-est\-submit\fR(8)
+\fBcertmonger_selinux\fR(8)

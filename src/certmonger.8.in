@@ -89,6 +89,7 @@ Please file tickets for any that you find at https://fedorahosted.org/certmonger
 
 .SH SEE ALSO
 \fBgetcert\fR(1)
+\fBgetcert\-add\-acme\-ca\fR(1)
 \fBgetcert\-add\-ca\fR(1)
 \fBgetcert\-add\-scep\-ca\fR(1)
 \fBgetcert\-add\-est\-ca\fR(1)

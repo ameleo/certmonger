@@ -179,13 +179,17 @@ as its value, to the signing request.
 Add an optional ChallengePassword value, read from the file, to the signing
 request.  A ChallengePassword is often required when the CA is accessed using
 SCEP.  When the CA is accessed using EST, the value is also used as the
-password for HTTP Basic authentication when enrolling.
+password for HTTP Basic authentication when enrolling.  When the CA is
+accessed using ACME, a value of the form \fIKID\fR:\fIKEY\fR provides the
+credentials for the external account binding.
 .TP
 \fB\-L\fR \fIPIN\fR, \fB\-\-challenge\-password\fR=\fIPIN\fR
 Add the argument value to the signing request as a ChallengePassword attribute.
 A ChallengePassword is often required when the CA is accessed using SCEP.
 When the CA is accessed using EST, the value is also used as the password for
-HTTP Basic authentication when enrolling.
+HTTP Basic authentication when enrolling.  When the CA is accessed using ACME,
+a value of the form \fIKID\fR:\fIKEY\fR provides the credentials for the
+external account binding.
 
 .SH OTHER OPTIONS
 .TP
