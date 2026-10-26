@@ -25,13 +25,20 @@
 TSS2_RC cm_acme_tpm_start_session(ESYS_CONTEXT *esys, ESYS_TR salt_key,
 				  ESYS_TR *session);
 
-/* Load the key which the daemon generated through the tpm2-pkcs11 module,
- * whose public key is the one in the request, with its authorization
- * value set. */
-int cm_acme_tpm_p11_load(void *parent, ESYS_CONTEXT *esys,
-			 const char *dbdir, const char *token,
-			 const char *pin, const char *csr,
-			 ESYS_TR *key, TPM2B_PUBLIC *public,
-			 const char **error);
+/* Certify the key which the daemon generated through the tpm2-pkcs11
+ * module, whose public key is the one in the request, with the signing key
+ * whose saved context (a marshalled TPMS_CONTEXT) is given, through the
+ * module's CKM_TPM2_CERTIFY mechanism.  Returns 0, -1 on error, or
+ * CM_ACME_TPM_P11_NO_CERTIFY if the token lacks the mechanism. */
+#define CM_ACME_TPM_P11_NO_CERTIFY 1
+int cm_acme_tpm_p11_certify(void *parent, const char *dbdir,
+			    const char *token, const char *pin,
+			    const char *csr,
+			    const unsigned char *signer_context,
+			    size_t signer_context_length,
+			    const unsigned char *qualifying,
+			    size_t qualifying_length,
+			    TPM2B_PUBLIC *public, TPM2B_ATTEST *certify_info,
+			    TPMT_SIGNATURE *signature, const char **error);
 
 #endif

@@ -81,7 +81,7 @@ BuildRequires:	/usr/bin/which
 BuildRequires:	python3-dbus
 BuildRequires:	popt-devel
 #  for TPM attestation in the ACME helper
-BuildRequires:	tpm2-tss-devel, sqlite-devel
+BuildRequires:	tpm2-tss-devel
 #  for ACME tests
 BuildRequires:	python3-cryptography
 

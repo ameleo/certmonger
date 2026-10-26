@@ -99,10 +99,10 @@ How it works:
   cannot fool it.  The AK's certificate is kept (ak.crt), and renewed when
   less than 30 days of its validity remain.
 
-* For each order, the helper finds the request's key in the token, loads it
-  in the TPM, and has the AK certify it (TPM2_Certify), with the SHA-256
-  digest of the challenge's key authorization (RFC 8555, 8.1) as qualifying
-  data: draft-ietf-acme-device-attest uses the key authorization as
+* For each order, the helper has the AK certify the request's key
+  (TPM2_Certify), with the SHA-256 digest of the challenge's key
+  authorization (RFC 8555, 8.1) as qualifying data:
+  draft-ietf-acme-device-attest uses the key authorization as
   "attToBeSigned", and the attestation object has no "authData".  The
   attestation statement carries the AK's certificate and chain ("x5c"), the
   statement ("certInfo"), its signature ("sig"), and the key's public area
@@ -111,32 +111,26 @@ How it works:
   them) send the bare signature which it holds instead; a server which
   accepts only that form will refuse the helper's attestation.
 
-Getting hold of the key in the TPM: PKCS#11 has no notion of TPM2_Certify,
-which needs the authorization value of the key which is certified, and
-tpm2-pkcs11 gives each key a random one, encrypted with a token-wide
-wrapping key which is sealed in the TPM under the user PIN.  The helper
-reads the key's TPM blobs and encrypted authorization value through
-PKCS#11, where tpm2-pkcs11 exposes them as vendor attributes, and the
-token's primary key and sealed wrapping key from the module's store (an
-SQLite database), and then does what the module does when the user logs
-in.  This ties the helper to that store's format.  The alternative, having
-the helper generate the key itself and add it to the token, would tie it to
-the same format for writing, and would take key generation away from the
-daemon.  Tokens whose primary key is not persistent (tpm2_ptool init
---transient-parent) are not supported.
+Certifying the key in the TPM: TPM2_Certify needs the authorization value of
+the key which is certified, which tpm2-pkcs11 keeps to itself, so the
+module performs it, through its vendor mechanism CKM_TPM2_CERTIFY: the
+helper saves the AK's context (TPM2_ContextSave) and hands it to the module
+as the signing key of a "signature" by the request's key, and the module
+loads it in its own connection to the TPM, certifies the key, and flushes
+it.  Keys in a module which lacks the mechanism can't be attested: the
+helper then fails with an error which says so.
 
 The TPM is reached using the TSS's TCTI loader: by default the TCTI named
 in the TPM2_PKCS11_TCTI environment variable, which tpm2-pkcs11 also uses,
 then TPM2TOOLS_TCTI, then the TSS's default (the resource manager, or
-/dev/tpmrm0).  The endorsement hierarchy must not have a password.  The key's
-authorization value is only ever used through HMAC sessions, and the
-wrapping key is unsealed through a session salted with the token's primary
-key, so that neither goes to the TPM in the clear.
+/dev/tpmrm0).  The endorsement hierarchy must not have a password.  The
+module uses the key's authorization value through a session salted with the
+token's primary key, so that it doesn't go to the TPM in the clear.
 
 TPMs which don't keep their EK certificate in their non-volatile memory,
 such as some firmware TPMs whose manufacturer serves it online, are not
 supported yet.
 
 Building the helper with TPM support needs tpm2-tss (libtss2-esys,
-libtss2-mu, libtss2-rc and libtss2-tctildr) and SQLite; configure's
+libtss2-mu, libtss2-rc and libtss2-tctildr); configure's
 --with-tpm2 option makes them required, --without-tpm2 leaves them out.

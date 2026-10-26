@@ -107,7 +107,7 @@ struct tpm_state {
 	enum ek_type type;
 	unsigned char *ek_cert;
 	size_t ek_cert_length;
-	ESYS_TR ek, ak, device;
+	ESYS_TR ek, ak;
 	TPM2B_PUBLIC ak_public;
 	X509 *ak_cert;
 	STACK_OF(X509) *ak_chain;
@@ -1138,64 +1138,88 @@ done:
 	return ret;
 }
 
+/* Certify the device key with the AK, through the module which holds the
+ * device key. */
+static int
+certify_device_key(struct tpm_state *state, const unsigned char *qualifying,
+		   size_t qualifying_length, TPM2B_PUBLIC *device_public,
+		   TPM2B_ATTEST *certify_info, TPMT_SIGNATURE *signature)
+{
+	struct cm_acme_tpm_params *params = state->params;
+	TPMS_CONTEXT *context = NULL;
+	unsigned char *context_buf;
+	size_t context_length = 0;
+	TSS2_RC rc;
+
+	/* The module loads the AK in its own connection to the TPM. */
+	rc = Esys_ContextSave(state->esys, state->ak, &context);
+	if (rc != TSS2_RC_SUCCESS) {
+		set_error(state, "error saving the attestation key's context",
+			  rc);
+		return -1;
+	}
+	context_buf = talloc_size(state->ctx, sizeof(*context));
+	if ((context_buf == NULL) ||
+	    (Tss2_MU_TPMS_CONTEXT_Marshal(context, context_buf,
+					  sizeof(*context),
+					  &context_length) !=
+	     TSS2_RC_SUCCESS)) {
+		Esys_Free(context);
+		state->error = "error encoding the attestation key's context";
+		return -1;
+	}
+	Esys_Free(context);
+	if (cm_acme_tpm_p11_certify(state->ctx, params->key_location,
+				    params->key_token, params->key_pin,
+				    params->csr, context_buf, context_length,
+				    qualifying, qualifying_length,
+				    device_public, certify_info, signature,
+				    &state->error) != 0) {
+		return -1;
+	}
+	return 0;
+}
+
 /* Certify the device key with the AK, binding the statement to the key
  * authorization, and build the attestation object. */
 static int
-attest_device_key(struct tpm_state *state, const TPM2B_PUBLIC *device_public,
-		  const char *key_authorization,
+attest_device_key(struct tpm_state *state, const char *key_authorization,
 		  unsigned char **att_obj, size_t *att_obj_length)
 {
-	TPM2B_DATA qualifying;
-	TPMT_SIG_SCHEME scheme;
-	TPM2B_ATTEST *certify_info = NULL;
-	TPMT_SIGNATURE *signature = NULL;
-	ESYS_TR session = ESYS_TR_NONE;
+	unsigned char qualifying[SHA256_DIGEST_LENGTH];
+	TPM2B_PUBLIC device_public;
+	TPM2B_ATTEST certify_info;
+	TPMT_SIGNATURE signature;
 	unsigned char *sig_buf, *pub_buf, *der;
 	size_t sig_length = 0, pub_length = 0;
 	struct cbor c;
-	int i, n, der_length, ret = -1;
-	TSS2_RC rc;
+	int i, n, der_length;
 
 	/* The key authorization is attToBeSigned, and the TPM signs its
 	 * digest, with the hash algorithm of the AK's signature algorithm,
 	 * as extraData (draft-ietf-acme-device-attest 5, WebAuthn 8.3).  Both
 	 * kinds of AK which we create use SHA-256. */
-	memset(&qualifying, 0, sizeof(qualifying));
 	SHA256((const unsigned char *) key_authorization,
-	       strlen(key_authorization), qualifying.buffer);
-	qualifying.size = SHA256_DIGEST_LENGTH;
-
-	/* The device key's authorization value is used through an HMAC
-	 * session, so that it never goes to the TPM in the clear. */
-	rc = cm_acme_tpm_start_session(state->esys, ESYS_TR_NONE, &session);
-	if (rc != TSS2_RC_SUCCESS) {
-		set_error(state, "error starting a session", rc);
+	       strlen(key_authorization), qualifying);
+	if (certify_device_key(state, qualifying, sizeof(qualifying),
+			       &device_public, &certify_info,
+			       &signature) != 0) {
 		return -1;
-	}
-	memset(&scheme, 0, sizeof(scheme));
-	scheme.scheme = TPM2_ALG_NULL;
-	rc = Esys_Certify(state->esys, state->device, state->ak, session,
-			  ESYS_TR_PASSWORD, ESYS_TR_NONE, &qualifying, &scheme,
-			  &certify_info, &signature);
-	Esys_FlushContext(state->esys, session);
-	if (rc != TSS2_RC_SUCCESS) {
-		set_error(state, "error certifying the key", rc);
-		goto done;
 	}
 
 	/* sig is the TPMT_SIGNATURE which the TPM returned, and pubArea a
 	 * TPMT_PUBLIC (WebAuthn 8.3). */
-	sig_buf = talloc_size(state->ctx, sizeof(*signature));
-	pub_buf = talloc_size(state->ctx, sizeof(device_public->publicArea));
+	sig_buf = talloc_size(state->ctx, sizeof(signature));
+	pub_buf = talloc_size(state->ctx, sizeof(device_public.publicArea));
 	if ((sig_buf == NULL) || (pub_buf == NULL) ||
-	    (Tss2_MU_TPMT_SIGNATURE_Marshal(signature, sig_buf,
-					    sizeof(*signature),
+	    (Tss2_MU_TPMT_SIGNATURE_Marshal(&signature, sig_buf,
+					    sizeof(signature),
 					    &sig_length) != TSS2_RC_SUCCESS) ||
-	    (Tss2_MU_TPMT_PUBLIC_Marshal(&device_public->publicArea, pub_buf,
-					 sizeof(device_public->publicArea),
+	    (Tss2_MU_TPMT_PUBLIC_Marshal(&device_public.publicArea, pub_buf,
+					 sizeof(device_public.publicArea),
 					 &pub_length) != TSS2_RC_SUCCESS)) {
 		state->error = "error encoding the attestation";
-		goto done;
+		return -1;
 	}
 
 	/* The attestation object, without authData, which has no meaning
@@ -1230,20 +1254,16 @@ attest_device_key(struct tpm_state *state, const TPM2B_PUBLIC *device_public,
 	cbor_text(&c, "sig");
 	cbor_bytes(&c, sig_buf, sig_length);
 	cbor_text(&c, "certInfo");
-	cbor_bytes(&c, certify_info->attestationData, certify_info->size);
+	cbor_bytes(&c, certify_info.attestationData, certify_info.size);
 	cbor_text(&c, "pubArea");
 	cbor_bytes(&c, pub_buf, pub_length);
 	if (c.failed) {
 		state->error = "error encoding the attestation object";
-		goto done;
+		return -1;
 	}
 	*att_obj = c.buf;
 	*att_obj_length = c.length;
-	ret = 0;
-done:
-	Esys_Free(certify_info);
-	Esys_Free(signature);
-	return ret;
+	return 0;
 }
 
 static const char *
@@ -1273,7 +1293,6 @@ cm_acme_tpm_attest(void *parent, struct cm_acme_tpm_params *params,
 		   const char **error)
 {
 	struct tpm_state state;
-	TPM2B_PUBLIC device_public;
 	TSS2_RC rc;
 	int ret = CM_SUBMIT_STATUS_UNCONFIGURED;
 
@@ -1283,7 +1302,6 @@ cm_acme_tpm_attest(void *parent, struct cm_acme_tpm_params *params,
 	state.params = params;
 	state.ek = ESYS_TR_NONE;
 	state.ak = ESYS_TR_NONE;
-	state.device = ESYS_TR_NONE;
 
 	if ((params->key_storage_type == NULL) ||
 	    (strcasecmp(params->key_storage_type, "NSSDB") != 0) ||
@@ -1315,14 +1333,8 @@ cm_acme_tpm_attest(void *parent, struct cm_acme_tpm_params *params,
 	/* The EK is no longer needed. */
 	Esys_FlushContext(state.esys, state.ek);
 	state.ek = ESYS_TR_NONE;
-	if (cm_acme_tpm_p11_load(state.ctx, state.esys, params->key_location,
-				 params->key_token, params->key_pin,
-				 params->csr, &state.device, &device_public,
-				 &state.error) != 0) {
-		goto done;
-	}
-	if (attest_device_key(&state, &device_public, key_authorization,
-			      att_obj, att_obj_length) != 0) {
+	if (attest_device_key(&state, key_authorization, att_obj,
+			      att_obj_length) != 0) {
 		goto done;
 	}
 	talloc_steal(parent, *att_obj);
@@ -1333,9 +1345,6 @@ done:
 				       *error);
 	}
 	if (state.esys != NULL) {
-		if (state.device != ESYS_TR_NONE) {
-			Esys_FlushContext(state.esys, state.device);
-		}
 		if (state.ak != ESYS_TR_NONE) {
 			Esys_FlushContext(state.esys, state.ak);
 		}

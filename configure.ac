@@ -309,10 +309,10 @@ if ! ${configure_dist_target_only:-false} ; then
 		[with_tpm2=check])
 	have_tss2=no
 	if test x"$with_tpm2" != xno ; then
-		PKG_CHECK_MODULES(TSS2,[tss2-esys tss2-mu tss2-rc tss2-tctildr sqlite3],
+		PKG_CHECK_MODULES(TSS2,[tss2-esys tss2-mu tss2-rc tss2-tctildr],
 				  [have_tss2=yes],[have_tss2=no])
 		if test x"$have_tss2" = xno && test x"$with_tpm2" = xyes ; then
-			AC_MSG_ERROR([tss2-esys, tss2-mu, tss2-rc, tss2-tctildr or sqlite3 not found])
+			AC_MSG_ERROR([tss2-esys, tss2-mu, tss2-rc or tss2-tctildr not found])
 		fi
 	fi
 	if test x"$have_tss2" = xyes ; then
