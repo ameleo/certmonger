@@ -1138,6 +1138,64 @@ done:
 	return ret;
 }
 
+/* For modules which lack CKM_TPM2_CERTIFY: load the device key ourselves,
+ * reading the token's data from the module's store, and certify it. */
+static int
+certify_device_key_from_store(struct tpm_state *state,
+			      const unsigned char *qualifying,
+			      size_t qualifying_length,
+			      TPM2B_PUBLIC *device_public,
+			      TPM2B_ATTEST *certify_info,
+			      TPMT_SIGNATURE *signature)
+{
+	struct cm_acme_tpm_params *params = state->params;
+	TPM2B_DATA data;
+	TPMT_SIG_SCHEME scheme;
+	TPM2B_ATTEST *info = NULL;
+	TPMT_SIGNATURE *sig = NULL;
+	ESYS_TR device = ESYS_TR_NONE, session = ESYS_TR_NONE;
+	TSS2_RC rc;
+
+	if (cm_acme_tpm_p11_load(state->ctx, state->esys, params->key_location,
+				 params->key_token, params->key_pin,
+				 params->csr, &device, device_public,
+				 &state->error) != 0) {
+		return -1;
+	}
+	memset(&data, 0, sizeof(data));
+	if (qualifying_length > sizeof(data.buffer)) {
+		Esys_FlushContext(state->esys, device);
+		state->error = "the qualifying data is too long";
+		return -1;
+	}
+	memcpy(data.buffer, qualifying, qualifying_length);
+	data.size = qualifying_length;
+	/* The device key's authorization value is used through an HMAC
+	 * session, so that it never goes to the TPM in the clear. */
+	rc = cm_acme_tpm_start_session(state->esys, ESYS_TR_NONE, &session);
+	if (rc != TSS2_RC_SUCCESS) {
+		Esys_FlushContext(state->esys, device);
+		set_error(state, "error starting a session", rc);
+		return -1;
+	}
+	memset(&scheme, 0, sizeof(scheme));
+	scheme.scheme = TPM2_ALG_NULL;
+	rc = Esys_Certify(state->esys, device, state->ak, session,
+			  ESYS_TR_PASSWORD, ESYS_TR_NONE, &data, &scheme,
+			  &info, &sig);
+	Esys_FlushContext(state->esys, session);
+	Esys_FlushContext(state->esys, device);
+	if (rc != TSS2_RC_SUCCESS) {
+		set_error(state, "error certifying the key", rc);
+		return -1;
+	}
+	*certify_info = *info;
+	*signature = *sig;
+	Esys_Free(info);
+	Esys_Free(sig);
+	return 0;
+}
+
 /* Certify the device key with the AK, through the module which holds the
  * device key. */
 static int
@@ -1150,6 +1208,7 @@ certify_device_key(struct tpm_state *state, const unsigned char *qualifying,
 	unsigned char *context_buf;
 	size_t context_length = 0;
 	TSS2_RC rc;
+	int ret;
 
 	/* The module loads the AK in its own connection to the TPM. */
 	rc = Esys_ContextSave(state->esys, state->ak, &context);
@@ -1169,15 +1228,24 @@ certify_device_key(struct tpm_state *state, const unsigned char *qualifying,
 		return -1;
 	}
 	Esys_Free(context);
-	if (cm_acme_tpm_p11_certify(state->ctx, params->key_location,
-				    params->key_token, params->key_pin,
-				    params->csr, context_buf, context_length,
-				    qualifying, qualifying_length,
-				    device_public, certify_info, signature,
-				    &state->error) != 0) {
-		return -1;
+	ret = cm_acme_tpm_p11_certify(state->ctx, params->key_location,
+				      params->key_token, params->key_pin,
+				      params->csr, context_buf,
+				      context_length, qualifying,
+				      qualifying_length, device_public,
+				      certify_info, signature, &state->error);
+	if (ret == CM_ACME_TPM_P11_NO_CERTIFY) {
+		if (params->verbose > 0) {
+			fprintf(stderr, "The token lacks CKM_TPM2_CERTIFY, "
+				"loading the key from the module's store.\n");
+		}
+		state->error = NULL;
+		return certify_device_key_from_store(state, qualifying,
+						     qualifying_length,
+						     device_public,
+						     certify_info, signature);
 	}
-	return 0;
+	return ret;
 }
 
 /* Certify the device key with the AK, binding the statement to the key

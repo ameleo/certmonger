@@ -41,4 +41,14 @@ int cm_acme_tpm_p11_certify(void *parent, const char *dbdir,
 			    TPM2B_PUBLIC *public, TPM2B_ATTEST *certify_info,
 			    TPMT_SIGNATURE *signature, const char **error);
 
+/* For modules which lack CKM_TPM2_CERTIFY: load the key which the daemon
+ * generated through the tpm2-pkcs11 module, whose public key is the one in
+ * the request, with its authorization value set, reading the token's data
+ * from the module's store. */
+int cm_acme_tpm_p11_load(void *parent, ESYS_CONTEXT *esys,
+			 const char *dbdir, const char *token,
+			 const char *pin, const char *csr,
+			 ESYS_TR *key, TPM2B_PUBLIC *public,
+			 const char **error);
+
 #endif

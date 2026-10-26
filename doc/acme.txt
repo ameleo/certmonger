@@ -117,8 +117,14 @@ module performs it, through its vendor mechanism CKM_TPM2_CERTIFY: the
 helper saves the AK's context (TPM2_ContextSave) and hands it to the module
 as the signing key of a "signature" by the request's key, and the module
 loads it in its own connection to the TPM, certifies the key, and flushes
-it.  Keys in a module which lacks the mechanism can't be attested: the
-helper then fails with an error which says so.
+it.  With a module which lacks the mechanism, the helper falls back to
+loading the key itself: it reads the key's TPM blobs and encrypted
+authorization value through PKCS#11, where tpm2-pkcs11 exposes them as
+vendor attributes, and the token's primary key and sealed wrapping key from
+the module's store (an SQLite database), and then does what the module does
+when the user logs in.  This ties the fallback to that store's format, and
+tokens whose primary key is not persistent (tpm2_ptool init
+--transient-parent) are not supported by it.
 
 The TPM is reached using the TSS's TCTI loader: by default the TCTI named
 in the TPM2_PKCS11_TCTI environment variable, which tpm2-pkcs11 also uses,
@@ -132,5 +138,5 @@ such as some firmware TPMs whose manufacturer serves it online, are not
 supported yet.
 
 Building the helper with TPM support needs tpm2-tss (libtss2-esys,
-libtss2-mu, libtss2-rc and libtss2-tctildr); configure's
+libtss2-mu, libtss2-rc and libtss2-tctildr) and SQLite; configure's
 --with-tpm2 option makes them required, --without-tpm2 leaves them out.

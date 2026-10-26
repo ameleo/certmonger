@@ -302,7 +302,7 @@ acme_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_LIBS) $(JANSSON_LIBS) \
 		    $(POPT_LIBS)
 if HAVE_TSS2
 acme_submit_CFLAGS += $(TSS2_CFLAGS)
-acme_submit_SOURCES += acme-tpm.c acme-tpm.h acme-tpm-p11.c
+acme_submit_SOURCES += acme-tpm.c acme-tpm.h acme-tpm-p11.c acme-tpm-p11-store.c
 acme_submit_LDADD += $(TSS2_LIBS)
 endif
 local_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS)
