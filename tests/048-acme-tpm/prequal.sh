@@ -16,8 +16,10 @@ for tool in swtpm swtpm_setup swtpm_localca tpm2-abrmd tpm2_ptool \
 		exit 1
 	fi
 done
-if ! ls /usr/lib64/pkcs11/libtpm2_pkcs11.so /usr/lib/*/pkcs11/libtpm2_pkcs11.so \
-       /usr/lib/pkcs11/libtpm2_pkcs11.so > /dev/null 2>&1 ; then
-	echo tpm2-pkcs11 not found
-	exit 1
-fi
+for module in /usr/lib64/pkcs11/libtpm2_pkcs11.so \
+	      /usr/lib/*/pkcs11/libtpm2_pkcs11.so \
+	      /usr/lib/pkcs11/libtpm2_pkcs11.so ; do
+	test -e $module && exit 0
+done
+echo tpm2-pkcs11 not found
+exit 1
