@@ -84,6 +84,8 @@ BuildRequires:	popt-devel
 BuildRequires:	tpm2-tss-devel, sqlite-devel
 #  for ACME tests
 BuildRequires:	python3-cryptography
+#  for the ACME helper's dns-01 tests: a DNS server, and a KDC for GSS-TSIG
+BuildRequires:	bind, krb5-server
 
 # we need a running system bus
 Requires:	dbus
