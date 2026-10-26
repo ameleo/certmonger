@@ -82,6 +82,12 @@ cm_subproc_propagate_environment(const char *p)
 	    (strncmp(p, "LC_", 3) == 0)) {
 		return equal;
 	}
+	/* Settings for the tpm2-pkcs11 PKCS#11 module, such as where its
+	 * store is and how it reaches the TPM, which keys in a TPM token
+	 * need when we generate them and when helpers use them. */
+	if ((equal > 12) && (strncmp(p, "TPM2_PKCS11_", 12) == 0)) {
+		return equal;
+	}
 	if ((equal > 6) &&
 	    ((strncmp(p + equal - 6, "_PROXY", 6) == 0) ||
 	     (strncmp(p + equal - 6, "_proxy", 6) == 0))) {
