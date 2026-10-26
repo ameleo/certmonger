@@ -1,0 +1,22 @@
+[enroll, GSS-TSIG, the keytab's principal]
+exit: 0
+certificate is for the key
+  dns-01 client.example.test: TXT record found
+_acme-challenge.client.example.test: 0 record(s)
+key host/client.example.test\@EXAMPLE.TEST: updating zone 'example.test/IN': adding an RR
+key host/client.example.test\@EXAMPLE.TEST: updating zone 'example.test/IN': deleting an RR
+[enroll, GSS-TSIG, principal given]
+exit: 0
+certificate is for the key
+  dns-01 client.example.test: TXT record found
+[another host may not update the name]
+exit: 4
+The DNS server ns1.example.test:PRIMARY refused the update (REFUSED).
+_acme-challenge.client.example.test: 0 record(s)
+[a principal which isn't in the keytab]
+exit: 4
+Error obtaining Kerberos credentials with the keytab "$tmpdir/krb5/client.keytab": ...
+[the DNS server given by its address]
+exit: 4
+GSS-TSIG needs the name of the DNS server, not its address (127.0.0.1).
+OK

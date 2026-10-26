@@ -161,7 +161,9 @@ CLEANFILES = \
 	048-acme-tpm/actual.out \
 	048-acme-tpm/actual.err \
 	049-acme-dns/actual.out \
-	049-acme-dns/actual.err
+	049-acme-dns/actual.err \
+	050-acme-dns-gss/actual.out \
+	050-acme-dns-gss/actual.err
 EXTRA_DIST = \
 	run-tests.sh functions certmonger.conf tools/cachain.sh \
 	001-keyiread/run.sh \
@@ -448,7 +450,10 @@ EXTRA_DIST = \
 	049-acme-dns/prequal.sh \
 	049-acme-dns/run.sh \
 	049-acme-dns/dns.sh \
-	049-acme-dns/expected.out
+	049-acme-dns/expected.out \
+	050-acme-dns-gss/prequal.sh \
+	050-acme-dns-gss/run.sh \
+	050-acme-dns-gss/expected.out
 
 subdirs = \
 	001-keyiread \
@@ -529,7 +534,8 @@ subdirs += \
 	046-est-nss \
 	047-acme \
 	048-acme-tpm \
-	049-acme-dns
+	049-acme-dns \
+	050-acme-dns-gss
 endif
 
 if HAVE_ML_DSA
