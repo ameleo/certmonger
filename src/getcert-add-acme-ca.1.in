@@ -26,6 +26,10 @@ attestation, made by the TPM, of the key in the request, which must have
 been generated in the TPM through the \fItpm2\-pkcs11\fR module.  See
 \fBcertmonger\-acme\-submit\fR(8).
 
+With \fB\-\-tsig\-key\-file\fR or \fB\-\-gss\-tsig\fR, the server's
+\fIdns\-01\fR challenges are answered by adding the challenge's TXT record
+to the DNS with signed DNS updates, and removing it afterwards.
+
 .SH OPTIONS
 .TP
 All user\-provided certificate files must be in PEM format.
@@ -60,6 +64,39 @@ format.  The only format which is supported is \fItpm\fR.
 The permanent identifier of the device, as registered with the CA.  If this
 option is not given, the common name of the request's subject is used.
 .TP
+\fB\-\-tsig\-key\-file\fR=\fIFILE\fR
+Answer \fIdns\-01\fR challenges, signing DNS updates with the TSIG key in
+the file, in the form which BIND's \fItsig\-keygen\fR writes, or a line in
+the form [\fIalgorithm\fR:]\fIname\fR:\fIsecret\fR.  The file is read by
+the helper each time it is needed, and should only be readable by the user
+which runs \fIcertmonger\fR.
+.TP
+\fB\-\-gss\-tsig\fR
+Answer \fIdns\-01\fR challenges, signing DNS updates with GSS\-TSIG, using
+the host's Kerberos keytab.
+.TP
+\fB\-\-keytab\fR=\fIKEYTAB\fR
+The keytab to use with GSS\-TSIG, instead of the system's default.
+.TP
+\fB\-\-principal\fR=\fIPRINCIPAL\fR
+The principal to use with GSS\-TSIG, instead of the keytab's first.
+.TP
+\fB\-\-dns\-update\-server\fR=\fIHOST\fR[:\fIPORT\fR]
+The DNS server to send updates to, instead of the zone's primary server.
+.TP
+\fB\-\-dns\-zone\fR=\fIZONE\fR
+The zone to update, instead of the one found in the DNS.
+.TP
+\fB\-\-dns\-resolver\fR=\fIADDRESS\fR[:\fIPORT\fR]
+The DNS resolver to use instead of the system's.
+.TP
+\fB\-\-dns\-check\-servers\fR=\fIHOST\fR[:\fIPORT\fR],...
+The DNS servers which must serve the record before the CA is asked to check
+it, instead of the zone's name servers.
+.TP
+\fB\-\-dns\-wait\fR=\fISECONDS\fR
+How long to wait for them to serve it.  The default is 120 seconds.
+.TP
 \fB\-v\fR, \fB\-\-verbose\fR
 Be verbose about errors.  Normally, the details of an error received from
 the daemon will be suppressed if the client can make a diagnostic suggestion.
@@ -69,6 +106,10 @@ the daemon will be suppressed if the client can make a diagnostic suggestion.
 getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-eab\-kid kid1 \-\-eab\-key\-file /etc/pki/acme\-eab.key
 .TP
 getcert request \-c ACME \-k /etc/pki/tls/private/host.key \-f /etc/pki/tls/certs/host.crt \-G EC \-g 256 \-N CN=host.example.com \-D host.example.com
+.TP
+getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-tsig\-key\-file /etc/pki/acme\-dns.key
+.TP
+getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-gss\-tsig
 .TP
 getcert add\-acme\-ca \-c DEVICE \-u https://acme.example.com/directory \-\-attest tpm
 .TP

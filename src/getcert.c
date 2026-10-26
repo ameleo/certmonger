@@ -4974,8 +4974,12 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 	char *caname = NULL, *url = NULL, *path = NULL, *root = NULL;
 	char *eab_kid = NULL, *eab_key_file = NULL, *attest = NULL;
 	char *permanent_identifier = NULL;
+	char *tsig_key_file = NULL, *keytab = NULL, *principal = NULL;
+	char *dns_update_server = NULL, *dns_zone = NULL, *dns_resolver = NULL;
+	char *dns_check_servers = NULL;
 	char *nickname, *command;
-	int c, verbose = 0;
+	int c, verbose = 0, gss_tsig = 0;
+	long dns_wait = 0;
 	dbus_bool_t b;
 	static DBusMessage *req, *rep;
 	const char *poptarg;
@@ -4988,6 +4992,15 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		{"eab-key-file", '\0', POPT_ARG_STRING, &eab_key_file, 0, _("file containing the MAC key for external account binding"), HELP_TYPE_FILENAME},
 		{"attest", '\0', POPT_ARG_STRING, &attest, 0, _("answer device-attest-01 challenges using the given attestation format"), HELP_TYPE_MODE},
 		{"permanent-identifier", '\0', POPT_ARG_STRING, &permanent_identifier, 0, _("the device's permanent identifier"), HELP_TYPE_ID},
+		{"tsig-key-file", '\0', POPT_ARG_STRING, &tsig_key_file, 0, _("answer dns-01 challenges with DNS updates signed with the TSIG key in this file"), HELP_TYPE_FILENAME},
+		{"gss-tsig", '\0', POPT_ARG_NONE, &gss_tsig, 0, _("answer dns-01 challenges with DNS updates signed with GSS-TSIG"), NULL},
+		{"keytab", '\0', POPT_ARG_STRING, &keytab, 0, _("keytab to use for GSS-TSIG"), HELP_TYPE_FILENAME},
+		{"principal", '\0', POPT_ARG_STRING, &principal, 0, _("principal to use for GSS-TSIG"), HELP_TYPE_PRINCIPAL},
+		{"dns-update-server", '\0', POPT_ARG_STRING, &dns_update_server, 0, _("DNS server to send updates to"), "HOST[:PORT]"},
+		{"dns-zone", '\0', POPT_ARG_STRING, &dns_zone, 0, _("DNS zone to update"), HELP_TYPE_NAME},
+		{"dns-resolver", '\0', POPT_ARG_STRING, &dns_resolver, 0, _("DNS resolver to use instead of the system's"), "ADDRESS[:PORT]"},
+		{"dns-check-servers", '\0', POPT_ARG_STRING, &dns_check_servers, 0, _("DNS servers to check for the record"), "HOST[:PORT],..."},
+		{"dns-wait", '\0', POPT_ARG_LONG, &dns_wait, 0, _("how long to wait for the zone's servers to serve the record"), "SECONDS"},
 		{"session", 's', POPT_ARG_NONE, NULL, 's', _("connect to the certmonger service on the session bus"), NULL},
 		{"system", 'S', POPT_ARG_NONE, NULL, 'S', _("connect to the certmonger service on the system bus"), NULL},
 		{"verbose", 'v', POPT_ARG_NONE, NULL, 'v', NULL, NULL},
@@ -5069,6 +5082,42 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		help(argv0, "add-acme-ca");
 		return 1;
 	}
+	if ((tsig_key_file != NULL) && gss_tsig) {
+		printf(_("A TSIG key and GSS-TSIG can't be used together.\n"));
+		help(argv0, "add-acme-ca");
+		return 1;
+	}
+	if ((tsig_key_file == NULL) && !gss_tsig &&
+	    ((dns_update_server != NULL) || (dns_zone != NULL) ||
+	     (dns_resolver != NULL) || (dns_check_servers != NULL) ||
+	     (dns_wait != 0))) {
+		printf(_("DNS options were given without a TSIG key "
+			 "(--tsig-key-file) or GSS-TSIG (--gss-tsig).\n"));
+		help(argv0, "add-acme-ca");
+		return 1;
+	}
+	if (((keytab != NULL) || (principal != NULL)) && !gss_tsig) {
+		printf(_("A keytab or principal was given without "
+			 "--gss-tsig.\n"));
+		help(argv0, "add-acme-ca");
+		return 1;
+	}
+	if (dns_wait < 0) {
+		printf(_("Invalid time to wait for the DNS servers.\n"));
+		help(argv0, "add-acme-ca");
+		return 1;
+	}
+	if (tsig_key_file != NULL) {
+		if (access(tsig_key_file, R_OK) != 0) {
+			printf(_("Can't read \"%s\".\n"), tsig_key_file);
+			return 1;
+		}
+		tsig_key_file = ensure_path_is_absolute(globals.tctx,
+							tsig_key_file);
+	}
+	if (keytab != NULL) {
+		keytab = ensure_path_is_absolute(globals.tctx, keytab);
+	}
 	if (poptPeekArg(pctx) != NULL) {
 		printf(_("Error: unused extra arguments were supplied.\n"));
 		help(argv0, "add-acme-ca");
@@ -5102,6 +5151,50 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		command = talloc_asprintf_append(command, " -P %s",
 						 shell_escape(globals.tctx,
 							      permanent_identifier));
+	}
+	if (tsig_key_file != NULL) {
+		command = talloc_asprintf_append(command, " --tsig-key-file=%s",
+						 shell_escape(globals.tctx,
+							      tsig_key_file));
+	}
+	if (gss_tsig) {
+		command = talloc_strdup_append(command, " --gss-tsig");
+	}
+	if (keytab != NULL) {
+		command = talloc_asprintf_append(command, " --keytab=%s",
+						 shell_escape(globals.tctx,
+							      keytab));
+	}
+	if (principal != NULL) {
+		command = talloc_asprintf_append(command, " --principal=%s",
+						 shell_escape(globals.tctx,
+							      principal));
+	}
+	if (dns_update_server != NULL) {
+		command = talloc_asprintf_append(command,
+						 " --dns-update-server=%s",
+						 shell_escape(globals.tctx,
+							      dns_update_server));
+	}
+	if (dns_zone != NULL) {
+		command = talloc_asprintf_append(command, " --dns-zone=%s",
+						 shell_escape(globals.tctx,
+							      dns_zone));
+	}
+	if (dns_resolver != NULL) {
+		command = talloc_asprintf_append(command, " --dns-resolver=%s",
+						 shell_escape(globals.tctx,
+							      dns_resolver));
+	}
+	if (dns_check_servers != NULL) {
+		command = talloc_asprintf_append(command,
+						 " --dns-check-servers=%s",
+						 shell_escape(globals.tctx,
+							      dns_check_servers));
+	}
+	if (dns_wait > 0) {
+		command = talloc_asprintf_append(command, " --dns-wait=%ld",
+						 dns_wait);
 	}
 	for (c = 0; c < verbose; c++) {
 		command = talloc_strdup_append(command, " -v");
@@ -5905,6 +5998,19 @@ help(const char *twopartcmd, const char *category)
 		N_("  --attest=tpm		answer device-attest-01 challenges with a TPM attestation\n"),
 		N_("  --permanent-identifier=ID\n"),
 		N_("			the device's permanent identifier\n"),
+		N_("* Options for dns-01 challenges:\n"),
+		N_("  --tsig-key-file=FILE	sign DNS updates with the TSIG key in the file\n"),
+		N_("  --gss-tsig		sign DNS updates with GSS-TSIG\n"),
+		N_("  --keytab=FILE		keytab for GSS-TSIG (default: the system's)\n"),
+		N_("  --principal=NAME	principal for GSS-TSIG (default: the keytab's first)\n"),
+		N_("  --dns-update-server=HOST[:PORT]\n"),
+		N_("			server to send updates to (default: the zone's primary)\n"),
+		N_("  --dns-zone=ZONE	zone to update (default: found in the DNS)\n"),
+		N_("  --dns-resolver=ADDRESS[:PORT]\n"),
+		N_("			resolver to use instead of the system's\n"),
+		N_("  --dns-check-servers=HOST[:PORT],...\n"),
+		N_("			servers which must serve the record (default: the zone's)\n"),
+		N_("  --dns-wait=SECONDS	how long to wait for them (default: 120)\n"),
 		N_("* Bus options:\n"),
 		N_("  -S, --system		connect to the certmonger service on the system bus\n"),
 		N_("  -s, --session		connect to the certmonger service on the session bus\n"),
