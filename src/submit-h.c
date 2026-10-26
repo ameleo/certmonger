@@ -167,9 +167,9 @@ call_ssl_ctx_function(CURL *curl, void *ssl_ctx, void *arg)
 /* Collect response headers.  If we follow a redirect, we only keep the
  * ones from the last response. */
 static size_t
-append_header(char *in, size_t size, size_t nmemb,
-	      struct cm_submit_h_context *ctx)
+append_header(char *in, size_t size, size_t nmemb, void *data)
 {
+	struct cm_submit_h_context *ctx = data;
 	size_t n = size * nmemb;
 
 	if ((n >= 5) && (strncmp(in, "HTTP/", 5) == 0)) {
