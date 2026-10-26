@@ -23,6 +23,7 @@ char *cm_env_config(const char *subdir, const char *subfile);
 char *cm_env_lock_file(void);
 char *cm_env_request_dir(void);
 char *cm_env_local_ca_dir(void);
+char *cm_env_acme_dir(void);
 char *cm_env_ca_dir(void);
 char *cm_env_tmp_dir(void);
 char *cm_env_home_dir(void);

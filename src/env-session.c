@@ -201,6 +201,22 @@ cm_env_local_ca_dir(void)
 	return ret;
 }
 
+/* The helper creates it when it needs it. */
+char *
+cm_env_acme_dir(void)
+{
+	static char *ret = NULL;
+
+	if (ret == NULL) {
+		ret = getenv(CM_STORE_ACME_DIRECTORY_ENV);
+		if (ret == NULL) {
+			ret = cm_env_homedir(CM_STORE_SESSION_ACME_DIRECTORY,
+					     NULL);
+		}
+	}
+	return ret;
+}
+
 char *
 cm_env_tmp_dir(void)
 {

@@ -133,6 +133,9 @@ helper is called.
     The PIN which protects the private key, if one was supplied directly.
   * CERTMONGER_KEY_PIN_FILE
     The name of a file which holds the PIN which protects the private key.
+  * CERTMONGER_ACME_DIR
+    The directory under which the ACME helper keeps account and attestation
+    data.
 
   A helper can use the location of the private key, together with the
   certificate in CERTMONGER_CERTIFICATE, to authenticate to the CA when

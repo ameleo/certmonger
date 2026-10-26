@@ -90,6 +90,18 @@ AC_DEFINE_UNQUOTED(CM_STORE_SESSION_CAS_DIRECTORY,".config/" PACKAGE_NAME "/cas"
 AC_DEFINE_UNQUOTED(CM_STORE_CAS_DIRECTORY_ENV,"${CM_STORE_CAS_DIRECTORY_ENV}",
 		   [Define to the name of the environment variable which can specify the directory for tracking CAs.])
 
+CM_STORE_ACME_DIRECTORY="$mylocalstatedir/acme"
+CM_STORE_SESSION_ACME_DIRECTORY=".config/${PACKAGE_NAME}/acme"
+CM_STORE_ACME_DIRECTORY_ENV="${UPCASE_PACKAGE_NAME}_ACME_DIR"
+AC_SUBST(CM_STORE_ACME_DIRECTORY)
+AC_SUBST(CM_STORE_ACME_DIRECTORY_ENV)
+AC_DEFINE_UNQUOTED(CM_STORE_ACME_DIRECTORY,"${CM_STORE_ACME_DIRECTORY}",
+		   [Define to the default path for ACME account and attestation data.])
+AC_DEFINE_UNQUOTED(CM_STORE_SESSION_ACME_DIRECTORY,"${CM_STORE_SESSION_ACME_DIRECTORY}",
+		   [Define to the default path for user ACME account and attestation data.])
+AC_DEFINE_UNQUOTED(CM_STORE_ACME_DIRECTORY_ENV,"${CM_STORE_ACME_DIRECTORY_ENV}",
+		   [Define to the name of the environment variable which can specify the directory for ACME account and attestation data.])
+
 CM_STORE_LOCAL_CA_DIRECTORY="$mylocalstatedir/local"
 CM_STORE_SESSION_LOCAL_CA_DIRECTORY=".config/${PACKAGE_NAME}/local"
 CM_STORE_LOCAL_CA_DIRECTORY_ENV="${UPCASE_PACKAGE_NAME}_LOCAL_CA_DIR"

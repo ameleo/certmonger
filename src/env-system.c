@@ -83,6 +83,18 @@ cm_env_local_ca_dir(void)
 }
 
 char *
+cm_env_acme_dir(void)
+{
+	char *ret;
+
+	ret = getenv(CM_STORE_ACME_DIRECTORY_ENV);
+	if (ret == NULL) {
+		ret = CM_STORE_ACME_DIRECTORY;
+	}
+	return ret;
+}
+
+char *
 cm_env_tmp_dir(void)
 {
 	char *ret;
