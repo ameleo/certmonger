@@ -17,7 +17,8 @@
 
 /* Answering dns-01 challenges (RFC 8555 8.4): the TXT record is added to,
  * and then removed from, the zone using DNS UPDATE (RFC 2136) messages
- * signed with TSIG (RFC 8945), using a shared HMAC key.
+ * signed with TSIG (RFC 8945), using a shared HMAC key, or with GSS-TSIG
+ * (RFC 3645), using the host's Kerberos keys.
  *
  * The messages are built and parsed here: the resolver library only
  * sends queries to the system's name servers, and expands compressed names.
@@ -36,6 +37,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <netdb.h>
 #include <poll.h>
 #include <resolv.h>
@@ -52,6 +54,10 @@
 #include <openssl/hmac.h>
 #include <openssl/rand.h>
 
+#ifdef HAVE_GSS_TSIG
+#include <gssapi/gssapi.h>
+#include <gssapi/gssapi_krb5.h>
+#endif
 
 #include <krb5.h>
 
@@ -83,6 +89,8 @@
 /* The fudge which we allow, and ask for, in TSIG (RFC 8945 5.2.3). */
 #define TSIG_FUDGE 300
 #define TSIG_MAX_MAC 1024
+/* How long we ask GSS-TSIG keys to be kept by the server. */
+#define TKEY_LIFETIME 3600
 
 #define DNS_FLAG_QR 0x8000
 #define DNS_FLAG_AA 0x0400
@@ -99,12 +107,14 @@
 #define DNS_TYPE_SOA 6
 #define DNS_TYPE_TXT 16
 #define DNS_TYPE_AAAA 28
+#define DNS_TYPE_TKEY 249
 #define DNS_TYPE_TSIG 250
 
 #define DNS_RCODE_NOERROR 0
 #define DNS_RCODE_SERVFAIL 2
 #define DNS_RCODE_NXDOMAIN 3
 #define DNS_RCODE_NOTAUTH 9
+#define TKEY_MODE_GSSAPI 3
 
 enum dns_section {
 	dns_answer,
@@ -178,6 +188,13 @@ struct cm_acme_dns {
 	const struct tsig_algorithm *algorithm;
 	unsigned char *secret;
 	size_t secret_length;
+#ifdef HAVE_GSS_TSIG
+	/* GSS-TSIG: a security context, established with one server. */
+	gss_cred_id_t cred;
+	gss_ctx_id_t gss;
+	char *gss_server;
+	char *gss_key_name;
+#endif
 };
 
 struct cm_acme_dns_record {
@@ -989,21 +1006,83 @@ tsig_input(struct dns_buf *in, const unsigned char *request_mac,
 static const char *
 signing_key_name(struct cm_acme_dns *dns)
 {
+#ifdef HAVE_GSS_TSIG
+	if (dns->params.gss_tsig) {
+		return dns->gss_key_name;
+	}
+#endif
 	return dns->key_name;
 }
 
 static const char *
 signing_algorithm(struct cm_acme_dns *dns)
 {
+	if (dns->params.gss_tsig) {
+		return "gss-tsig";
+	}
 	return dns->algorithm->name;
 }
 
+#ifdef HAVE_GSS_TSIG
+static char *
+gss_error(void *parent, OM_uint32 major, OM_uint32 minor)
+{
+	OM_uint32 min, ctx = 0;
+	gss_buffer_desc text;
+	char *ret;
+
+	ret = talloc_strdup(parent, "");
+	do {
+		text.length = 0;
+		text.value = NULL;
+		gss_display_status(&min, major, GSS_C_GSS_CODE,
+				   GSS_C_NO_OID, &ctx, &text);
+		ret = talloc_asprintf_append(ret, "%s%.*s",
+					     strlen(ret) ? "; " : "",
+					     (int) text.length,
+					     (char *) text.value);
+		gss_release_buffer(&min, &text);
+	} while (ctx != 0);
+	if (minor != 0) {
+		do {
+			text.length = 0;
+			text.value = NULL;
+			gss_display_status(&min, minor, GSS_C_MECH_CODE,
+					   GSS_C_NO_OID, &ctx, &text);
+			ret = talloc_asprintf_append(ret, "; %.*s",
+						     (int) text.length,
+						     (char *) text.value);
+			gss_release_buffer(&min, &text);
+		} while (ctx != 0);
+	}
+	return ret;
+}
+#endif
 
 static int
 compute_mac(struct cm_acme_dns *dns, const struct dns_buf *in,
 	    unsigned char *mac, size_t *mac_length)
 {
 	unsigned int length = EVP_MAX_MD_SIZE;
+#ifdef HAVE_GSS_TSIG
+	OM_uint32 major, minor;
+	gss_buffer_desc message, token;
+
+	if (dns->params.gss_tsig) {
+		message.value = (void *) in->data;
+		message.length = in->length;
+		major = gss_get_mic(&minor, dns->gss, GSS_C_QOP_DEFAULT,
+				    &message, &token);
+		if (GSS_ERROR(major) || (token.length > TSIG_MAX_MAC)) {
+			gss_release_buffer(&minor, &token);
+			return -1;
+		}
+		memcpy(mac, token.value, token.length);
+		*mac_length = token.length;
+		gss_release_buffer(&minor, &token);
+		return 0;
+	}
+#endif
 	if (HMAC(dns->algorithm->md(), dns->secret, dns->secret_length,
 		 in->data, in->length, mac, &length) == NULL) {
 		return -1;
@@ -1018,6 +1097,20 @@ verify_mac(struct cm_acme_dns *dns, const struct dns_buf *in,
 {
 	unsigned char expected[EVP_MAX_MD_SIZE];
 	unsigned int length = sizeof(expected);
+#ifdef HAVE_GSS_TSIG
+	OM_uint32 major, minor;
+	gss_buffer_desc message, token;
+
+	if (dns->params.gss_tsig) {
+		message.value = (void *) in->data;
+		message.length = in->length;
+		token.value = (void *) mac;
+		token.length = mac_length;
+		major = gss_verify_mic(&minor, dns->gss, &message, &token,
+				       NULL);
+		return GSS_ERROR(major) ? -1 : 0;
+	}
+#endif
 	if ((HMAC(dns->algorithm->md(), dns->secret, dns->secret_length,
 		  in->data, in->length, expected, &length) == NULL) ||
 	    (length != mac_length) ||
@@ -1333,6 +1426,300 @@ done:
 	return ret;
 }
 
+#ifdef HAVE_GSS_TSIG
+/* GSS-TSIG (RFC 3645). */
+
+static int
+acquire_cred(struct cm_acme_dns *dns)
+{
+	OM_uint32 major, minor;
+	gss_name_t name = GSS_C_NO_NAME;
+	gss_buffer_desc buf;
+	krb5_context kctx;
+	char keytab[PATH_MAX + 16];
+	const char *ktname = dns->params.keytab;
+#ifdef HAVE_GSS_ACQUIRE_CRED_FROM
+	gss_key_value_element_desc elements[2];
+	gss_key_value_set_desc store;
+#endif
+
+	if (dns->cred != GSS_C_NO_CREDENTIAL) {
+		return 0;
+	}
+	if (ktname == NULL) {
+		if (krb5_init_context(&kctx) != 0) {
+			printf(_("Error initializing Kerberos.\n"));
+			return -1;
+		}
+		if (krb5_kt_default_name(kctx, keytab, sizeof(keytab)) != 0) {
+			krb5_free_context(kctx);
+			printf(_("Error finding the default keytab.\n"));
+			return -1;
+		}
+		krb5_free_context(kctx);
+		ktname = keytab;
+	}
+	if (dns->params.principal != NULL) {
+		buf.value = (void *) dns->params.principal;
+		buf.length = strlen(dns->params.principal);
+		major = gss_import_name(&minor, &buf,
+					GSS_KRB5_NT_PRINCIPAL_NAME, &name);
+		if (GSS_ERROR(major)) {
+			printf(_("Error parsing the principal name \"%s\": "
+				 "%s.\n"), dns->params.principal,
+			       gss_error(dns->ctx, major, minor));
+			return -1;
+		}
+	}
+#ifdef HAVE_GSS_ACQUIRE_CRED_FROM
+	/* Credentials for the keytab's client, in a cache of our own. */
+	elements[0].key = "client_keytab";
+	elements[0].value = ktname;
+	elements[1].key = "ccache";
+	elements[1].value = "MEMORY:" PACKAGE_NAME "_acme_dns";
+	store.count = 2;
+	store.elements = elements;
+	major = gss_acquire_cred_from(&minor, name, GSS_C_INDEFINITE,
+				      GSS_C_NO_OID_SET, GSS_C_INITIATE,
+				      &store, &dns->cred, NULL, NULL);
+#else
+	setenv("KRB5_CLIENT_KTNAME", ktname, 1);
+	setenv("KRB5CCNAME", "MEMORY:" PACKAGE_NAME "_acme_dns", 1);
+	major = gss_acquire_cred(&minor, name, GSS_C_INDEFINITE,
+				 GSS_C_NO_OID_SET, GSS_C_INITIATE,
+				 &dns->cred, NULL, NULL);
+#endif
+	if (name != GSS_C_NO_NAME) {
+		gss_release_name(&minor, &name);
+	}
+	if (GSS_ERROR(major)) {
+		printf(_("Error obtaining Kerberos credentials with the "
+			 "keytab \"%s\": %s.\n"), ktname,
+		       gss_error(dns->ctx, major, minor));
+		dns->cred = GSS_C_NO_CREDENTIAL;
+		return -1;
+	}
+	return 0;
+}
+
+static void
+forget_context(struct cm_acme_dns *dns)
+{
+	OM_uint32 minor;
+
+	if (dns->gss != GSS_C_NO_CONTEXT) {
+		gss_delete_sec_context(&minor, &dns->gss, GSS_C_NO_BUFFER);
+	}
+	dns->gss = GSS_C_NO_CONTEXT;
+	talloc_free(dns->gss_server);
+	dns->gss_server = NULL;
+	talloc_free(dns->gss_key_name);
+	dns->gss_key_name = NULL;
+}
+
+/* Establish a security context with the server, exchanging the GSS-API
+ * tokens in TKEY queries (RFC 3645 3.1). */
+static int
+negotiate(struct cm_acme_dns *dns, const char *server,
+	  const struct dns_addrs *addrs)
+{
+	static gss_OID_desc spnego = {6, (void *) "\x2b\x06\x01\x05\x05\x02"};
+	OM_uint32 major, minor, flags;
+	gss_name_t target = GSS_C_NO_NAME;
+	gss_buffer_desc buf, input, output;
+	struct dns_buf *query, *answer;
+	struct dns_reply reply;
+	const struct dns_rr *rr;
+	const unsigned char *p, *end;
+	unsigned char id[8], address[16];
+	const char *error;
+	char *service, algorithm[NS_MAXDNAME];
+	unsigned int tkey_error, key_size, tsig_error;
+	uint32_t now;
+	size_t i;
+	int n, round, unsigned_reply, have_reply = 0, ret = -1;
+
+	if ((dns->gss != GSS_C_NO_CONTEXT) && (dns->gss_server != NULL) &&
+	    name_is(dns->gss_server, server)) {
+		return 0;
+	}
+	forget_context(dns);
+	if (acquire_cred(dns) != 0) {
+		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	}
+	if ((inet_pton(AF_INET, server, address) == 1) ||
+	    (inet_pton(AF_INET6, server, address) == 1)) {
+		printf(_("GSS-TSIG needs the name of the DNS server, not its "
+			 "address (%s).\n"), server);
+		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	}
+	service = talloc_asprintf(dns->ctx, "DNS@%s", server);
+	buf.value = service;
+	buf.length = strlen(service);
+	major = gss_import_name(&minor, &buf, GSS_C_NT_HOSTBASED_SERVICE,
+				&target);
+	if (GSS_ERROR(major)) {
+		printf(_("Error parsing the service name \"%s\": %s.\n"),
+		       service, gss_error(dns->ctx, major, minor));
+		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	}
+	if (RAND_bytes(id, sizeof(id)) != 1) {
+		gss_release_name(&minor, &target);
+		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	}
+	dns->gss_key_name = talloc_asprintf(dns->ctx,
+					    "%02x%02x%02x%02x%02x%02x%02x%02x."
+					    "sig-%s", id[0], id[1], id[2],
+					    id[3], id[4], id[5], id[6], id[7],
+					    server);
+	if (strlen(dns->gss_key_name) > DNS_MAX_NAME - 2) {
+		dns->gss_key_name[DNS_MAX_NAME - 2] = '\0';
+	}
+	dns->gss_key_name = dns_name(dns->ctx, dns->gss_key_name);
+	if (dns->gss_key_name == NULL) {
+		gss_release_name(&minor, &target);
+		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	}
+	query = talloc_zero(dns->ctx, struct dns_buf);
+	answer = talloc_zero(dns->ctx, struct dns_buf);
+	input.length = 0;
+	input.value = NULL;
+	ret = CM_SUBMIT_STATUS_UNREACHABLE;
+	for (round = 0; round < 8; round++) {
+		output.length = 0;
+		output.value = NULL;
+		major = gss_init_sec_context(&minor, dns->cred, &dns->gss,
+					     target, &spnego,
+					     GSS_C_MUTUAL_FLAG |
+					     GSS_C_REPLAY_FLAG |
+					     GSS_C_INTEG_FLAG,
+					     0, GSS_C_NO_CHANNEL_BINDINGS,
+					     input.length ? &input : NULL,
+					     NULL, &output, &flags, NULL);
+		if (GSS_ERROR(major)) {
+			printf(_("Error setting up GSS-TSIG with %s: %s.\n"),
+			       service, gss_error(dns->ctx, major, minor));
+			gss_release_buffer(&minor, &output);
+			ret = CM_SUBMIT_STATUS_UNCONFIGURED;
+			goto done;
+		}
+		if (output.length == 0) {
+			gss_release_buffer(&minor, &output);
+			if (major == GSS_S_COMPLETE) {
+				break;
+			}
+			goto done;
+		}
+		/* A TKEY query, with the token in a TKEY record in the
+		 * additional section, as BIND's and Windows' clients do. */
+		now = time(NULL);
+		put_header(query, 0, 1, 0, 0, 1);
+		put_name(query, dns->gss_key_name);
+		put_u16(query, DNS_TYPE_TKEY);
+		put_u16(query, DNS_CLASS_ANY);
+		put_name(query, dns->gss_key_name);
+		put_u16(query, DNS_TYPE_TKEY);
+		put_u16(query, DNS_CLASS_ANY);
+		put_u32(query, 0);
+		put_u16(query, strlen("gss-tsig") + 2 + 16 + output.length);
+		put_name(query, "gss-tsig");
+		put_u32(query, now);
+		put_u32(query, now + TKEY_LIFETIME);
+		put_u16(query, TKEY_MODE_GSSAPI);
+		put_u16(query, 0);
+		put_u16(query, output.length);
+		put_bytes(query, output.value, output.length);
+		put_u16(query, 0);
+		gss_release_buffer(&minor, &output);
+		if (query->overflow) {
+			goto done;
+		}
+		if (exchange(dns, addrs, query, 1, answer, &error) != 0) {
+			printf(_("Error talking to the DNS server: %s.\n"),
+			       error);
+			goto done;
+		}
+		if (parse_reply(answer, answer->data, answer->length,
+				&reply) != 0) {
+			printf(_("Error parsing the DNS server's answer.\n"));
+			goto done;
+		}
+		have_reply = 1;
+		if (reply.rcode != DNS_RCODE_NOERROR) {
+			printf(_("The DNS server refused to set up GSS-TSIG "
+				 "(%s).\n"), rcode_text(reply.rcode));
+			ret = CM_SUBMIT_STATUS_UNCONFIGURED;
+			goto done;
+		}
+		rr = NULL;
+		for (i = 0; i < reply.n_rrs; i++) {
+			if ((reply.rrs[i].section == dns_answer) &&
+			    (reply.rrs[i].type == DNS_TYPE_TKEY) &&
+			    name_is(reply.rrs[i].name, dns->gss_key_name)) {
+				rr = &reply.rrs[i];
+			}
+		}
+		if (rr == NULL) {
+			printf(_("The DNS server did not answer the TKEY "
+				 "query.\n"));
+			goto done;
+		}
+		n = expand_name(reply.msg, rr->rdata + rr->rdlength, rr->rdata,
+				algorithm, sizeof(algorithm));
+		p = reply.msg + rr->rdata + ((n > 0) ? n : 0);
+		end = reply.msg + rr->rdata + rr->rdlength;
+		if ((n < 0) || !name_is(algorithm, "gss-tsig") ||
+		    (p + 14 > end)) {
+			printf(_("Error parsing the DNS server's TKEY "
+				 "record.\n"));
+			goto done;
+		}
+		tkey_error = get_u16(p + 10);
+		key_size = get_u16(p + 12);
+		if (tkey_error != 0) {
+			printf(_("The DNS server refused to set up GSS-TSIG "
+				 "(%s).\n"), rcode_text(tkey_error));
+			ret = CM_SUBMIT_STATUS_UNCONFIGURED;
+			goto done;
+		}
+		if (p + 14 + key_size > end) {
+			printf(_("Error parsing the DNS server's TKEY "
+				 "record.\n"));
+			goto done;
+		}
+		if (major == GSS_S_COMPLETE) {
+			break;
+		}
+		input.value = talloc_memdup(dns->ctx, p + 14, key_size);
+		input.length = key_size;
+	}
+	if (dns->gss == GSS_C_NO_CONTEXT) {
+		goto done;
+	}
+	/* The server signs its last answer with the new key. */
+	if (have_reply &&
+	    (tsig_verify(dns, &reply, NULL, 0, &tsig_error,
+			 &unsigned_reply) != 0) && !unsigned_reply) {
+		printf(_("The DNS server's answer is not signed with the "
+			 "GSS-TSIG key (%s).\n"), rcode_text(tsig_error));
+		goto done;
+	}
+	if (dns->params.verbose > 0) {
+		fprintf(stderr, "GSS-TSIG key \"%s\" set up with %s.\n",
+			dns->gss_key_name, server);
+	}
+	dns->gss_server = talloc_strdup(dns->ctx, server);
+	ret = 0;
+done:
+	gss_release_name(&minor, &target);
+	talloc_free(query);
+	talloc_free(answer);
+	if (ret != 0) {
+		forget_context(dns);
+	}
+	return ret;
+}
+#endif
 
 /* Updates. */
 
@@ -1363,6 +1750,15 @@ send_update(struct cm_acme_dns *dns, struct cm_acme_dns_record *record,
 			 "\"%s\".\n"), server_text(dns, &server));
 		return CM_SUBMIT_STATUS_UNREACHABLE;
 	}
+#ifdef HAVE_GSS_TSIG
+	if (dns->params.gss_tsig) {
+		ret = negotiate(dns, server.host, &addrs);
+		if (ret != 0) {
+			return ret;
+		}
+		ret = CM_SUBMIT_STATUS_UNREACHABLE;
+	}
+#endif
 	msg = talloc_zero(dns->ctx, struct dns_buf);
 	answer = talloc_zero(dns->ctx, struct dns_buf);
 	if ((msg == NULL) || (answer == NULL)) {
@@ -1392,7 +1788,7 @@ send_update(struct cm_acme_dns *dns, struct cm_acme_dns_record *record,
 			add ? "to" : "from", record->name, record->zone,
 			server_text(dns, &server));
 	}
-	if (exchange(dns, &addrs, msg, 0, answer,
+	if (exchange(dns, &addrs, msg, dns->params.gss_tsig, answer,
 		     &error) != 0) {
 		printf(_("Error sending the DNS update to %s: %s.\n"),
 		       server_text(dns, &server), error);
@@ -1719,6 +2115,14 @@ done:
 static int
 dns_destructor(struct cm_acme_dns *dns)
 {
+#ifdef HAVE_GSS_TSIG
+	OM_uint32 minor;
+
+	forget_context(dns);
+	if (dns->cred != GSS_C_NO_CREDENTIAL) {
+		gss_release_cred(&minor, &dns->cred);
+	}
+#endif
 	if (dns->secret != NULL) {
 		OPENSSL_cleanse(dns->secret, dns->secret_length);
 	}
@@ -1738,6 +2142,10 @@ cm_acme_dns_new(void *parent, const struct cm_acme_dns_params *params)
 	}
 	dns->ctx = dns;
 	dns->params = *params;
+#ifdef HAVE_GSS_TSIG
+	dns->cred = GSS_C_NO_CREDENTIAL;
+	dns->gss = GSS_C_NO_CONTEXT;
+#endif
 	talloc_set_destructor(dns, dns_destructor);
 	if (dns->params.ttl <= 0) {
 		dns->params.ttl = CM_ACME_DNS_DEFAULT_TTL;
@@ -1745,11 +2153,22 @@ cm_acme_dns_new(void *parent, const struct cm_acme_dns_params *params)
 	if (dns->params.wait <= 0) {
 		dns->params.wait = CM_ACME_DNS_DEFAULT_WAIT;
 	}
-	if (params->tsig_key_file == NULL) {
-		printf(_("No TSIG key for DNS updates.\n"));
+	if ((params->tsig_key_file != NULL) && params->gss_tsig) {
+		printf(_("A TSIG key and GSS-TSIG can't be used together.\n"));
 		goto fail;
 	}
-	if (read_key(dns, params->tsig_key_file) != 0) {
+	if ((params->tsig_key_file == NULL) && !params->gss_tsig) {
+		printf(_("No TSIG key, nor GSS-TSIG, for DNS updates.\n"));
+		goto fail;
+	}
+#ifndef HAVE_GSS_TSIG
+	if (params->gss_tsig) {
+		printf(_("This helper was built without GSS-TSIG support.\n"));
+		goto fail;
+	}
+#endif
+	if ((params->tsig_key_file != NULL) &&
+	    (read_key(dns, params->tsig_key_file) != 0)) {
 		goto fail;
 	}
 	if ((params->update_server != NULL) &&

@@ -1304,6 +1304,9 @@ main(int argc, const char **argv)
 		{"state-dir", 's', POPT_ARG_STRING, &state_base, 0, "directory for account and attestation data", "DIRECTORY"},
 		{"tcti", 'T', POPT_ARG_STRING, &tcti, 0, "TPM command transmission interface", "TCTI"},
 		{"tsig-key-file", '\0', POPT_ARG_STRING, &dns_params.tsig_key_file, 0, "answer dns-01 challenges with DNS updates signed with the TSIG key in the file", "FILENAME"},
+		{"gss-tsig", '\0', POPT_ARG_NONE, &dns_params.gss_tsig, 0, "answer dns-01 challenges with DNS updates signed with GSS-TSIG", NULL},
+		{"keytab", '\0', POPT_ARG_STRING, &dns_params.keytab, 0, "keytab for GSS-TSIG", "KEYTAB"},
+		{"principal", '\0', POPT_ARG_STRING, &dns_params.principal, 0, "principal for GSS-TSIG", "PRINCIPAL"},
 		{"dns-update-server", '\0', POPT_ARG_STRING, &dns_params.update_server, 0, "DNS server to send updates to, instead of the zone's primary server", "HOST[:PORT]"},
 		{"dns-zone", '\0', POPT_ARG_STRING, &dns_params.zone, 0, "zone to update, instead of the one found in the DNS", "ZONE"},
 		{"dns-resolver", '\0', POPT_ARG_STRING, &dns_params.resolver, 0, "DNS resolver to use instead of the system's", "ADDRESS[:PORT]"},
@@ -1382,7 +1385,7 @@ main(int argc, const char **argv)
 		goto done;
 	}
 	client.directory_url = url;
-	if (dns_params.tsig_key_file != NULL) {
+	if ((dns_params.tsig_key_file != NULL) || dns_params.gss_tsig) {
 		dns_params.verbose = verbose;
 		dns = cm_acme_dns_new(ctx, &dns_params);
 		if (dns == NULL) {
@@ -1393,7 +1396,7 @@ main(int argc, const char **argv)
 	    (dns_params.resolver != NULL) ||
 	    (dns_params.check_servers != NULL)) {
 		printf(_("DNS options were given without a TSIG key "
-			 "(--tsig-key-file).\n"));
+			 "(--tsig-key-file) or GSS-TSIG (--gss-tsig).\n"));
 		goto done;
 	}
 	if (attest != NULL) {

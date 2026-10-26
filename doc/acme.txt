@@ -58,7 +58,7 @@ that it checks on the order again later.
 
 DNS challenges
 --------------
-With a TSIG key, the helper answers "dns-01" challenges (RFC
+With a TSIG key, or GSS-TSIG, the helper answers "dns-01" challenges (RFC
 8555, 8.4) itself, with DNS UPDATE messages (RFC 2136), without running
 any other program:
 
@@ -110,6 +110,19 @@ can be allowed to change only TXT records of the zone:
   update-policy { grant acme zonesub TXT; };
 
 or only the names which it is meant for.
+
+With "--gss-tsig", updates are signed using GSS-TSIG (RFC 3645), as the
+DNS servers of FreeIPA and Active Directory accept them from the hosts of
+their domain: the helper obtains Kerberos credentials with the host's keytab
+(the default keytab, usually /etc/krb5.keytab, or the one given with
+"--keytab"), for its first principal (or the one given with "--principal"),
+in a credential cache of its own, and sets up a key with the server, whose
+name must be known (the SOA record's MNAME, or a name given with
+"--dns-update-server"), in TKEY queries, for its "DNS/<server name>"
+principal.  A server running BIND can let each host change the records
+under its own name:
+
+  update-policy { grant EXAMPLE.COM krb5-selfsub . TXT; };
 
 The helper waits for the CA to check the record for up to two minutes; if
 the CA takes longer, the record is removed nonetheless, and the

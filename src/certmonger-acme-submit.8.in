@@ -11,7 +11,7 @@ acme\-submit \-u DIRECTORY\-URL
 [\-P permanent\-identifier]
 [\-s state\-directory]
 [\-T tcti]
-[\-\-tsig\-key\-file file]
+[\-\-tsig\-key\-file file | \-\-gss\-tsig [\-\-keytab keytab] [\-\-principal principal]]
 [\-\-dns\-update\-server host[:port]]
 [\-\-dns\-zone zone]
 [\-\-dns\-resolver address[:port]]
@@ -53,7 +53,8 @@ in the signing request's subjectAltName extension, or, if it has none, its
 subject's common name.  Authorizations must then be valid already (as they
 are when the server authorizes the account through its external account
 binding) or be satisfied by a challenge which \fIacme\-submit\fR can
-answer: \fIdns\-01\fR, if it is given a TSIG key to update the DNS with.  Challenges which require serving content (\fIhttp\-01\fR,
+answer: \fIdns\-01\fR, if it is given a TSIG key or GSS\-TSIG to update the
+DNS with.  Challenges which require serving content (\fIhttp\-01\fR,
 \fItls\-alpn\-01\fR) are not supported.
 
 With device attestation, the order names the device's
@@ -68,12 +69,19 @@ To answer a \fIdns\-01\fR challenge (RFC 8555, section 8.4) for a name,
 digest of the challenge's key authorization at \fI_acme\-challenge\fR.\fIname\fR
 (without the \fI*.\fR label of a wildcard name), or at the name which a
 CNAME record there points to, using a DNS UPDATE message (RFC 2136) signed
-with TSIG (RFC 8945).  The update goes to the
+with TSIG (RFC 8945) or GSS\-TSIG (RFC 3645).  The update goes to the
 primary server of the record's zone, which is found by looking up SOA
 records from the record's name upwards.  \fIacme\-submit\fR then asks each
 of the zone's name servers, directly, until they all serve the record,
 tells the server that the challenge can be checked, waits for it to be,
 and removes the record, whatever the outcome.  No other program is run.
+
+With GSS\-TSIG, Kerberos credentials are obtained using the keytab, in a
+credential cache of the helper's own, and a key is set up with the DNS
+server, in TKEY queries, for its \fIDNS/\fRserver\fI@REALM\fR principal, as
+the DNS servers of FreeIPA and Active Directory expect from the hosts of
+their domains.  The server's name must then be known: an address can't be
+given with \fB\-\-dns\-update\-server\fR.
 
 .SS TPM attestation
 With \fB\-a tpm\fR, the private key must have been generated in a TPM
@@ -146,6 +154,17 @@ file, which holds a \fIkey\fR statement in the form which BIND's
 [\fIalgorithm\fR:]\fIname\fR:\fIsecret\fR, which \fInsupdate\fR's \fB\-y\fR
 option takes.  The algorithm is \fIhmac\-sha256\fR (the default),
 \fIhmac\-sha384\fR, \fIhmac\-sha512\fR or \fIhmac\-sha224\fR.
+.TP
+\fB\-\-gss\-tsig\fR
+Answer \fIdns\-01\fR challenges, signing updates with GSS\-TSIG.
+.TP
+\fB\-\-keytab\fR=\fIKEYTAB\fR
+The keytab to use with GSS\-TSIG.  The default is the system's default
+keytab, usually \fI/etc/krb5.keytab\fR.
+.TP
+\fB\-\-principal\fR=\fIPRINCIPAL\fR
+The principal to use with GSS\-TSIG.  The default is the first one in the
+keytab.
 .TP
 \fB\-\-dns\-update\-server\fR=\fIHOST\fR[:\fIPORT\fR]
 The server to send updates to.  The default is the zone's primary server,

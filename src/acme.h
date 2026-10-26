@@ -107,7 +107,7 @@ int cm_acme_tpm_attest(void *parent, struct cm_acme_tpm_params *params,
 		       const char **error);
 
 /* acme-dns.c: publishing dns-01 records (RFC 8555 8.4) with DNS UPDATE
- * (RFC 2136), signed with TSIG (RFC 8945).  The
+ * (RFC 2136), signed with TSIG (RFC 8945) or GSS-TSIG (RFC 3645).  The
  * functions print what went wrong, and return 0 or one of the
  * CM_SUBMIT_STATUS_* values. */
 #define CM_ACME_DNS_DEFAULT_TTL 60
@@ -118,6 +118,9 @@ struct cm_acme_dns_params {
 	const char *resolver;		/* ADDRESS[:PORT], else the system's */
 	const char *check_servers;	/* HOST[:PORT],..., else the NS set */
 	const char *tsig_key_file;
+	int gss_tsig;
+	const char *keytab;		/* for GSS-TSIG, else the default */
+	const char *principal;		/* for GSS-TSIG, else the keytab's */
 	long ttl;
 	long wait;			/* for the servers to serve the record */
 	int verbose;

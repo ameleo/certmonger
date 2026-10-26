@@ -408,6 +408,53 @@ if ! ${configure_dist_target_only:-false} ; then
 	CPPFLAGS="$savedCPPFLAGS"
 	LDFLAGS="$savedLDFLAGS"
 
+	dnl GSS-TSIG, for the ACME helper's DNS updates.
+	AC_ARG_WITH([gss-tsig],
+		[AS_HELP_STRING([--with-gss-tsig], [sign the ACME helper's DNS updates with GSS-TSIG (default: when available)])],
+		[with_gss_tsig=${with_gss_tsig}],
+		[with_gss_tsig=check])
+	GSSAPI_CFLAGS=
+	GSSAPI_LIBS=
+	have_gss_tsig=no
+	if test x"$with_gss_tsig" != xno ; then
+		AC_MSG_CHECKING(for GSS-API)
+		GSSAPI_CFLAGS=`${KRB5_CONFIG} --cflags gssapi 2> /dev/null`
+		GSSAPI_LIBS=`${KRB5_CONFIG} --libs gssapi 2> /dev/null`
+		savedCFLAGS="$CFLAGS"
+		savedLIBS="$LIBS"
+		CFLAGS="$CFLAGS $GSSAPI_CFLAGS"
+		LIBS="$GSSAPI_LIBS $LIBS"
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+			#include <gssapi/gssapi.h>
+			#include <gssapi/gssapi_krb5.h>
+			]],[[
+			OM_uint32 minor;
+			gss_ctx_id_t ctx = GSS_C_NO_CONTEXT;
+			gss_buffer_desc in, out;
+			gss_get_mic(&minor, ctx, GSS_C_QOP_DEFAULT, &in, &out);
+			gss_verify_mic(&minor, ctx, &in, &out, NULL);
+			(void) GSS_KRB5_NT_PRINCIPAL_NAME;
+			]])],
+			[have_gss_tsig=yes])
+		AC_MSG_RESULT([$have_gss_tsig])
+		if test x"$have_gss_tsig" = xyes ; then
+			AC_CHECK_FUNCS(gss_acquire_cred_from)
+		fi
+		CFLAGS="$savedCFLAGS"
+		LIBS="$savedLIBS"
+		if test x"$have_gss_tsig" = xno && test x"$with_gss_tsig" = xyes ; then
+			AC_MSG_ERROR([GSS-API not found])
+		fi
+	fi
+	if test x"$have_gss_tsig" = xyes ; then
+		AC_DEFINE(HAVE_GSS_TSIG,1,[Define if the ACME helper can sign DNS updates with GSS-TSIG.])
+	else
+		GSSAPI_CFLAGS=
+		GSSAPI_LIBS=
+	fi
+	AC_SUBST(GSSAPI_CFLAGS)
+	AC_SUBST(GSSAPI_LIBS)
+
 	AM_CONDITIONAL(HAVE_OPENSSL,test x$withopenssl != xno)
 	if test x$withopenssl != xno ; then
 		if pkg-config libcrypto 2> /dev/null ; then
