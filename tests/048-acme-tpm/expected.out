@@ -1,3 +1,5 @@
+[the test server's check of the attestation signature]
+sig: TPMT_SIGNATURE accepted, anything else refused
 [getcert add-acme-ca]
 New CA "TPM" added.
 ca_external_helper=acme-submit -u https://localhost/directory -R $tmpdir/ca/root.crt -a tpm

@@ -29,7 +29,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec, padding, rsa
 from cryptography.hazmat.primitives.asymmetric.utils import \
-    encode_dss_signature
+    decode_dss_signature, encode_dss_signature
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.x509.oid import NameOID
 
@@ -227,14 +227,64 @@ def make_import(ek_public):
 
 
 def verify_tpm_signature(key, alg, sig, data):
-    """The "sig" of a WebAuthn "tpm" statement, as verifiers read it: the
-    bare RSASSA signature, or a DER-encoded ECDSA signature."""
-    if alg == -257:
-        key.verify(sig, data, padding.PKCS1v15(), hashes.SHA256())
-    elif alg == -7:
-        key.verify(sig, data, ec.ECDSA(hashes.SHA256()))
+    """The "sig" of a WebAuthn "tpm" statement, as WebAuthn (8.3) defines
+    it: a TPMT_SIGNATURE (TPM 2.0 Part 2, 11.3.4), whose scheme and hash are
+    those which "alg" names."""
+    r = Reader(sig)
+    scheme = (r.u16(), r.u16())
+    if alg == -257 and scheme == (ALG_RSASSA, ALG_SHA256):
+        signature = r.tpm2b()
+        if not r.done():
+            raise ValueError("trailing data after TPMT_SIGNATURE")
+        key.verify(signature, data, padding.PKCS1v15(), hashes.SHA256())
+    elif alg == -7 and scheme == (ALG_ECDSA, ALG_SHA256):
+        sig_r = int.from_bytes(r.tpm2b(), "big")
+        sig_s = int.from_bytes(r.tpm2b(), "big")
+        if not r.done():
+            raise ValueError("trailing data after TPMT_SIGNATURE")
+        key.verify(encode_dss_signature(sig_r, sig_s), data,
+                   ec.ECDSA(hashes.SHA256()))
     else:
-        raise ValueError("unexpected signature algorithm")
+        raise ValueError("signature scheme does not match alg")
+
+
+def self_test():
+    """Check that verify_tpm_signature() accepts a TPMT_SIGNATURE, and
+    refuses anything else, so that the tests show what the helper sends."""
+    data = b"certInfo"
+    ec_key = ec.generate_private_key(ec.SECP256R1())
+    rsa_key = rsa.generate_private_key(65537, 2048)
+    r, s = decode_dss_signature(ec_key.sign(data, ec.ECDSA(hashes.SHA256())))
+    ecdsa = struct.pack(">HH", ALG_ECDSA, ALG_SHA256) + \
+        tpm2b(r.to_bytes(32, "big")) + tpm2b(s.to_bytes(32, "big"))
+    bare_rsa = rsa_key.sign(data, padding.PKCS1v15(), hashes.SHA256())
+    rsassa = struct.pack(">HH", ALG_RSASSA, ALG_SHA256) + tpm2b(bare_rsa)
+    other = ec_key.sign(b"something else", ec.ECDSA(hashes.SHA256()))
+    o_r, o_s = decode_dss_signature(other)
+    verify_tpm_signature(ec_key.public_key(), -7, ecdsa, data)
+    verify_tpm_signature(rsa_key.public_key(), -257, rsassa, data)
+    nonsense = [
+        (ec_key, -7, b"", "nothing"),
+        (ec_key, -7, os.urandom(72), "random bytes"),
+        (ec_key, -7, encode_dss_signature(r, s), "a DER ECDSA signature"),
+        (rsa_key, -257, bare_rsa, "a bare RSA signature"),
+        (ec_key, -7, ecdsa + b"\0", "trailing data"),
+        (ec_key, -7, ecdsa[:-1], "a truncated structure"),
+        (ec_key, -7, struct.pack(">HH", ALG_ECDSA, 0x000c) + ecdsa[4:],
+         "another hash"),
+        (rsa_key, -257, struct.pack(">HH", 0x0016, ALG_SHA256) + rsassa[4:],
+         "another scheme"),
+        (ec_key, -257, ecdsa, "another alg"),
+        (ec_key, -7, ecdsa[:4] + tpm2b(o_r.to_bytes(32, "big")) +
+         tpm2b(o_s.to_bytes(32, "big")), "a signature of other data"),
+    ]
+    for key, alg, sig, what in nonsense:
+        try:
+            verify_tpm_signature(key.public_key(), alg, sig, data)
+        except Exception:
+            continue
+        sys.exit("sig accepted: %s" % what)
+    print("sig: TPMT_SIGNATURE accepted, anything else refused")
 
 
 class Problem(Exception):
@@ -721,6 +771,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 
 def main():
+    if sys.argv[1:] == ["--self-test"]:
+        self_test()
+        return
     parser = argparse.ArgumentParser()
     parser.add_argument("--cert", required=True)
     parser.add_argument("--key", required=True)

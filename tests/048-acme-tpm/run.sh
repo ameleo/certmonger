@@ -163,6 +163,12 @@ transient() {
 	echo "TPM objects left: `tpm2_getcap handles-transient | wc -l`"
 }
 
+# The test server takes "sig" only as WebAuthn defines it, a TPMT_SIGNATURE,
+# and refuses anything else, so that the enrollments below show what the
+# helper sends.
+echo "[the test server's check of the attestation signature]"
+$PYTHON "$srcdir"/../047-acme/acmeserver.py --self-test
+
 start_server
 
 echo "[getcert add-acme-ca]"

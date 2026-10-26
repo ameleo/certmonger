@@ -41,8 +41,6 @@
 #include <unistd.h>
 
 #include <openssl/bio.h>
-#include <openssl/bn.h>
-#include <openssl/ecdsa.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/sha.h>
@@ -1140,53 +1138,6 @@ done:
 	return ret;
 }
 
-/* The signature as WebAuthn verifiers read the "sig" of a "tpm" statement:
- * the bare RSASSA signature, or a DER-encoded ECDSA signature.  WebAuthn's
- * text calls it a TPMT_SIGNATURE, but verifiers and authenticators (Windows
- * Hello among them) use the signature which it holds, and so do we. */
-static unsigned char *
-bare_signature(void *parent, const TPMT_SIGNATURE *signature, size_t *length)
-{
-	unsigned char *ret = NULL, *der = NULL;
-	ECDSA_SIG *sig;
-	BIGNUM *r, *s;
-	int der_length;
-
-	*length = 0;
-	switch (signature->sigAlg) {
-	case TPM2_ALG_RSASSA:
-		*length = signature->signature.rsassa.sig.size;
-		return talloc_memdup(parent,
-				     signature->signature.rsassa.sig.buffer,
-				     *length);
-	case TPM2_ALG_ECDSA:
-		sig = ECDSA_SIG_new();
-		r = BN_bin2bn(signature->signature.ecdsa.signatureR.buffer,
-			      signature->signature.ecdsa.signatureR.size,
-			      NULL);
-		s = BN_bin2bn(signature->signature.ecdsa.signatureS.buffer,
-			      signature->signature.ecdsa.signatureS.size,
-			      NULL);
-		if ((sig == NULL) || (r == NULL) || (s == NULL) ||
-		    (ECDSA_SIG_set0(sig, r, s) != 1)) {
-			BN_free(r);
-			BN_free(s);
-			ECDSA_SIG_free(sig);
-			return NULL;
-		}
-		der_length = i2d_ECDSA_SIG(sig, &der);
-		if (der_length > 0) {
-			ret = talloc_memdup(parent, der, der_length);
-			*length = der_length;
-		}
-		OPENSSL_free(der);
-		ECDSA_SIG_free(sig);
-		return ret;
-	default:
-		return NULL;
-	}
-}
-
 /* Certify the device key with the AK, binding the statement to the key
  * authorization, and build the attestation object. */
 static int
@@ -1232,10 +1183,14 @@ attest_device_key(struct tpm_state *state, const TPM2B_PUBLIC *device_public,
 		goto done;
 	}
 
-	/* pubArea is a TPMT_PUBLIC (WebAuthn 8.3). */
-	sig_buf = bare_signature(state->ctx, signature, &sig_length);
+	/* sig is the TPMT_SIGNATURE which the TPM returned, and pubArea a
+	 * TPMT_PUBLIC (WebAuthn 8.3). */
+	sig_buf = talloc_size(state->ctx, sizeof(*signature));
 	pub_buf = talloc_size(state->ctx, sizeof(device_public->publicArea));
-	if ((sig_buf == NULL) ||
+	if ((sig_buf == NULL) || (pub_buf == NULL) ||
+	    (Tss2_MU_TPMT_SIGNATURE_Marshal(signature, sig_buf,
+					    sizeof(*signature),
+					    &sig_length) != TSS2_RC_SUCCESS) ||
 	    (Tss2_MU_TPMT_PUBLIC_Marshal(&device_public->publicArea, pub_buf,
 					 sizeof(device_public->publicArea),
 					 &pub_length) != TSS2_RC_SUCCESS)) {

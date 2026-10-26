@@ -106,10 +106,10 @@ How it works:
   "attToBeSigned", and the attestation object has no "authData".  The
   attestation statement carries the AK's certificate and chain ("x5c"), the
   statement ("certInfo"), its signature ("sig"), and the key's public area
-  ("pubArea").  WebAuthn's text describes "sig" as a TPMT_SIGNATURE, but
-  authenticators and verifiers use the signature which it holds (the RSASSA
-  signature, or the DER encoding of an ECDSA signature), and so does the
-  helper.
+  ("pubArea").  "sig" is the TPMT_SIGNATURE which TPM2_Certify returns, as
+  WebAuthn (8.3) defines it.  Some authenticators (Windows Hello among
+  them) send the bare signature which it holds instead; a server which
+  accepts only that form will refuse the helper's attestation.
 
 Getting hold of the key in the TPM: PKCS#11 has no notion of TPM2_Certify,
 which needs the authorization value of the key which is certified, and
