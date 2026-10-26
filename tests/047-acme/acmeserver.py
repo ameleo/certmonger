@@ -3,7 +3,8 @@
 # A minimal ACME (RFC 8555) server for testing acme-submit.  It checks the
 # JWS of every request, requires an external account binding when given
 # one, and either authorizes the names of an order at once, as a CA which
-# trusts the external account does, or requires a device-attest-01
+# trusts the external account does, or requires a dns-01 challenge for
+# each name, which it checks by asking a DNS server, or a device-attest-01
 # challenge (draft-ietf-acme-device-attest) answered with a WebAuthn "tpm"
 # attestation statement, whose attestation key it certifies itself after
 # importing an HMAC key under the TPM's endorsement key.  It signs requests
@@ -18,6 +19,7 @@ import http.server
 import json
 import os
 import secrets
+import socket
 import ssl
 import struct
 import subprocess
@@ -287,6 +289,60 @@ def self_test():
     print("sig: TPMT_SIGNATURE accepted, anything else refused")
 
 
+def dns_query(server, name, rtype=16):
+    """Ask a DNS server (HOST:PORT) for the records of a name, and return
+    the rcode, the TXT strings (or names, for CNAMEs) and the CNAME target,
+    if the name is an alias."""
+    host, port = server.rsplit(":", 1)
+    qid = secrets.randbelow(65536)
+    query = struct.pack(">HHHHHH", qid, 0, 1, 0, 0, 0)
+    for label in name.rstrip(".").split("."):
+        query += bytes([len(label)]) + label.encode()
+    query += b"\0" + struct.pack(">HH", rtype, 1)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.settimeout(5)
+        sock.sendto(query, (host, int(port)))
+        while True:
+            msg, _ = sock.recvfrom(65535)
+            if struct.unpack(">H", msg[:2])[0] == qid:
+                break
+
+    def read_name(pos):
+        labels, jumped, end = [], False, pos
+        while True:
+            n = msg[pos]
+            if n & 0xc0 == 0xc0:
+                if not jumped:
+                    end = pos + 2
+                pos, jumped = ((n & 0x3f) << 8) | msg[pos + 1], True
+                continue
+            if n == 0:
+                return ".".join(labels).lower(), (end if jumped else pos + 1)
+            labels.append(msg[pos + 1:pos + 1 + n].decode())
+            pos += 1 + n
+    flags, qd, an = struct.unpack(">HHH", msg[2:8])
+    pos = 12
+    for _ in range(qd):
+        _, pos = read_name(pos)
+        pos += 4
+    values, cname = [], None
+    for _ in range(an):
+        owner, pos = read_name(pos)
+        rr_type, _, _, length = struct.unpack(">HHIH", msg[pos:pos + 10])
+        pos += 10
+        rdata = msg[pos:pos + length]
+        if rr_type == 5 and owner == name.lower():
+            cname, _ = read_name(pos)
+        elif rr_type == 16 and owner == name.lower():
+            text, i = b"", 0
+            while i < len(rdata):
+                text += rdata[i + 1:i + 1 + rdata[i]]
+                i += 1 + rdata[i]
+            values.append(text.decode())
+        pos += length
+    return flags & 0xf, values, cname
+
+
 class Problem(Exception):
     def __init__(self, code, kind, detail):
         self.code, self.kind, self.detail = code, kind, detail
@@ -461,6 +517,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     return self.get_order(order)
                 if parts[0] == "order" and parts[2:] == ["finalize"]:
                     return self.finalize(account, order, payload)
+                if parts[0] == "authz" and "authzs" in order:
+                    return self.get_dns_authz(account, order, parts)
+                if parts[0] == "chall" and "authzs" in order:
+                    return self.dns_challenge(order, parts, payload)
                 if parts[0] == "authz":
                     return self.get_authz(order)
                 if parts[0] == "chall":
@@ -525,6 +585,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
                  "processing": 0, "token": b64u(secrets.token_bytes(16)),
                  "authz": "pending" if st.opts.attest or st.opts.offer
                  else "valid", "attested": None}
+        if st.opts.offer == "dns-01":
+            # One authorization for each name; that of a wildcard name is
+            # for the name without its "*." label (RFC 8555 7.1.3).
+            order["authzs"] = []
+            for i in identifiers:
+                wildcard = i["value"].startswith("*.")
+                order["authzs"].append({
+                    "identifier": {"type": "dns", "value":
+                                   i["value"][2:] if wildcard
+                                   else i["value"]},
+                    "wildcard": wildcard, "status": "pending",
+                    "challenge": "pending",
+                    "token": b64u(secrets.token_bytes(16))})
         if order["authz"] == "valid":
             order["status"] = "ready"
         st.orders[oid] = order
@@ -534,7 +607,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def order_json(self, order):
         out = {"status": order["status"],
                "identifiers": order["identifiers"],
-               "authorizations": [self.url("/authz/%s/0" % order["id"])],
+               "authorizations": [self.url("/authz/%s/%d" % (order["id"], i))
+                                  for i in range(len(order.get("authzs",
+                                                               [0])))],
                "finalize": self.url("/order/%s/finalize" % order["id"])}
         if order["status"] == "valid":
             out["certificate"] = self.url("/cert/" + order["id"])
@@ -569,6 +644,74 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.reply(200, {"status": order["authz"],
                          "identifier": order["identifiers"][0],
                          "challenges": challenges})
+
+    # dns-01
+    def dns_authz(self, order, parts):
+        try:
+            return int(parts[2]), order["authzs"][int(parts[2])]
+        except (IndexError, ValueError):
+            raise Problem(404, "malformed", "no such authorization")
+
+    def dns_challenge_json(self, order, index, authz):
+        out = {"type": "dns-01",
+               "url": self.url("/chall/%s/%d" % (order["id"], index)),
+               "status": authz["challenge"], "token": authz["token"]}
+        if authz.get("error"):
+            out["error"] = authz["error"]
+        return out
+
+    def dns_check(self, account, order, authz):
+        """Look for the TXT record, as a CA does, following a CNAME."""
+        st = self.state
+        name = "_acme-challenge." + authz["identifier"]["value"]
+        expected = b64u(hashlib.sha256(
+            (authz["token"] + "." + account["thumb"]).encode()).digest())
+        seen, via = [], ""
+        for _ in range(8):
+            rcode, seen, cname = dns_query(st.opts.dns_server, name)
+            if cname is None or seen:
+                break
+            name, via = cname, " (via %s)" % cname
+        if expected in seen and not st.opts.dns_fail:
+            authz["status"] = authz["challenge"] = "valid"
+            self.log("  dns-01 %s%s: TXT record found%s" %
+                     (authz["identifier"]["value"],
+                      " (wildcard)" if authz["wildcard"] else "", via))
+        else:
+            authz["status"] = authz["challenge"] = "invalid"
+            authz["error"] = {"type": "urn:ietf:params:acme:error:"
+                              "unauthorized",
+                              "detail": "no TXT record with the expected "
+                              "value at %s" % name}
+            self.log("  dns-01 %s: TXT record %s%s" %
+                     (authz["identifier"]["value"],
+                      "found, but refused" if expected in seen
+                      else "not found", via))
+        statuses = [a["status"] for a in order["authzs"]]
+        if "invalid" in statuses:
+            order["status"] = "invalid"
+        elif all(s == "valid" for s in statuses):
+            order["status"] = "ready"
+
+    def get_dns_authz(self, account, order, parts):
+        index, authz = self.dns_authz(order, parts)
+        if authz["challenge"] == "processing":
+            self.dns_check(account, order, authz)
+        out = {"status": authz["status"],
+               "identifier": authz["identifier"],
+               "challenges": [self.dns_challenge_json(order, index, authz)]}
+        if authz["wildcard"]:
+            out["wildcard"] = True
+        self.reply(200, out)
+
+    def dns_challenge(self, order, parts, payload):
+        index, authz = self.dns_authz(order, parts)
+        if payload == b"{}" and authz["challenge"] == "pending":
+            # Checked the next time the client looks.
+            authz["challenge"] = "processing"
+        self.reply(200, self.dns_challenge_json(order, index, authz),
+                   headers=[("Link", "<%s>;rel=\"up\"" % self.url(
+                       "/authz/%s/%d" % (order["id"], index)))])
 
     def challenge(self, account, order, payload):
         st = self.state
@@ -774,6 +917,13 @@ def main():
     if sys.argv[1:] == ["--self-test"]:
         self_test()
         return
+    if sys.argv[1:2] == ["--dns-query"]:
+        rcode, values, cname = dns_query(sys.argv[2], sys.argv[3])
+        for value in values:
+            print(value)
+        if cname:
+            print("CNAME " + cname)
+        return
     parser = argparse.ArgumentParser()
     parser.add_argument("--cert", required=True)
     parser.add_argument("--key", required=True)
@@ -791,6 +941,8 @@ def main():
     parser.add_argument("--processing", type=int, default=0)
     parser.add_argument("--retry-after", type=int, default=1)
     parser.add_argument("--bad-nonce", action="store_true")
+    parser.add_argument("--dns-server")
+    parser.add_argument("--dns-fail", action="store_true")
     opts = parser.parse_args()
 
     server = http.server.ThreadingHTTPServer(("localhost", 0), Handler)

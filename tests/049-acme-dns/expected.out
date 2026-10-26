@@ -1,0 +1,107 @@
+[dns-01 offered, no DNS configuration]
+exit: 2
+No challenge we can answer for www.example.test (offered: dns-01).
+POST /new-order
+  identifiers: dns:www.example.test, dns:host.example.test
+POST /authz/2/0 (POST-as-GET)
+[DNS options without a key]
+exit: 4
+DNS options were given without a TSIG key (--tsig-key-file) or GSS-TSIG (--gss-tsig).
+[enroll, two names, a secondary server]
+exit: 0
+certificate is for the key
+POST /new-order
+  identifiers: dns:www.example.test, dns:host.example.test
+POST /authz/3/0 (POST-as-GET)
+POST /chall/3/0
+POST /authz/3/0 (POST-as-GET)
+  dns-01 www.example.test: TXT record found
+POST /authz/3/0 (POST-as-GET)
+POST /authz/3/1 (POST-as-GET)
+POST /chall/3/1
+POST /authz/3/1 (POST-as-GET)
+  dns-01 host.example.test: TXT record found
+POST /authz/3/1 (POST-as-GET)
+POST /order/3 (POST-as-GET)
+POST /order/3/finalize
+POST /cert/3 (POST-as-GET)
+_acme-challenge.www.example.test: 0 record(s)
+_acme-challenge.host.example.test: 0 record(s)
+2
+2
+the secondary got the changes by zone transfer
+[enroll, wildcard]
+exit: 0
+certificate is for the key
+    DNS:*.example.test, DNS:example.test
+POST /new-order
+  identifiers: dns:*.example.test, dns:example.test
+POST /authz/4/0 (POST-as-GET)
+POST /chall/4/0
+POST /authz/4/0 (POST-as-GET)
+  dns-01 example.test (wildcard): TXT record found
+POST /authz/4/0 (POST-as-GET)
+POST /authz/4/1 (POST-as-GET)
+POST /chall/4/1
+POST /authz/4/1 (POST-as-GET)
+  dns-01 example.test: TXT record found
+POST /authz/4/1 (POST-as-GET)
+POST /order/4 (POST-as-GET)
+POST /order/4/finalize
+POST /cert/4 (POST-as-GET)
+_acme-challenge.example.test: 0 record(s)
+[enroll, the challenge's name is an alias in another zone]
+exit: 0
+certificate is for the key
+  dns-01 www.locked.test: TXT record found (via www.challenges.test)
+www.challenges.test: 0 record(s)
+1
+[enroll, zone given, key in nsupdate's form]
+exit: 0
+certificate is for the key
+  dns-01 www.example.test: TXT record found
+  dns-01 host.example.test: TXT record found
+0
+[the zone given isn't the name's]
+exit: 4
+"_acme-challenge.www.example.test" is not in the zone "challenges.test".
+[bad TSIG key]
+exit: 4
+The DNS server 127.0.0.1:PRIMARY refused the update's signature (NOTAUTH, BADSIG).
+0
+[unknown TSIG key]
+exit: 4
+The DNS server 127.0.0.1:PRIMARY refused the update's signature (NOTAUTH, BADKEY).
+[TSIG key which may not update the zone]
+exit: 4
+The DNS server 127.0.0.1:PRIMARY refused the update (REFUSED).
+[unsupported TSIG algorithm]
+exit: 4
+Unsupported TSIG algorithm "hmac-md5" in "$tmpdir/md5.key".
+[a server which doesn't get the record in time]
+exit: 3
+The record "_acme-challenge.www.example.test" was not served by all of the zone's servers within 3 seconds: 127.0.0.1:STALE.
+0
+_acme-challenge.www.example.test: 0 record(s)
+[the server refuses the record]
+exit: 2
+Authorization for www.example.test is invalid.
+  no TXT record with the expected value at _acme-challenge.www.example.test
+POST /new-order
+  identifiers: dns:www.example.test, dns:host.example.test
+POST /authz/2/0 (POST-as-GET)
+POST /chall/2/0
+POST /authz/2/0 (POST-as-GET)
+  dns-01 www.example.test: TXT record found, but refused
+POST /authz/2/0 (POST-as-GET)
+_acme-challenge.www.example.test: 0 record(s)
+_acme-challenge.host.example.test: 0 record(s)
+[getcert add-acme-ca]
+New CA "ACME" added.
+ca_external_helper=acme-submit -u https://localhost/directory -R $tmpdir/ca/root.crt --tsig-key-file=$tmpdir/acme.key --dns-update-server=127.0.0.1:PRIMARY --dns-zone=example.test --dns-resolver=127.0.0.1:PRIMARY --dns-check-servers=127.0.0.1:PRIMARY,127.0.0.1:SECONDARY --dns-wait=30
+[getcert request]
+	status: MONITORING
+certificate is for the key
+  dns-01 www.example.test: TXT record found
+_acme-challenge.www.example.test: 0 record(s)
+OK
