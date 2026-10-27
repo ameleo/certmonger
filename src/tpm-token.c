@@ -130,6 +130,12 @@ cm_tpm_token_client_setenv(void)
 		}
 		if (access(dir, R_OK | W_OK | X_OK) == 0) {
 			setenv("TPM2_PKCS11_STORE", dir, 1);
+			/* Ours is a store of the "esysdb" kind: naming it keeps the
+			 * module from starting its FAPI backend, and from the errors
+			 * that backend reports where it was never provisioned. */
+			if (getenv("TPM2_PKCS11_BACKEND") == NULL) {
+				setenv("TPM2_PKCS11_BACKEND", "esysdb", 1);
+			}
 		}
 	}
 	/* We use no token at all: what the module warns about is noise. */
