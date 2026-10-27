@@ -49,6 +49,22 @@ const char *cm_tpm_token_dir(void);
  * says how to reach it. */
 void cm_tpm_token_setenv(void);
 
+/* At the daemon's start, before anything loads NSS: point tpm2-pkcs11 at
+ * the token's store, which is created if need be, and quiet its warnings,
+ * unless our environment says otherwise.  Nothing happens when the module
+ * isn't installed. */
+void cm_tpm_token_startup(void);
+
+/* In a subprocess working on the entry: what cm_tpm_token_setenv() does for
+ * an entry whose key is in our token, and for any other, undo what
+ * cm_tpm_token_startup() did. */
+void cm_tpm_token_child_setenv(struct cm_store_entry *entry);
+
+/* In a client, before it loads NSS: point tpm2-pkcs11 at the daemon's store
+ * if we can use it, and quiet its warnings, unless our environment says
+ * otherwise. */
+void cm_tpm_token_client_setenv(void);
+
 /* Initialize the token if it doesn't exist yet, and make sure the NSS
  * database knows about the module.  Run in a subprocess, before NSS has
  * loaded the module. */

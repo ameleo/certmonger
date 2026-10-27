@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <dbus/dbus.h>
 
@@ -111,3 +112,55 @@ cm_tpm_token_setenv(void)
 	}
 }
 
+
+/* Whether we pointed tpm2-pkcs11 at our store, and quieted it, ourselves. */
+static int cm_tpm_token_set_store, cm_tpm_token_set_log_level;
+
+void
+cm_tpm_token_startup(void)
+{
+#ifdef CM_TPM2_PKCS11_MODULE
+	const char *dir;
+
+	if (access(CM_TPM2_PKCS11_MODULE, R_OK) != 0) {
+		return;
+	}
+	/* Where p11-kit makes the module known to every user of NSS, NSS
+	 * loads it into this process too, and the module complains loudly
+	 * when it finds no store of its own.  Give it ours, made now rather
+	 * than at the first request for a CA which attests, as the module
+	 * looks for its store whenever NSS loads it: an empty directory, in
+	 * which the module creates an empty store.  A store named in our
+	 * environment is left as it is. */
+	if (getenv("TPM2_PKCS11_STORE") == NULL) {
+		dir = cm_tpm_token_dir();
+		if (dir != NULL) {
+			setenv("TPM2_PKCS11_STORE", dir, 1);
+			cm_tpm_token_set_store = 1;
+		}
+	}
+	/* The module also warns about its FAPI backend, which we don't use,
+	 * on every system which hasn't provisioned it.  Errors still show. */
+	if (getenv("TPM2_PKCS11_LOG_LEVEL") == NULL) {
+		setenv("TPM2_PKCS11_LOG_LEVEL", "0", 1);
+		cm_tpm_token_set_log_level = 1;
+	}
+#endif
+}
+
+void
+cm_tpm_token_child_setenv(struct cm_store_entry *entry)
+{
+	if (cm_tpm_token_entry_uses(entry)) {
+		cm_tpm_token_setenv();
+		return;
+	}
+	/* Anything else sees the module as it would have without us: a key
+	 * in a token of someone else's finds that token's store. */
+	if (cm_tpm_token_set_store) {
+		unsetenv("TPM2_PKCS11_STORE");
+	}
+	if (cm_tpm_token_set_log_level) {
+		unsetenv("TPM2_PKCS11_LOG_LEVEL");
+	}
+}

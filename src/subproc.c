@@ -142,10 +142,9 @@ cm_subproc_start(int (*cb)(int fd,
 				close(fds[0]);
 
 				/* Work on a key in our TPM token, by us or by
-				 * a helper, finds the token. */
-				if (cm_tpm_token_entry_uses(entry)) {
-					cm_tpm_token_setenv();
-				}
+				 * a helper, finds the token; other work sees
+				 * the module as it would without it. */
+				cm_tpm_token_child_setenv(entry);
 
 				tmp = getenv(CM_STORE_CONFIG_DIRECTORY_ENV);
 				configdir = (tmp != NULL) ? strdup(tmp) : NULL;

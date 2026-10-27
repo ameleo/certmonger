@@ -40,6 +40,6 @@ TPM objects left: 0
 	certificate: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
 [a CA without attestation: storage must be given]
 New CA "PLAIN" added.
-None of database directory and nickname or certificate file specified.
+The CA "PLAIN" doesn't have keys attested by the TPM, so a database directory and nickname or a certificate file must be specified.
 No request found with specified nickname.
 OK

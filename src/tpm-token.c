@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <unistd.h>
 
 #include <talloc.h>
 
@@ -106,4 +107,33 @@ cm_tpm_token_helper_attests(const char *helper)
 	}
 	talloc_free(argv);
 	return ret;
+}
+
+void
+cm_tpm_token_client_setenv(void)
+{
+#ifdef CM_TPM2_PKCS11_MODULE
+	const char *dir;
+
+	if (access(CM_TPM2_PKCS11_MODULE, R_OK) != 0) {
+		return;
+	}
+	/* NSS loads the module into this process too where p11-kit makes it
+	 * known to every user of NSS.  Point it at the daemon's store when
+	 * we may use it, so that it doesn't complain about finding none,
+	 * without making one where there isn't any. */
+	if (getenv("TPM2_PKCS11_STORE") == NULL) {
+		dir = getenv(CM_STORE_TPM_DIRECTORY_ENV);
+		if (dir == NULL) {
+			dir = CM_STORE_TPM_DIRECTORY;
+		}
+		if (access(dir, R_OK | W_OK | X_OK) == 0) {
+			setenv("TPM2_PKCS11_STORE", dir, 1);
+		}
+	}
+	/* We use no token at all: what the module warns about is noise. */
+	if (getenv("TPM2_PKCS11_LOG_LEVEL") == NULL) {
+		setenv("TPM2_PKCS11_LOG_LEVEL", "0", 1);
+	}
+#endif
 }

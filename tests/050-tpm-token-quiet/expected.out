@@ -1,0 +1,18 @@
+[getcert add-acme-ca]
+New CA "TPM" added.
+daemon and getcert: no complaint from the module
+token directory: 700
+[getcert list-cas]
+daemon and getcert: no complaint from the module
+[getcert request, nothing said of the key's storage]
+daemon, getcert and helpers: no complaint from the module
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+[a CA which doesn't exist]
+No CA with name "NONE" found.
+[a CA without attestation]
+New CA "PLAIN" added.
+The CA "PLAIN" doesn't have keys attested by the TPM, so a database directory and nickname or a certificate file must be specified.
+[no CA named]
+None of database directory and nickname or certificate file specified.
+OK

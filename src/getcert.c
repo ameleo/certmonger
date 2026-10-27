@@ -1107,12 +1107,28 @@ request(const char *argv0, int argc, const char **argv)
 	 * own, but only for a CA which wants keys that the TPM attests. */
 	if ((dbdir == NULL) &&
 	    (nickname == NULL) &&
-	    (certfile == NULL) &&
-	    !ca_attests_with_tpm(bus, ca, verbose, argc, argv)) {
-		printf(_("None of database directory and nickname or "
-			 "certificate file specified.\n"));
-		help(argv0, "request");
-		return 1;
+	    (certfile == NULL)) {
+		switch (ca_attests_with_tpm(bus, ca, verbose, argc, argv)) {
+		case 1:
+			break;
+		case -1:
+			printf(_("No CA with name \"%s\" found.\n"), ca);
+			return 1;
+		case 0:
+			if (ca != NULL) {
+				printf(_("The CA \"%s\" doesn't have keys "
+					 "attested by the TPM, so a database "
+					 "directory and nickname or a "
+					 "certificate file must be "
+					 "specified.\n"), ca);
+			} else {
+				printf(_("None of database directory and "
+					 "nickname or certificate file "
+					 "specified.\n"));
+			}
+			help(argv0, "request");
+			return 1;
+		}
 	}
 	if ((certfile != NULL) && (keyfile != NULL) &&
 	    (strcmp(certfile, keyfile) == 0)) {
@@ -1619,7 +1635,8 @@ find_ca_by_name(void *parent, enum cm_tdbus_type bus, const char *name,
 }
 
 /* Whether the named CA answers device-attest-01 challenges with a TPM
- * attestation. */
+ * attestation: 1 if it does, 0 if it doesn't or none is named, -1 if
+ * there is no CA of that name. */
 static int
 ca_attests_with_tpm(enum cm_tdbus_type bus, const char *ca, int verbose,
 		    int argc, const char **argv)
@@ -1632,7 +1649,7 @@ ca_attests_with_tpm(enum cm_tdbus_type bus, const char *ca, int verbose,
 	prep_bus(bus, "request", verbose, argc, argv);
 	capath = find_ca_by_name(globals.tctx, bus, ca, verbose);
 	if (capath == NULL) {
-		return 0;
+		return -1;
 	}
 	helper = query_prop_s(bus, capath, CM_DBUS_CA_INTERFACE,
 			      CM_DBUS_PROP_EXTERNAL_HELPER, verbose,
@@ -6058,6 +6075,8 @@ main(int argc, const char **argv)
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, MYLOCALEDIR);
 #endif
+	/* Before NSS loads the tpm2-pkcs11 module, if it does. */
+	cm_tpm_token_client_setenv();
 	NSS_NoDB_Init(NULL);
 	p = argv[0];
 	if (strchr(p, '/') != NULL) {

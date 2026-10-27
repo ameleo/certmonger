@@ -41,6 +41,7 @@
 #include "log.h"
 #include "tdbus.h"
 #include "tdbusm.h"
+#include "tpm-token.h"
 #include "util-n.h"
 
 #ifdef ENABLE_NLS
@@ -229,6 +230,9 @@ main(int argc, const char **argv)
 	}
 
 	umask(S_IRWXG | S_IRWXO);
+
+	/* Before anything loads NSS, and the tpm2-pkcs11 module with it. */
+	cm_tpm_token_startup();
 
 	/* Set our working directory - the root for a system instance, the
 	 * configuration directory for a session instance. */
