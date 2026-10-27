@@ -119,10 +119,11 @@ cm_tpm_token_client_setenv(void)
 		return;
 	}
 	/* NSS loads the module into this process too where p11-kit makes it
-	 * known to every user of NSS.  Point it at the daemon's store when
-	 * we may use it, so that it doesn't complain about finding none,
-	 * without making one where there isn't any. */
-	if (getenv("TPM2_PKCS11_STORE") == NULL) {
+	 * known to every user of NSS.  Point it at the daemon's store, as the
+	 * daemon does, when the daemon has made its directory and we may use
+	 * it, so that the module doesn't complain about finding no store. */
+	if ((getenv("TPM2_PKCS11_STORE") == NULL) &&
+	    (access(CM_TPM2_PKCS11_DEFAULT_STORE, F_OK) != 0)) {
 		dir = getenv(CM_STORE_TPM_DIRECTORY_ENV);
 		if (dir == NULL) {
 			dir = CM_STORE_TPM_DIRECTORY;

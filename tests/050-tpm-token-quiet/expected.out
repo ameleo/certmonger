@@ -8,6 +8,11 @@ daemon and getcert: no complaint from the module
 daemon, getcert and helpers: no complaint from the module
 	status: MONITORING
 	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+token directory: 700
+  cert9.db: 600
+  key4.db: 600
+  pkcs11.txt: 600
+  tpm2_pkcs11.sqlite3: 600
 [a CA which doesn't exist]
 No CA with name "NONE" found.
 [a CA without attestation]

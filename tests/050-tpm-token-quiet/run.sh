@@ -147,6 +147,8 @@ quiet "$tmpdir"/request.err "daemon, getcert and helpers"
 run "$builddir"/../src/getcert list -i device 2> /dev/null |
 	grep -E "status:|ca-error:|key pair storage:" |
 	sed -e "s,$tmpdir,\$tmpdir,g"
+echo "token directory: `stat -c %a "$TOKEN"`"
+for f in `ls "$TOKEN" | sort` ; do echo "  $f: `stat -c %a "$TOKEN"/$f`" ; done
 
 echo "[a CA which doesn't exist]"
 run "$builddir"/../src/getcert request -c NONE -I none -N CN=device42 2> /dev/null | head -n 1

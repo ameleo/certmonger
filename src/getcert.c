@@ -6071,13 +6071,18 @@ main(int argc, const char **argv)
 	const char *p, *argv1;
 	char poptname[LINE_MAX];
 	unsigned int i;
+	mode_t mask;
 	int ret;
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, MYLOCALEDIR);
 #endif
-	/* Before NSS loads the tpm2-pkcs11 module, if it does. */
+	/* Before NSS loads the tpm2-pkcs11 module, if it does, which makes
+	 * an empty store in the daemon's directory if there is none yet:
+	 * only we may read it, as the daemon's own files. */
 	cm_tpm_token_client_setenv();
+	mask = umask(S_IRWXG | S_IRWXO);
 	NSS_NoDB_Init(NULL);
+	umask(mask);
 	p = argv[0];
 	if (strchr(p, '/') != NULL) {
 		p = strrchr(p, '/') + 1;
