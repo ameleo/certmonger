@@ -1,0 +1,45 @@
+[getcert add-acme-ca]
+New CA "TPM" added.
+[getcert request, nothing said of the key's storage]
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+	certificate: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+key is in the TPM token
+certificate is attested
+subject=CN=device42
+POST /new-account (eab)
+POST /new-order
+  identifiers: permanent-identifier:device42
+POST /attest/v1/ak/begin
+POST /attest/v1/ak/finish
+  attestation key certified
+POST /chall/2
+  attestation verified
+token directory: 700
+cert9.db
+key4.db
+pkcs11.txt
+tpm2_pkcs11.sqlite3
+TPM objects left: 0
+[getcert resubmit]
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+	certificate: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+certificate is attested
+same key
+[getcert rekey: a new key in the token]
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+	certificate: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+certificate is attested
+key is in the TPM token
+TPM objects left: 0
+[a second request: the same token]
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
+	certificate: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
+[a CA without attestation: storage must be given]
+New CA "PLAIN" added.
+None of database directory and nickname or certificate file specified.
+No request found with specified nickname.
+OK

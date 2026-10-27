@@ -36,6 +36,7 @@
 #include "log.h"
 #include "pin.h"
 #include "store-int.h"
+#include "tpm-token.h"
 
 enum cm_pin_type {
 	cm_pin_for_key,
@@ -109,6 +110,10 @@ cm_pin_read(struct cm_store_entry *entry, enum cm_pin_type pin_type, char **pin)
 	if ((pin != NULL) && (*pin == NULL) && (err == 0)) {
 		if (pinvalue != NULL) {
 			*pin = talloc_strdup(entry, pinvalue);
+		} else
+		if (cm_tpm_token_entry_uses(entry)) {
+			/* Our TPM token's user PIN is empty. */
+			*pin = talloc_strdup(entry, "");
 		}
 	}
 	return err;

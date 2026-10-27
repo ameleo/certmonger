@@ -47,6 +47,7 @@
 #include "store.h"
 #include "store-int.h"
 #include "subproc.h"
+#include "tpm-token.h"
 #include "util-n.h"
 
 #ifndef PRIVKEY_LIST_EMPTY
@@ -114,6 +115,11 @@ cm_keyiread_n_get_keys(struct cm_store_entry *entry, int readwrite)
 	int n_tokens, ec;
 	struct cm_keyiread_n_ctx_and_keys *ret;
 
+	/* A key in our TPM token: set the token up first, if it isn't. */
+	if (cm_tpm_token_entry_uses(entry) &&
+	    (cm_tpm_token_prepare(entry, &es) != 0)) {
+		cm_log(1, "Error preparing the TPM token: %s.\n", es);
+	}
 	/* Open the database. */
 	ctx = NSS_InitContext(entry->cm_key_storage_location,
 			      NULL, NULL, NULL, NULL,

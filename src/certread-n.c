@@ -48,6 +48,7 @@
 #include "store.h"
 #include "store-int.h"
 #include "subproc.h"
+#include "tpm-token.h"
 #include "util-n.h"
 
 struct cm_certread_state {
@@ -91,6 +92,12 @@ cm_certread_n_main(int fd, struct cm_store_ca *ca, struct cm_store_entry *entry,
 	if (fp == NULL) {
 		cm_log(1, "Unable to initialize I/O.\n");
 		_exit(1);
+	}
+	/* A certificate in our TPM token: set the token up first, if it
+	 * isn't. */
+	if (cm_tpm_token_entry_uses(entry) &&
+	    (cm_tpm_token_prepare(entry, &es) != 0)) {
+		cm_log(1, "Error preparing the TPM token: %s.\n", es);
 	}
 	/* Open the database. */
 	settings = userdata;

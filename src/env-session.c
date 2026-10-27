@@ -217,6 +217,22 @@ cm_env_acme_dir(void)
 	return ret;
 }
 
+/* The token's code creates it when it needs it. */
+char *
+cm_env_tpm_dir(void)
+{
+	static char *ret = NULL;
+
+	if (ret == NULL) {
+		ret = getenv(CM_STORE_TPM_DIRECTORY_ENV);
+		if (ret == NULL) {
+			ret = cm_env_homedir(CM_STORE_SESSION_TPM_DIRECTORY,
+					     NULL);
+		}
+	}
+	return ret;
+}
+
 char *
 cm_env_tmp_dir(void)
 {

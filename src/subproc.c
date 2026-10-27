@@ -37,6 +37,7 @@
 #include "env.h"
 #include "log.h"
 #include "subproc.h"
+#include "tpm-token.h"
 
 extern char **environ;
 
@@ -115,7 +116,7 @@ cm_subproc_start(int (*cb)(int fd,
 	int fds[2];
 	unsigned int i, childenvs;
 	long flags;
-	char *configdir, *tmpdir, *tmp, *homedir, *local, *acme;
+	char *configdir, *tmpdir, *tmp, *homedir, *local, *acme, *tpm;
 	char *p, **childenv;
 
 	state = talloc_ptrtype(parent, state);
@@ -140,6 +141,12 @@ cm_subproc_start(int (*cb)(int fd,
 				state->fd = fds[1];
 				close(fds[0]);
 
+				/* Work on a key in our TPM token, by us or by
+				 * a helper, finds the token. */
+				if (cm_tpm_token_entry_uses(entry)) {
+					cm_tpm_token_setenv();
+				}
+
 				tmp = getenv(CM_STORE_CONFIG_DIRECTORY_ENV);
 				configdir = (tmp != NULL) ? strdup(tmp) : NULL;
 				tmp = getenv("TMPDIR");
@@ -149,6 +156,8 @@ cm_subproc_start(int (*cb)(int fd,
 				local = local ? strdup(local) : NULL;
 				acme = cm_env_acme_dir();
 				acme = acme ? strdup(acme) : NULL;
+				tpm = cm_env_tpm_dir();
+				tpm = tpm ? strdup(tpm) : NULL;
 				childenvs = 0;
 				for (i = 0; (environ != NULL) && (environ[i] != NULL); i++) {
 					if (cm_subproc_propagate_environment(environ[i]) > 0) {
@@ -190,6 +199,10 @@ cm_subproc_start(int (*cb)(int fd,
 				if (acme != NULL) {
 					setenv(CM_STORE_ACME_DIRECTORY_ENV,
 					       acme, 1);
+				}
+				if (tpm != NULL) {
+					setenv(CM_STORE_TPM_DIRECTORY_ENV,
+					       tpm, 1);
 				}
 				for (i = 0; (childenv != NULL) && (childenv[i] != NULL); i++) {
 					p = childenv[i] + strcspn(childenv[i], "=");

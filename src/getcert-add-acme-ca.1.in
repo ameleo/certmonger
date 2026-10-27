@@ -23,8 +23,11 @@ given here, or, for each request, as the challenge password given to
 With \fB\-\-attest tpm\fR, requests are for the device's permanent identifier,
 and the server's \fIdevice\-attest\-01\fR challenges are answered with an
 attestation, made by the TPM, of the key in the request, which must have
-been generated in the TPM through the \fItpm2\-pkcs11\fR module.  See
-\fBcertmonger\-acme\-submit\fR(8).
+been generated in the TPM through the \fItpm2\-pkcs11\fR module.  A request
+which names no key storage keeps its key and certificate in a token which
+\fIcertmonger\fR sets up for itself, in \fI@CM_STORE_TPM_DIRECTORY@\fR: a
+\fItpm2\-pkcs11\fR token named \fIcertmonger\fR, with an empty PIN, whose key
+can't leave the TPM.  See \fBcertmonger\-acme\-submit\fR(8).
 
 .SH OPTIONS
 .TP
@@ -71,6 +74,8 @@ getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-eab\-k
 getcert request \-c ACME \-k /etc/pki/tls/private/host.key \-f /etc/pki/tls/certs/host.crt \-G EC \-g 256 \-N CN=host.example.com \-D host.example.com
 .TP
 getcert add\-acme\-ca \-c DEVICE \-u https://acme.example.com/directory \-\-attest tpm
+.TP
+getcert request \-c DEVICE \-I device \-N CN=device42 \-L kid1:b64urlkey
 .TP
 getcert request \-c DEVICE \-d /etc/pki/device \-t tpm \-n device \-p /etc/pki/device/pin \-G RSA \-g 2048 \-N CN=device42 \-L kid1:b64urlkey
 

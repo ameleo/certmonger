@@ -102,6 +102,18 @@ AC_DEFINE_UNQUOTED(CM_STORE_SESSION_ACME_DIRECTORY,"${CM_STORE_SESSION_ACME_DIRE
 AC_DEFINE_UNQUOTED(CM_STORE_ACME_DIRECTORY_ENV,"${CM_STORE_ACME_DIRECTORY_ENV}",
 		   [Define to the name of the environment variable which can specify the directory for ACME account and attestation data.])
 
+CM_STORE_TPM_DIRECTORY="$mylocalstatedir/tpm"
+CM_STORE_SESSION_TPM_DIRECTORY=".config/${PACKAGE_NAME}/tpm"
+CM_STORE_TPM_DIRECTORY_ENV="${UPCASE_PACKAGE_NAME}_TPM_DIR"
+AC_SUBST(CM_STORE_TPM_DIRECTORY)
+AC_SUBST(CM_STORE_TPM_DIRECTORY_ENV)
+AC_DEFINE_UNQUOTED(CM_STORE_TPM_DIRECTORY,"${CM_STORE_TPM_DIRECTORY}",
+		   [Define to the default path for the TPM token we keep keys in.])
+AC_DEFINE_UNQUOTED(CM_STORE_SESSION_TPM_DIRECTORY,"${CM_STORE_SESSION_TPM_DIRECTORY}",
+		   [Define to the default path for the user TPM token we keep keys in.])
+AC_DEFINE_UNQUOTED(CM_STORE_TPM_DIRECTORY_ENV,"${CM_STORE_TPM_DIRECTORY_ENV}",
+		   [Define to the name of the environment variable which can specify the directory for the TPM token we keep keys in.])
+
 CM_STORE_LOCAL_CA_DIRECTORY="$mylocalstatedir/local"
 CM_STORE_SESSION_LOCAL_CA_DIRECTORY=".config/${PACKAGE_NAME}/local"
 CM_STORE_LOCAL_CA_DIRECTORY_ENV="${UPCASE_PACKAGE_NAME}_LOCAL_CA_DIR"
@@ -319,6 +331,21 @@ if ! ${configure_dist_target_only:-false} ; then
 		AC_DEFINE(HAVE_TSS2,1,[Define if the ACME helper can use a TPM for device attestation.])
 	fi
 	AM_CONDITIONAL(HAVE_TSS2,test x"$have_tss2" = xyes)
+
+	AC_ARG_WITH([tpm2-pkcs11-module],
+		[AS_HELP_STRING([--with-tpm2-pkcs11-module=PATH], [the tpm2-pkcs11 PKCS#11 module, for keys in a TPM token of our own (default: in p11-kit's module directory)])],
+		[tpm2_pkcs11_module=${withval}],
+		[tpm2_pkcs11_module=])
+	if test -z "$tpm2_pkcs11_module" ; then
+		p11_module_path=`$PKG_CONFIG --variable=p11_module_path p11-kit-1 2> /dev/null`
+		if test -z "$p11_module_path" ; then
+			p11_module_path=`eval echo $libdir/pkcs11 | sed "s,NONE,$ac_default_prefix,g"`
+			p11_module_path=`eval echo $p11_module_path | sed "s,NONE,$ac_default_prefix,g"`
+		fi
+		tpm2_pkcs11_module="$p11_module_path/libtpm2_pkcs11.so"
+	fi
+	AC_DEFINE_UNQUOTED(CM_TPM2_PKCS11_MODULE,"$tpm2_pkcs11_module",[Define to the path of the tpm2-pkcs11 PKCS#11 module.])
+	AC_SEARCH_LIBS(dlopen,dl)
 
 	AC_ARG_WITH([xmlrpc],
 		[AC_HELP_STRING([--with-xmlrpc], [Enable XML-RPC support])],

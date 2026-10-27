@@ -49,6 +49,7 @@
 #include "submit-u.h"
 #include "tdbus.h"
 #include "tdbusm.h"
+#include "tpm-token.h"
 #include "util-o.h"
 #include "util.h"
 
@@ -97,6 +98,8 @@ static struct {
 
 static char *find_ca_by_name(void *parent, enum cm_tdbus_type bus,
 			     const char *nickname, int verbose);
+static int ca_attests_with_tpm(enum cm_tdbus_type bus, const char *ca,
+			       int verbose, int argc, const char **argv);
 static char *find_request_by_name(void *parent, enum cm_tdbus_type bus,
 				  const char *path, int verbose);
 static char *find_ca_name(void *parent, enum cm_tdbus_type bus,
@@ -1100,9 +1103,12 @@ request(const char *argv0, int argc, const char **argv)
 		help(argv0, "request");
 		return 1;
 	}
+	/* With none of them, the daemon keeps the key in a TPM token of its
+	 * own, but only for a CA which wants keys that the TPM attests. */
 	if ((dbdir == NULL) &&
 	    (nickname == NULL) &&
-	    (certfile == NULL)) {
+	    (certfile == NULL) &&
+	    !ca_attests_with_tpm(bus, ca, verbose, argc, argv)) {
 		printf(_("None of database directory and nickname or "
 			 "certificate file specified.\n"));
 		help(argv0, "request");
@@ -1610,6 +1616,28 @@ find_ca_by_name(void *parent, enum cm_tdbus_type bus, const char *name,
 		return cas[which];
 	}
 	return NULL;
+}
+
+/* Whether the named CA answers device-attest-01 challenges with a TPM
+ * attestation. */
+static int
+ca_attests_with_tpm(enum cm_tdbus_type bus, const char *ca, int verbose,
+		    int argc, const char **argv)
+{
+	char *capath, *helper;
+
+	if (ca == NULL) {
+		return 0;
+	}
+	prep_bus(bus, "request", verbose, argc, argv);
+	capath = find_ca_by_name(globals.tctx, bus, ca, verbose);
+	if (capath == NULL) {
+		return 0;
+	}
+	helper = query_prop_s(bus, capath, CM_DBUS_CA_INTERFACE,
+			      CM_DBUS_PROP_EXTERNAL_HELPER, verbose,
+			      globals.tctx);
+	return cm_tpm_token_helper_attests(helper);
 }
 
 static int

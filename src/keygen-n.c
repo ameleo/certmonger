@@ -47,6 +47,7 @@
 #include "store.h"
 #include "store-int.h"
 #include "subproc.h"
+#include "tpm-token.h"
 #include "util-n.h"
 
 #define PRIVKEY_LIST_EMPTY(l) PRIVKEY_LIST_END(PRIVKEY_LIST_HEAD(l), l)
@@ -161,6 +162,13 @@ cm_keygen_n_main(int fd, struct cm_store_ca *ca, struct cm_store_entry *entry,
 	status = fdopen(fd, "w");
 	if (status == NULL) {
 		_exit(CM_SUB_STATUS_INTERNAL_ERROR);
+	}
+	/* A key in our TPM token: set the token up first, if it isn't. */
+	if (cm_tpm_token_entry_uses(entry) &&
+	    (cm_tpm_token_prepare(entry, &es) != 0)) {
+		fprintf(status, "Error preparing the TPM token: %s.\n", es);
+		cm_log(1, "Error preparing the TPM token: %s.\n", es);
+		_exit(CM_SUB_STATUS_ERROR_INITIALIZING);
 	}
 	/* Start up NSS and open the database. */
 	settings = userdata;

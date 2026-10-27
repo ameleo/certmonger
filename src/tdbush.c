@@ -40,6 +40,7 @@
 #include "tdbus.h"
 #include "tdbush.h"
 #include "tdbusm.h"
+#include "tpm-token.h"
 
 #ifdef ENABLE_NLS
 #include <libintl.h>
@@ -429,6 +430,99 @@ base_add_request_ml_dsa_size(DBusConnection *conn, DBusMessage *msg,
 #endif
 
 /* org.fedorahosted.certmonger.add_request */
+/* A request which says nothing of where to keep its key and certificate,
+ * for a CA which wants keys that the TPM attests, keeps both in our TPM
+ * token, under the request's nickname. */
+static struct cm_tdbusm_dict **
+add_tpm_token_defaults(void *parent, struct cm_context *ctx,
+		       struct cm_tdbusm_dict **d)
+{
+	const char *storage_keys[] = {
+		"CERT_STORAGE", CM_DBUS_PROP_CERT_LOCATION_TYPE,
+		"KEY_STORAGE", CM_DBUS_PROP_KEY_LOCATION_TYPE,
+		NULL,
+	};
+	const char *defaults[] = {
+		"CERT_STORAGE", "KEY_STORAGE",
+		"CERT_LOCATION", "KEY_LOCATION",
+		"CERT_TOKEN", "KEY_TOKEN",
+		"CERT_NICKNAME", "KEY_NICKNAME",
+	};
+	static unsigned int serial;
+	const struct cm_tdbusm_dict *param;
+	struct cm_tdbusm_dict **nd, *entries;
+	struct cm_store_ca *ca;
+	const char *dir, *nickname;
+	int i, n, n_defaults;
+
+	for (i = 0; storage_keys[i] != NULL; i++) {
+		if (cm_tdbusm_find_dict_entry(d, storage_keys[i],
+					      cm_tdbusm_dict_s) != NULL) {
+			return d;
+		}
+	}
+	param = cm_tdbusm_find_dict_entry(d, "CA", cm_tdbusm_dict_p);
+	if (param == NULL) {
+		param = cm_tdbusm_find_dict_entry(d, CM_DBUS_PROP_CA,
+						  cm_tdbusm_dict_p);
+	}
+	ca = (param != NULL) ? get_ca_for_path(ctx, param->value.s) : NULL;
+	if (!cm_tpm_token_ca_attests(ca)) {
+		return d;
+	}
+	dir = cm_tpm_token_dir();
+	if (dir == NULL) {
+		return d;
+	}
+	param = cm_tdbusm_find_dict_entry(d, "NICKNAME", cm_tdbusm_dict_s);
+	if (param == NULL) {
+		param = cm_tdbusm_find_dict_entry(d, CM_DBUS_PROP_NICKNAME,
+						  cm_tdbusm_dict_s);
+	}
+	if (param != NULL) {
+		nickname = param->value.s;
+	} else {
+		nickname = talloc_asprintf(parent, "certmonger-%lu-%u",
+					   (unsigned long) time(NULL),
+					   serial++);
+	}
+	for (n = 0; (d != NULL) && (d[n] != NULL); n++) {
+		continue;
+	}
+	n_defaults = sizeof(defaults) / sizeof(defaults[0]);
+	nd = talloc_array(parent, struct cm_tdbusm_dict *, n + n_defaults + 1);
+	entries = talloc_zero_array(parent, struct cm_tdbusm_dict, n_defaults);
+	if ((nd == NULL) || (entries == NULL) || (nickname == NULL)) {
+		return d;
+	}
+	for (i = 0; i < n; i++) {
+		nd[i] = d[i];
+	}
+	for (i = 0; i < n_defaults; i++) {
+		entries[i].key = (char *) defaults[i];
+		entries[i].value_type = cm_tdbusm_dict_s;
+		switch (i / 2) {
+		case 0:
+			entries[i].value.s = "NSSDB";
+			break;
+		case 1:
+			entries[i].value.s = (char *) dir;
+			break;
+		case 2:
+			entries[i].value.s = CM_TPM_TOKEN_LABEL;
+			break;
+		default:
+			entries[i].value.s = (char *) nickname;
+			break;
+		}
+		nd[n + i] = &entries[i];
+	}
+	nd[n + n_defaults] = NULL;
+	cm_log(3, "Keeping the key and certificate in the TPM token, as "
+	       "\"%s\".\n", nickname);
+	return nd;
+}
+
 static DBusHandlerResult
 base_add_request(DBusConnection *conn, DBusMessage *msg,
 		 struct cm_client_info *ci, struct cm_context *ctx)
@@ -460,6 +554,7 @@ base_add_request(DBusConnection *conn, DBusMessage *msg,
 		talloc_free(parent);
 		return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 	}
+	d = add_tpm_token_defaults(parent, ctx, d);
 
 	/* Certificate storage. */
 	param = cm_tdbusm_find_dict_entry(d, "CERT_STORAGE", cm_tdbusm_dict_s);

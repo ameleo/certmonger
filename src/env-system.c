@@ -95,6 +95,18 @@ cm_env_acme_dir(void)
 }
 
 char *
+cm_env_tpm_dir(void)
+{
+	char *ret;
+
+	ret = getenv(CM_STORE_TPM_DIRECTORY_ENV);
+	if (ret == NULL) {
+		ret = CM_STORE_TPM_DIRECTORY;
+	}
+	return ret;
+}
+
+char *
 cm_env_tmp_dir(void)
 {
 	char *ret;

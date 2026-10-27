@@ -13,6 +13,11 @@ signing request using the key pair, and to submit them for signing to a
 CA.
 
 .SH KEY AND CERTIFICATE STORAGE OPTIONS
+Without any of these options, the request is only accepted for a CA which
+answers \fIdevice\-attest\-01\fR challenges with a TPM attestation (see
+\fBgetcert\-add\-acme\-ca\fR(1)): the key is generated in a TPM token which
+\fIcertmonger\fR sets up for itself, and the certificate is kept there too,
+under the request's nickname.
 .TP
 \fB\-d\fR \fIDIR\fR, \fR\-\-dbdir\fR=\fIDIR\fR
 Use an NSS database in the specified directory for storing this
