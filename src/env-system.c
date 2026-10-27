@@ -107,6 +107,22 @@ cm_env_tpm_dir(void)
 }
 
 char *
+cm_env_tpm_system_store(void)
+{
+#ifdef CM_TPM2_PKCS11_SYSTEM_STORE
+	char *ret;
+
+	ret = getenv(CM_STORE_TPM_SYSTEM_STORE_ENV);
+	if (ret == NULL) {
+		ret = CM_TPM2_PKCS11_SYSTEM_STORE;
+	}
+	return ret;
+#else
+	return NULL;
+#endif
+}
+
+char *
 cm_env_tmp_dir(void)
 {
 	char *ret;

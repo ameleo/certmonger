@@ -20,7 +20,8 @@
 
 /* When a CA wants keys which a TPM attests, and a request doesn't say where
  * to keep its key, we keep it in a TPM token of our own: a tpm2-pkcs11 token
- * whose store and NSS database are in a directory only we can read.  The
+ * in the module's system store, which only root can read, or in our own
+ * directory where there is none, with an NSS database in our directory.  The
  * key can't leave the TPM, so the token has an empty user PIN, and its SO
  * PIN is random and forgotten: starting over means removing the
  * directory. */
@@ -42,8 +43,17 @@ int cm_tpm_token_ca_attests(struct cm_store_ca *ca);
 /* Whether the entry's key is in our token. */
 int cm_tpm_token_entry_uses(struct cm_store_entry *entry);
 
-/* The token's directory, created if it isn't there yet. */
+/* The token's directory, created if it isn't there yet: it holds the NSS
+ * database, and the module's store when the module has no system store. */
 const char *cm_tpm_token_dir(void);
+
+/* The file of a tpm2-pkcs11 store, in its directory. */
+#define CM_TPM2_PKCS11_STORE_FILE "tpm2_pkcs11.sqlite3"
+
+/* Where the token's store is: the module's system store when there is one we
+ * may use, so that every program of the system sees the token, unless a store
+ * of our own which couldn't be moved there is still in our directory. */
+const char *cm_tpm_token_store(void);
 
 /* Point tpm2-pkcs11 at the token's store, and at the TPM if nothing else
  * says how to reach it. */

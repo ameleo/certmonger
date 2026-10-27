@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -92,17 +93,162 @@ cm_tpm_token_dir(void)
 	return dir;
 }
 
+/* Whether a directory holds a store of the module. */
+static int
+has_store(const char *dir)
+{
+	char *path;
+	int ret;
+
+	path = talloc_asprintf(NULL, "%s/%s", dir, CM_TPM2_PKCS11_STORE_FILE);
+	ret = (path != NULL) && (access(path, F_OK) == 0);
+	talloc_free(path);
+	return ret;
+}
+
+/* The module's system store, if there is one we may use. */
+static const char *
+system_store(void)
+{
+	const char *store;
+
+	store = cm_env_tpm_system_store();
+	if ((store == NULL) || (access(store, R_OK | W_OK | X_OK) != 0)) {
+		return NULL;
+	}
+	return store;
+}
+
+const char *
+cm_tpm_token_store(void)
+{
+	const char *store, *dir;
+
+	store = system_store();
+	dir = cm_env_tpm_dir();
+	/* A store of our own which couldn't be moved stays in use: the keys
+	 * we track are in it. */
+	if ((store != NULL) && ((dir == NULL) || !has_store(dir))) {
+		return store;
+	}
+	return dir;
+}
+
+/* Copy a file into a directory under a new name, never replacing a file
+ * that is already there. */
+static int
+copy_into(const char *from, const char *dir, const char *name)
+{
+	char *tmp, *to, buf[16384];
+	ssize_t n, w, off;
+	int in, out, err, ret = -1;
+
+	tmp = talloc_asprintf(NULL, "%s/.%s.XXXXXX", dir, name);
+	to = talloc_asprintf(tmp, "%s/%s", dir, name);
+	if ((tmp == NULL) || (to == NULL)) {
+		talloc_free(tmp);
+		return -1;
+	}
+	in = open(from, O_RDONLY | O_CLOEXEC);
+	if (in == -1) {
+		talloc_free(tmp);
+		return -1;
+	}
+	out = mkstemp(tmp);
+	if (out == -1) {
+		close(in);
+		talloc_free(tmp);
+		return -1;
+	}
+	while ((n = read(in, buf, sizeof(buf))) > 0) {
+		for (off = 0; off < n; off += w) {
+			w = write(out, buf + off, n - off);
+			if (w <= 0) {
+				n = -1;
+				break;
+			}
+		}
+		if (n < 0) {
+			break;
+		}
+	}
+	if ((n == 0) && (fsync(out) == 0) && (close(out) == 0)) {
+		out = -1;
+		/* link() rather than rename(): a store which appeared there
+		 * meanwhile is kept. */
+		if (link(tmp, to) == 0) {
+			ret = 0;
+		}
+	}
+	err = errno;
+	if (out != -1) {
+		close(out);
+	}
+	close(in);
+	unlink(tmp);
+	talloc_free(tmp);
+	errno = err;
+	return ret;
+}
+
+/* Move the store we kept in our own directory to the module's system store,
+ * where every program of the system finds the token, unless the system store
+ * has a store of its own already.  The keys in it are wrapped by the TPM,
+ * and are used from wherever the file is.  We copy it rather than rename it
+ * so that the copy is labelled as its new directory, then remove ours. */
+static void
+move_store(void)
+{
+	const char *store, *dir;
+	char *journal, *path;
+	int busy;
+
+	store = system_store();
+	dir = cm_env_tpm_dir();
+	if ((store == NULL) || (dir == NULL) || !has_store(dir) ||
+	    has_store(store)) {
+		return;
+	}
+	/* A journal left by a write which didn't finish belongs with the
+	 * store, which we leave alone then. */
+	journal = talloc_asprintf(NULL, "%s/%s-journal", dir,
+				  CM_TPM2_PKCS11_STORE_FILE);
+	busy = (journal == NULL) || (access(journal, F_OK) == 0);
+	talloc_free(journal);
+	if (busy) {
+		cm_log(1, "Not moving the TPM token's store from \"%s\" to "
+		       "\"%s\": it has a journal.\n", dir, store);
+		return;
+	}
+	path = talloc_asprintf(NULL, "%s/%s", dir, CM_TPM2_PKCS11_STORE_FILE);
+	if ((path == NULL) ||
+	    (copy_into(path, store, CM_TPM2_PKCS11_STORE_FILE) != 0)) {
+		cm_log(1, "Error moving the TPM token's store from \"%s\" to "
+		       "\"%s\": %s.\n", dir, store, strerror(errno));
+		talloc_free(path);
+		return;
+	}
+	if (unlink(path) != 0) {
+		cm_log(1, "Error removing \"%s\": %s.\n", path,
+		       strerror(errno));
+	}
+	talloc_free(path);
+	cm_log(1, "Moved the TPM token's store from \"%s\" to \"%s\".\n",
+	       dir, store);
+}
+
 void
 cm_tpm_token_setenv(void)
 {
 	const char *dir;
 
-	dir = cm_env_tpm_dir();
+	dir = cm_tpm_token_store();
 	if (dir == NULL) {
 		return;
 	}
-	/* The token's store is ours, whatever store the module is told to
-	 * use for other tokens, and it is a store of the "esysdb" kind. */
+	/* The token's store is the one we chose, whatever store the module
+	 * is told to use for other tokens, and it is a store of the "esysdb"
+	 * kind. */
 	setenv("TPM2_PKCS11_STORE", dir, 1);
 	setenv("TPM2_PKCS11_BACKEND", "esysdb", 1);
 	/* The kernel's resource manager is there whenever there is a TPM,
@@ -128,13 +274,19 @@ cm_tpm_token_startup(void)
 	 * names one, or there is one where the module looks first by
 	 * default, give it ours.  Where the module looks after that depends
 	 * on a home directory, which we don't use, so that nothing which
-	 * worked before stops working.  We make the directory now rather than
-	 * at the first request for a CA which attests, as the module looks
-	 * for its store whenever NSS loads it; it makes an empty store in it
-	 * the first time. */
+	 * worked before stops working.  Where the module has a system store,
+	 * our token is kept there, and a store we kept ourselves until then
+	 * is moved there.  Otherwise we make our directory now rather than at
+	 * the first request for a CA which attests, as the module looks for
+	 * its store whenever NSS loads it; it makes an empty store in it the
+	 * first time. */
 	if ((getenv("TPM2_PKCS11_STORE") == NULL) &&
 	    (access(CM_TPM2_PKCS11_DEFAULT_STORE, F_OK) != 0)) {
-		dir = cm_tpm_token_dir();
+		move_store();
+		dir = cm_tpm_token_store();
+		if ((dir != NULL) && (dir == cm_env_tpm_dir())) {
+			dir = cm_tpm_token_dir();
+		}
 		if (dir != NULL) {
 			setenv("TPM2_PKCS11_STORE", dir, 1);
 			/* Ours is a store of the "esysdb" kind: naming it keeps the

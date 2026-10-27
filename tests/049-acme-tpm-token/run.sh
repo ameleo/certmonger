@@ -117,6 +117,7 @@ run() {
 	CERTMONGER_CAS_DIR="$tmpdir"/cas \
 	CERTMONGER_ACME_DIR="$tmpdir"/state \
 	CERTMONGER_TPM_DIR="$TOKEN" \
+	CERTMONGER_TPM_SYSTEM_STORE="$tmpdir"/no-system-store \
 	"$builddir"/../src/certmonger-session -L -P "$tmpdir/certmonger.sock" -n -c "$*"
 }
 status() {

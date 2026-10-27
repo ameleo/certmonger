@@ -113,6 +113,10 @@ AC_DEFINE_UNQUOTED(CM_STORE_SESSION_TPM_DIRECTORY,"${CM_STORE_SESSION_TPM_DIRECT
 		   [Define to the default path for the user TPM token we keep keys in.])
 AC_DEFINE_UNQUOTED(CM_STORE_TPM_DIRECTORY_ENV,"${CM_STORE_TPM_DIRECTORY_ENV}",
 		   [Define to the name of the environment variable which can specify the directory for the TPM token we keep keys in.])
+CM_STORE_TPM_SYSTEM_STORE_ENV="${UPCASE_PACKAGE_NAME}_TPM_SYSTEM_STORE"
+AC_SUBST(CM_STORE_TPM_SYSTEM_STORE_ENV)
+AC_DEFINE_UNQUOTED(CM_STORE_TPM_SYSTEM_STORE_ENV,"${CM_STORE_TPM_SYSTEM_STORE_ENV}",
+		   [Define to the name of the environment variable which can specify the system store of the tpm2-pkcs11 module.])
 
 CM_STORE_LOCAL_CA_DIRECTORY="$mylocalstatedir/local"
 CM_STORE_SESSION_LOCAL_CA_DIRECTORY=".config/${PACKAGE_NAME}/local"
@@ -345,6 +349,15 @@ if ! ${configure_dist_target_only:-false} ; then
 		tpm2_pkcs11_module="$p11_module_path/libtpm2_pkcs11.so"
 	fi
 	AC_DEFINE_UNQUOTED(CM_TPM2_PKCS11_MODULE,"$tpm2_pkcs11_module",[Define to the path of the tpm2-pkcs11 PKCS#11 module.])
+	AC_ARG_WITH([tpm2-pkcs11-store],
+		[AS_HELP_STRING([--with-tpm2-pkcs11-store=DIR], [the system store of the tpm2-pkcs11 module, where it looks first: our token is kept there when it exists, so that every program of the system sees it (default: $localstatedir/lib/tpm2-pkcs11)])],
+		[tpm2_pkcs11_store=${withval}],
+		[tpm2_pkcs11_store=])
+	if test -z "$tpm2_pkcs11_store" ; then
+		tpm2_pkcs11_store=`eval echo $localstatedir/lib/tpm2-pkcs11 | sed "s,NONE,$ac_default_prefix,g"`
+		tpm2_pkcs11_store=`eval echo $tpm2_pkcs11_store | sed "s,NONE,$ac_default_prefix,g"`
+	fi
+	AC_DEFINE_UNQUOTED(CM_TPM2_PKCS11_SYSTEM_STORE,"$tpm2_pkcs11_store",[Define to the system store of the tpm2-pkcs11 module.])
 	AC_SEARCH_LIBS(dlopen,dl)
 
 	AC_ARG_WITH([xmlrpc],

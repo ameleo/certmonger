@@ -217,6 +217,14 @@ cm_env_acme_dir(void)
 	return ret;
 }
 
+/* A user's token is kept in the user's own directory: the module's system
+ * store is root's, unless the environment names another one. */
+char *
+cm_env_tpm_system_store(void)
+{
+	return getenv(CM_STORE_TPM_SYSTEM_STORE_ENV);
+}
+
 /* The token's code creates it when it needs it. */
 char *
 cm_env_tpm_dir(void)

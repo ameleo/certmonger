@@ -1,0 +1,19 @@
+[no system store: the token's store is ours]
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+  $tmpdir/token: store, 600
+  $tmpdir/system-store: no store
+[a system store appears: the token's store moves there]
+	status: MONITORING
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
+  $tmpdir/token: no store
+  $tmpdir/system-store: store, 600
+renewed with the same key
+[another program, with the system store]
+token: certmonger
+signed a request with the token's key
+[both stores there: ours stays in use]
+  $tmpdir/token: store, 600
+  $tmpdir/system-store: store, 600
+0
+OK

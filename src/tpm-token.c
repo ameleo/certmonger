@@ -113,20 +113,34 @@ void
 cm_tpm_token_client_setenv(void)
 {
 #ifdef CM_TPM2_PKCS11_MODULE
-	const char *dir;
+	const char *dir, *system;
+	char *path;
+	int own;
 
 	if (access(CM_TPM2_PKCS11_MODULE, R_OK) != 0) {
 		return;
 	}
 	/* NSS loads the module into this process too where p11-kit makes it
-	 * known to every user of NSS.  Point it at the daemon's store, as the
-	 * daemon does, when the daemon has made its directory and we may use
-	 * it, so that the module doesn't complain about finding no store. */
+	 * known to every user of NSS.  Point it at the store the daemon uses,
+	 * when we may use it, so that the module doesn't complain about
+	 * finding no store: a store still in the daemon's directory, else the
+	 * module's system store, else the daemon's directory. */
 	if ((getenv("TPM2_PKCS11_STORE") == NULL) &&
 	    (access(CM_TPM2_PKCS11_DEFAULT_STORE, F_OK) != 0)) {
 		dir = getenv(CM_STORE_TPM_DIRECTORY_ENV);
 		if (dir == NULL) {
 			dir = CM_STORE_TPM_DIRECTORY;
+		}
+		system = getenv(CM_STORE_TPM_SYSTEM_STORE_ENV);
+		if (system == NULL) {
+			system = CM_TPM2_PKCS11_SYSTEM_STORE;
+		}
+		path = talloc_asprintf(NULL, "%s/%s", dir,
+				       CM_TPM2_PKCS11_STORE_FILE);
+		own = (path != NULL) && (access(path, F_OK) == 0);
+		talloc_free(path);
+		if (!own && (access(system, R_OK | W_OK | X_OK) == 0)) {
+			dir = system;
 		}
 		if (access(dir, R_OK | W_OK | X_OK) == 0) {
 			setenv("TPM2_PKCS11_STORE", dir, 1);

@@ -25,6 +25,7 @@ char *cm_env_request_dir(void);
 char *cm_env_local_ca_dir(void);
 char *cm_env_acme_dir(void);
 char *cm_env_tpm_dir(void);
+char *cm_env_tpm_system_store(void);
 char *cm_env_ca_dir(void);
 char *cm_env_tmp_dir(void);
 char *cm_env_home_dir(void);

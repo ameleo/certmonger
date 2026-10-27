@@ -117,6 +117,7 @@ cm_subproc_start(int (*cb)(int fd,
 	unsigned int i, childenvs;
 	long flags;
 	char *configdir, *tmpdir, *tmp, *homedir, *local, *acme, *tpm;
+	char *tpmstore;
 	char *p, **childenv;
 
 	state = talloc_ptrtype(parent, state);
@@ -158,6 +159,8 @@ cm_subproc_start(int (*cb)(int fd,
 				acme = acme ? strdup(acme) : NULL;
 				tpm = cm_env_tpm_dir();
 				tpm = tpm ? strdup(tpm) : NULL;
+				tpmstore = cm_env_tpm_system_store();
+				tpmstore = tpmstore ? strdup(tpmstore) : NULL;
 				childenvs = 0;
 				for (i = 0; (environ != NULL) && (environ[i] != NULL); i++) {
 					if (cm_subproc_propagate_environment(environ[i]) > 0) {
@@ -203,6 +206,10 @@ cm_subproc_start(int (*cb)(int fd,
 				if (tpm != NULL) {
 					setenv(CM_STORE_TPM_DIRECTORY_ENV,
 					       tpm, 1);
+				}
+				if (tpmstore != NULL) {
+					setenv(CM_STORE_TPM_SYSTEM_STORE_ENV,
+					       tpmstore, 1);
 				}
 				for (i = 0; (childenv != NULL) && (childenv[i] != NULL); i++) {
 					p = childenv[i] + strcspn(childenv[i], "=");

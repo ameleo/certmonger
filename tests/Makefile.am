@@ -163,7 +163,9 @@ CLEANFILES = \
 	049-acme-tpm-token/actual.out \
 	049-acme-tpm-token/actual.err \
 	050-tpm-token-quiet/actual.out \
-	050-tpm-token-quiet/actual.err
+	050-tpm-token-quiet/actual.err \
+	051-tpm-token-system-store/actual.out \
+	051-tpm-token-system-store/actual.err
 EXTRA_DIST = \
 	run-tests.sh functions certmonger.conf tools/cachain.sh \
 	001-keyiread/run.sh \
@@ -452,7 +454,10 @@ EXTRA_DIST = \
 	049-acme-tpm-token/expected.out \
 	050-tpm-token-quiet/prequal.sh \
 	050-tpm-token-quiet/run.sh \
-	050-tpm-token-quiet/expected.out
+	050-tpm-token-quiet/expected.out \
+	051-tpm-token-system-store/prequal.sh \
+	051-tpm-token-system-store/run.sh \
+	051-tpm-token-system-store/expected.out
 
 subdirs = \
 	001-keyiread \
@@ -534,7 +539,8 @@ subdirs += \
 	047-acme \
 	048-acme-tpm \
 	049-acme-tpm-token \
-	050-tpm-token-quiet
+	050-tpm-token-quiet \
+	051-tpm-token-system-store
 endif
 
 if HAVE_ML_DSA
