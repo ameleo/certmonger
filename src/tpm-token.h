@@ -28,6 +28,10 @@
  * directory. */
 
 #define CM_TPM_TOKEN_LABEL "certmonger"
+/* Our own keys, such as those of ACME accounts, are kept in a token of their
+ * own, so that whoever uses the device's keys and certificates, a VPN or a
+ * Wi-Fi client, doesn't see them beside those. */
+#define CM_TPM_ACCOUNT_TOKEN_LABEL "certmonger-acme"
 #define CM_TPM_TOKEN_MODULE_NAME "tpm2"
 
 struct cm_store_ca;

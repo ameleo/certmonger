@@ -29,10 +29,12 @@ struct cm_tpm_token_session {
 	CK_SESSION_HANDLE session;
 };
 
-/* Load the module, find our token, initializing it if asked to when it
- * doesn't exist yet, and open a read-write session logged in with its empty
- * user PIN.  Freeing the result closes everything. */
-struct cm_tpm_token_session *cm_tpm_token_open(void *parent, int create,
+/* Load the module, find our token with that label, initializing it if asked
+ * to when it doesn't exist yet, and open a read-write session logged in with
+ * its empty user PIN.  Freeing the result closes everything. */
+struct cm_tpm_token_session *cm_tpm_token_open(void *parent,
+					       const char *token_label,
+					       int create,
 					       const char **error);
 
 #endif

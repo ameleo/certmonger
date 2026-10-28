@@ -122,6 +122,7 @@ generate(CK_FUNCTION_LIST_PTR f, CK_SESSION_HANDLE session,
 	CK_ATTRIBUTE public_attrs[] = {
 		{CKA_TOKEN, &yes, sizeof(yes)},
 		{CKA_VERIFY, &yes, sizeof(yes)},
+		{CKA_DERIVE, &no, sizeof(no)},
 		{CKA_EC_PARAMS, (void *) p256_params, sizeof(p256_params)},
 		{CKA_LABEL, (void *) label, strlen(label)},
 		{CKA_ID, (void *) id, id_length},
@@ -130,6 +131,7 @@ generate(CK_FUNCTION_LIST_PTR f, CK_SESSION_HANDLE session,
 		{CKA_TOKEN, &yes, sizeof(yes)},
 		{CKA_PRIVATE, &yes, sizeof(yes)},
 		{CKA_SIGN, &yes, sizeof(yes)},
+		{CKA_DERIVE, &no, sizeof(no)},
 		{CKA_SENSITIVE, &yes, sizeof(yes)},
 		{CKA_EXTRACTABLE, &no, sizeof(no)},
 		{CKA_LABEL, (void *) label, strlen(label)},
@@ -166,7 +168,7 @@ cm_acme_p11_account_key(void *parent, const char *name, int create,
 		*error = "out of memory";
 		return NULL;
 	}
-	key->token = cm_tpm_token_open(key, 1, error);
+	key->token = cm_tpm_token_open(key, CM_TPM_ACCOUNT_TOKEN_LABEL, 1, error);
 	if (key->token == NULL) {
 		talloc_free(key);
 		return NULL;

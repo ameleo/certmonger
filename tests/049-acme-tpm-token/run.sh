@@ -153,11 +153,20 @@ attested() {
 transient() {
 	echo "TPM objects left: `tpm2_getcap handles-transient | wc -l`"
 }
-# The ACME account key: in the token, where there is a TPM, never a file;
-# the token lists its two halves.
+# The objects of the token, by class, its account keys left aside: a request
+# has one key pair and one certificate, whatever its renewals and rekeys.
+objects() {
+	token tpm2_ptool listobjects --label=certmonger --path "$TOKEN" 2> /dev/null |
+		awk '/CKA_CLASS:/ {class = $NF} /CKA_LABEL:/ {print class, $NF}' |
+		grep -v ' acme-account-' | awk '{print $1}' | sort | uniq -c |
+		awk '{printf "%s %s\n", $2, $1}'
+}
+# The ACME account key: in the token of our own keys, where there is a TPM,
+# never a file nor in the device's token; the token lists its two halves.
 account_key() {
 	echo "account key files: `ls "$tmpdir"/state/*/account.key 2> /dev/null | wc -l`"
-	echo "account keys in the TPM token: `token tpm2_ptool listobjects --label=certmonger --path "$TOKEN" 2> /dev/null | grep -c 'CKA_LABEL: acme-account-'`"
+	echo "account keys in the device token: `token tpm2_ptool listobjects --label=certmonger --path "$TOKEN" 2> /dev/null | grep -c 'CKA_LABEL: acme-account-'`"
+	echo "account keys in the token of our own keys: `token tpm2_ptool listobjects --label=certmonger-acme --path "$TOKEN" 2> /dev/null | grep -c 'CKA_LABEL: acme-account-'`"
 }
 
 start_server
@@ -198,6 +207,7 @@ in_token
 test "`openssl x509 -in second.pem -noout -pubkey`" = \
      "`openssl x509 -in third.pem -noout -pubkey`" && echo "ERROR: same key"
 transient
+objects
 
 echo "[a second request: the same token]"
 run "$builddir"/../src/getcert request -c TPM -I other -w --wait-timeout=$timeout \

@@ -29,8 +29,13 @@ which names no key storage keeps its key and certificate in a token which
 \fItpm2\-pkcs11\fR token named \fIcertmonger\fR, with an empty PIN, whose key
 can't leave the TPM.  Their keys can't be kept in files.  On a machine with a
 TPM, the requests of an ACME CA without attestation which name no key
-storage keep their keys in that token too, and the account key is generated
-there.  See \fBcertmonger\-acme\-submit\fR(8).
+storage keep their keys in that token too.  The ACME account key is generated
+in the TPM as well, in a second token, \fIcertmonger\-acme\fR, so that the
+programs which use the device's keys and certificates don't see it beside
+them; like any key of a token, it remains usable by whoever can read the
+token's store, that is root.  When a certificate is renewed with a new key,
+the previous certificate and its key are removed from the token.  See
+\fBcertmonger\-acme\-submit\fR(8).
 
 .SH OPTIONS
 .TP

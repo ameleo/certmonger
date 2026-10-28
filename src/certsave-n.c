@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <pwd.h>
@@ -34,6 +35,7 @@
 #include <keyhi.h>
 #include <pk11pub.h>
 #include <prerror.h>
+#include <prprf.h>
 #include <secerr.h>
 
 #include <talloc.h>
@@ -83,6 +85,133 @@ add_privkey_to_list(SECKEYPrivateKey **list, SECKEYPrivateKey *key)
 		}
 	}
 	return list;
+}
+
+/* Whether a certificate is kept in the token that a slot holds, looking at
+ * the token's name: a module may be loaded twice, directly and through
+ * p11-kit, and show the same token in two slots. */
+static PRBool
+cert_in_token(CERTCertificate *cert, PK11SlotInfo *slot)
+{
+	const char *a, *b;
+
+	if ((cert == NULL) || (cert->slot == NULL) || (slot == NULL)) {
+		return PR_FALSE;
+	}
+	if (cert->slot == slot) {
+		return PR_TRUE;
+	}
+	a = PK11_GetTokenName(cert->slot);
+	b = PK11_GetTokenName(slot);
+	return (a != NULL) && (b != NULL) && (strcmp(a, b) == 0);
+}
+
+/* Remove the certificates with the nickname, other than the one we just
+ * imported, from the token we keep it in, and from the internal token,
+ * which gets a copy of what goes into another token.  A nickname without a
+ * token's name only finds what the internal token holds, so look in another
+ * token with the name qualified by the token's.  Their keys are added to the
+ * list of those which may be left without a certificate. */
+static SECKEYPrivateKey **
+remove_other_certs(SECKEYPrivateKey **privkeys, PK11SlotInfo *slot,
+		   const char *nickname, SECItem *keep)
+{
+	CERTCertList *certlist;
+	CERTCertListNode *node;
+	PK11SlotInfo *internal;
+	SECKEYPrivateKey *privkey;
+	char *names[2] = {NULL, NULL};
+	unsigned int i;
+
+	internal = PK11_GetInternalKeySlot();
+	if ((internal != NULL) &&
+	    (slot != internal) && (PK11_GetTokenName(slot) != NULL)) {
+		names[0] = PR_smprintf("%s:%s", PK11_GetTokenName(slot),
+				       nickname);
+	}
+	names[1] = PR_smprintf("%s", nickname);
+	for (i = 0; i < sizeof(names) / sizeof(names[0]); i++) {
+		if (names[i] == NULL) {
+			continue;
+		}
+		certlist = PK11_FindCertsFromNickname(names[i], NULL);
+		if (certlist == NULL) {
+			continue;
+		}
+		for (node = CERT_LIST_HEAD(certlist);
+		     !CERT_LIST_EMPTY(certlist) &&
+		     !CERT_LIST_END(node, certlist);
+		     node = CERT_LIST_NEXT(node)) {
+			if (SECITEM_ItemsAreEqual(keep, &node->cert->derCert)) {
+				continue;
+			}
+			if (!cert_in_token(node->cert, slot) &&
+			    !cert_in_token(node->cert, internal)) {
+				continue;
+			}
+			cm_log(3, "Removing the previous certificate \"%s\" "
+			       "from \"%s\".\n", names[i],
+			       PK11_GetTokenName(node->cert->slot));
+			privkey = PK11_FindKeyByAnyCert(node->cert, NULL);
+			privkeys = add_privkey_to_list(privkeys, privkey);
+			SEC_DeletePermCertificate(node->cert);
+		}
+		CERT_DestroyCertList(certlist);
+	}
+	for (i = 0; i < sizeof(names) / sizeof(names[0]); i++) {
+		if (names[i] != NULL) {
+			PR_smprintf_free(names[i]);
+		}
+	}
+	if (internal != NULL) {
+		PK11_FreeSlot(internal);
+	}
+	return privkeys;
+}
+
+/* Remove the public key object which goes with a private key that we are
+ * about to remove, so that a token doesn't keep the halves of old keys. */
+static void
+remove_public_key(SECKEYPrivateKey *privkey)
+{
+	SECKEYPublicKey *pubkey;
+	SECKEYPublicKeyList *pubkeys;
+	SECKEYPublicKeyListNode *node;
+	SECItem *spki, *other;
+
+	pubkey = SECKEY_ConvertToPublicKey(privkey);
+	if (pubkey == NULL) {
+		return;
+	}
+	spki = SECKEY_EncodeDERSubjectPublicKeyInfo(pubkey);
+	SECKEY_DestroyPublicKey(pubkey);
+	if (spki == NULL) {
+		return;
+	}
+	pubkeys = PK11_ListPublicKeysInSlot(privkey->pkcs11Slot, NULL);
+	if (pubkeys != NULL) {
+		for (node = PUBKEY_LIST_HEAD(pubkeys);
+		     !PUBKEY_LIST_END(node, pubkeys);
+		     node = PUBKEY_LIST_NEXT(node)) {
+			other = SECKEY_EncodeDERSubjectPublicKeyInfo(node->key);
+			if ((other != NULL) &&
+			    SECITEM_ItemsAreEqual(spki, other)) {
+				if (PK11_DeleteTokenPublicKey(node->key) ==
+				    SECSuccess) {
+					cm_log(3, "Removed old public key.\n");
+				}
+				/* The list's node no longer holds a key. */
+				node->key = NULL;
+				SECITEM_FreeItem(other, PR_TRUE);
+				break;
+			}
+			if (other != NULL) {
+				SECITEM_FreeItem(other, PR_TRUE);
+			}
+		}
+		SECKEY_DestroyPublicKeyList(pubkeys);
+	}
+	SECITEM_FreeItem(spki, PR_TRUE);
 }
 
 /* Return a nickname minus the token */
@@ -735,38 +864,13 @@ cm_certsave_n_main(int fd, struct cm_store_ca *ca, struct cm_store_entry *entry,
 						oldcert = NULL;
 					}
 
-					certlist = PK11_FindCertsFromNickname(entry->cm_cert_nickname,
-									      NULL);
-					if (certlist != NULL) {
-						/* Look for certs with contents. */
-						for (node = CERT_LIST_HEAD(certlist);
-						     (node != NULL) &&
-						     !CERT_LIST_EMPTY(certlist) &&
-						     !CERT_LIST_END(node, certlist);
-						     node = CERT_LIST_NEXT(node)) {
-							if (!SECITEM_ItemsAreEqual(item,
-										   &node->cert->derCert) &&
-									(sle->slot == node->cert->slot)) {
-								cm_log(3, "3 Found a "
-								       "certificate "
-								       "with the same "
-								       "nickname and "
-								       "subject, but "
-								       "different "
-								       "contents, "
-								       "removing it.\n");
-								/* Get a handle for
-								 * this certificate's
-								 * private key, in case
-								 * we need to remove
-								 * it. */
-								privkey = PK11_FindKeyByAnyCert(node->cert, NULL);
-								privkeys = add_privkey_to_list(privkeys, privkey);
-								SEC_DeletePermCertificate(node->cert);
-							}
-						}
-						CERT_DestroyCertList(certlist);
-					}
+					/* Delete what's left of older certificates
+					 * with the nickname, in the token and in its
+					 * copy in the internal token. */
+					privkeys = remove_other_certs(privkeys,
+								      sle->slot,
+								      entry->cm_cert_nickname,
+								      item);
 				} else {
 					if (ec != 0) {
 						es = PR_ErrorToName(ec);
@@ -834,7 +938,8 @@ cm_certsave_n_main(int fd, struct cm_store_ca *ca, struct cm_store_entry *entry,
 							 * orphaned keys, so remove
 							 * this one.  No need to mess
 							 * with its nickname first. */
-							PK11_DeleteTokenPrivateKey(privkey, PR_FALSE);
+							remove_public_key(privkey);
+							error = PK11_DeleteTokenPrivateKey(privkey, PR_FALSE);
 							if (error == SECSuccess) {
 								cm_log(3, "Removed old key.\n");
 							} else {

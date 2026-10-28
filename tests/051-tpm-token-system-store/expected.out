@@ -10,6 +10,7 @@
   $tmpdir/system-store: store, 600
 renewed with the same key
 [another program, with the system store]
+token: certmonger-acme
 token: certmonger
 signed a request with the token's key
 [both stores there: ours stays in use]

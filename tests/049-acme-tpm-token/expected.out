@@ -22,7 +22,8 @@ pkcs11.txt
 tpm2_pkcs11.sqlite3
 TPM objects left: 0
 account key files: 0
-account keys in the TPM token: 2
+account keys in the device token: 0
+account keys in the token of our own keys: 2
 [getcert resubmit]
 	status: MONITORING
 	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
@@ -36,12 +37,16 @@ same key
 certificate is attested
 key is in the TPM token
 TPM objects left: 0
+CKO_CERTIFICATE 1
+CKO_PRIVATE_KEY 1
+CKO_PUBLIC_KEY 1
 [a second request: the same token]
 	status: MONITORING
 	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
 	certificate: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
 account key files: 0
-account keys in the TPM token: 2
+account keys in the device token: 0
+account keys in the token of our own keys: 2
 [a CA without attestation, on a machine with a TPM: its keys go to the token too]
 New CA "PLAIN" added.
 New signing request "plain" added.

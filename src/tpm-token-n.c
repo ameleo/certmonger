@@ -51,7 +51,7 @@ init_token(void *parent, const char **error)
 {
 	struct cm_tpm_token_session *s;
 
-	s = cm_tpm_token_open(parent, 1, error);
+	s = cm_tpm_token_open(parent, CM_TPM_TOKEN_LABEL, 1, error);
 	if (s == NULL) {
 		return -1;
 	}

@@ -65,7 +65,7 @@ random_pin(char *pin, size_t size)
  * empty user PIN and a random SO PIN which we forget. */
 static int
 init_token(void *parent, CK_FUNCTION_LIST_PTR f, CK_SLOT_ID slot,
-	   const char **error)
+	   const char *token_label, const char **error)
 {
 	CK_SESSION_HANDLE session;
 	CK_UTF8CHAR label[32];
@@ -74,12 +74,12 @@ init_token(void *parent, CK_FUNCTION_LIST_PTR f, CK_SLOT_ID slot,
 	char so_pin[33];
 
 	memset(label, ' ', sizeof(label));
-	memcpy(label, CM_TPM_TOKEN_LABEL, strlen(CM_TPM_TOKEN_LABEL));
+	memcpy(label, token_label, strlen(token_label));
 	if (random_pin(so_pin, sizeof(so_pin)) != 0) {
 		*error = "error generating a PIN";
 		return -1;
 	}
-	cm_log(3, "Initializing the TPM token \"%s\".\n", CM_TPM_TOKEN_LABEL);
+	cm_log(3, "Initializing the TPM token \"%s\".\n", token_label);
 	rv = f->C_InitToken(slot, (CK_UTF8CHAR_PTR) so_pin, strlen(so_pin),
 			    label);
 	if (rv != CKR_OK) {
@@ -127,7 +127,8 @@ session_destructor(struct cm_tpm_token_session *s)
 }
 
 struct cm_tpm_token_session *
-cm_tpm_token_open(void *parent, int create, const char **error)
+cm_tpm_token_open(void *parent, const char *token_label, int create,
+		  const char **error)
 {
 #ifdef CM_TPM2_PKCS11_MODULE
 	struct cm_tpm_token_session *s;
@@ -147,8 +148,12 @@ cm_tpm_token_open(void *parent, int create, const char **error)
 	}
 	s->session = CK_INVALID_HANDLE;
 	talloc_set_destructor(s, session_destructor);
+	if (strlen(token_label) > sizeof(label)) {
+		*error = "a TPM token label is longer than a token's";
+		goto fail;
+	}
 	memset(label, ' ', sizeof(label));
-	memcpy(label, CM_TPM_TOKEN_LABEL, strlen(CM_TPM_TOKEN_LABEL));
+	memcpy(label, token_label, strlen(token_label));
 	s->module = dlopen(CM_TPM2_PKCS11_MODULE, RTLD_NOW | RTLD_LOCAL);
 	if (s->module == NULL) {
 		*error = talloc_asprintf(parent, "error loading %s: %s",
@@ -211,7 +216,7 @@ cm_tpm_token_open(void *parent, int create, const char **error)
 			*error = "the TPM module offers no token to initialize";
 			goto fail;
 		}
-		if (init_token(parent, s->f, slot, error) != 0) {
+		if (init_token(parent, s->f, slot, token_label, error) != 0) {
 			goto fail;
 		}
 	}
