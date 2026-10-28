@@ -91,8 +91,10 @@ struct acme_client {
 	const char *state_dir;
 	int verbose;
 	json_t *directory;
-	EVP_PKEY *key;
+	struct cm_acme_signer signer;
 	char *jwk, *thumbprint, *kid;
+	/* Where the daemon keeps the external account keys it was given. */
+	const char *eab_dir;
 	char *nonce;
 	/* What we learned from the last problem document. */
 	char *problem_type;
@@ -116,8 +118,8 @@ read_secret(void *parent, const char *filename)
 }
 
 /* The external account binding: its key is read only when it is used, to
- * open an account or to have an attestation key certified, so that a
- * renewal through an account we have needs neither the key nor its file. */
+ * open the account, so that everything through an account we have needs
+ * neither the key nor its file. */
 struct acme_eab {
 	void *ctx;
 	const char *kid;
@@ -488,7 +490,7 @@ acme_post(struct acme_client *client, const char *url, const char *payload,
 		}
 		nonce = client->nonce;
 		client->nonce = NULL;
-		jws = cm_acme_jws(client->ctx, client->key,
+		jws = cm_acme_jws(client->ctx, &client->signer,
 				  use_jwk ? NULL : client->kid,
 				  client->jwk, nonce, url, payload);
 		talloc_free(nonce);
@@ -582,6 +584,36 @@ come_back_later(const struct cm_acme_response *response,
 	return CM_SUBMIT_STATUS_WAIT_WITH_DELAY;
 }
 
+/* The external account binding serves once, to open the account (RFC 8555
+ * 7.3.4): from then on the account key proves who we are.  The copy of its
+ * key which the daemon keeps for us goes, and so does what we read. */
+static void
+forget_eab(struct acme_client *client, struct acme_eab *eab)
+{
+	size_t length;
+
+	if (eab->key != NULL) {
+		memset(eab->key, '\0', eab->length);
+		eab->key = NULL;
+	}
+	if ((eab->file == NULL) || (client->eab_dir == NULL)) {
+		return;
+	}
+	length = strlen(client->eab_dir);
+	if ((strncmp(eab->file, client->eab_dir, length) == 0) &&
+	    (eab->file[length] == '/') &&
+	    (strchr(eab->file + length + 1, '/') == NULL)) {
+		if ((unlink(eab->file) != 0) && (errno != ENOENT)) {
+			printf(_("Error removing \"%s\": %s.\n"), eab->file,
+			       strerror(errno));
+		} else
+		if (client->verbose > 0) {
+			fprintf(stderr, "Removed the external account key, "
+				"which served its purpose.\n");
+		}
+	}
+}
+
 /* Use the account we have, or create one, binding it to the account which
  * the CA gave us if we have its credentials. */
 static int
@@ -591,17 +623,32 @@ setup_account(struct acme_client *client, struct acme_eab *eab)
 	size_t key_length;
 	struct cm_acme_response response;
 	json_t *meta, *account;
-	const char *error, *url, *status;
+	const char *error, *url, *status, *name;
 	char *path, *payload, *binding, *kid;
 	int ret;
 
-	path = state_file(client, ACME_ACCOUNT_KEY_FILE);
-	client->key = cm_acme_account_key(path, 1, &error);
-	if (client->key == NULL) {
-		printf(_("Error with account key \"%s\": %s.\n"), path, error);
-		return CM_SUBMIT_STATUS_UNCONFIGURED;
+	/* Where there is a TPM, the account key is generated in our TPM
+	 * token and never leaves it; elsewhere it is a file only we read. */
+	if (cm_acme_p11_available()) {
+		name = strrchr(client->state_dir, '/');
+		name = (name != NULL) ? name + 1 : client->state_dir;
+		client->signer.p11 = cm_acme_p11_account_key(client->ctx, name,
+							     1, &error);
+		if (client->signer.p11 == NULL) {
+			printf(_("Error with the account key in the TPM "
+				 "token: %s.\n"), error);
+			return CM_SUBMIT_STATUS_UNCONFIGURED;
+		}
+	} else {
+		path = state_file(client, ACME_ACCOUNT_KEY_FILE);
+		client->signer.key = cm_acme_account_key(path, 1, &error);
+		if (client->signer.key == NULL) {
+			printf(_("Error with account key \"%s\": %s.\n"),
+			       path, error);
+			return CM_SUBMIT_STATUS_UNCONFIGURED;
+		}
 	}
-	client->jwk = cm_acme_jwk(client->ctx, client->key);
+	client->jwk = cm_acme_jwk(client->ctx, &client->signer);
 	if (client->jwk == NULL) {
 		printf(_("Error encoding the account key.\n"));
 		return CM_SUBMIT_STATUS_UNCONFIGURED;
@@ -682,6 +729,7 @@ setup_account(struct acme_client *client, struct acme_eab *eab)
 		printf(_("Error saving the account URL to \"%s\".\n"), path);
 		return CM_SUBMIT_STATUS_UNCONFIGURED;
 	}
+	forget_eab(client, eab);
 	return 0;
 }
 
@@ -787,15 +835,22 @@ order_identifiers(void *parent, X509_REQ *req,
 
 #ifdef HAVE_TSS2
 /* The device attestation code talks to the server's attestation key
- * certification service using plain JSON. */
+ * certification service with ACME requests, signed by the account. */
 static int
-post_json(void *parent, void *data, const char *url, const char *body,
-	  struct cm_acme_response *response)
+post_signed(void *parent, void *data, const char *url, const char *payload,
+	    struct cm_acme_response *response)
 {
 	struct acme_client *client = data;
 
 	(void) parent;
-	http_request(client, "POST", url, "application/json", body, response);
+	memset(response, 0, sizeof(*response));
+	if (acme_post(client, url, payload, 0, response) != 0) {
+		if (response->error_text == NULL) {
+			response->error_text = "error signing or sending the "
+					       "request";
+		}
+		return -1;
+	}
 	return (response->error == 0) ? 0 : -1;
 }
 
@@ -829,7 +884,6 @@ attestation_service_url(void *parent, const char *directory)
 struct acme_attestation {
 	enum attest_format format;
 	const char *tcti;
-	struct acme_eab *eab;
 	const char *key_storage_type, *key_location, *key_token, *key_pin;
 	const char *csr;
 };
@@ -860,16 +914,13 @@ answer_device_attest(struct acme_client *client,
 	params.tcti = attestation->tcti;
 	params.service_url = attestation_service_url(client->ctx,
 						     client->directory_url);
-	params.eab_kid = attestation->eab->kid;
-	params.eab_key = eab_key;
-	params.eab_data = attestation->eab;
 	params.key_storage_type = attestation->key_storage_type;
 	params.key_location = attestation->key_location;
 	params.key_token = attestation->key_token;
 	params.key_pin = attestation->key_pin;
 	params.csr = attestation->csr;
 	params.verbose = client->verbose;
-	params.post_json = post_json;
+	params.post_signed = post_signed;
 	params.get = http_get;
 	params.http_data = client;
 	ret = cm_acme_tpm_attest(client->ctx, &params, key_authorization,
@@ -1361,7 +1412,6 @@ main(int argc, const char **argv)
 		}
 	}
 	attestation.tcti = tcti;
-	attestation.eab = &eab;
 	attestation.key_storage_type = getenv(CM_SUBMIT_KEY_STORAGE_TYPE_ENV);
 	attestation.key_location = getenv(CM_SUBMIT_KEY_STORAGE_LOCATION_ENV);
 	attestation.key_token = getenv(CM_SUBMIT_KEY_TOKEN_ENV);
@@ -1376,6 +1426,8 @@ main(int argc, const char **argv)
 		state_base = CM_STORE_ACME_DIRECTORY;
 	}
 	client.state_dir = account_dir(ctx, state_base, url);
+	client.eab_dir = talloc_asprintf(ctx, "%s/%s", state_base,
+					 CM_STORE_ACME_EAB_SUBDIR);
 	if ((mkdir_private(state_base) != 0) ||
 	    (mkdir_private(client.state_dir) != 0)) {
 		printf(_("Error creating directory \"%s\": %s.\n"),
@@ -1494,8 +1546,8 @@ done:
 	if (key_pin != NULL) {
 		memset(key_pin, '\0', strlen(key_pin));
 	}
-	if (client.key != NULL) {
-		EVP_PKEY_free(client.key);
+	if (client.signer.key != NULL) {
+		EVP_PKEY_free(client.signer.key);
 	}
 	json_decref(client.directory);
 	X509_REQ_free(req);

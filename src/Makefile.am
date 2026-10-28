@@ -120,6 +120,8 @@ libcm_a_SOURCES = \
 	tpm-token.h \
 	tpm-token-dir.c \
 	tpm-token-n.c \
+	tpm-token-p11.c \
+	tpm-token-p11.h \
 	util.c \
 	util.h \
 	util-m.c \
@@ -297,7 +299,8 @@ est_submit_LDADD = $(CURL_LIBS) $(NSS_LIBS) $(OPENSSL_SSL_LIBS) $(TALLOC_LIBS) \
 		   $(KRB5_LIBS) $(UUID_LIBS) $(LTLIBICONV) $(POPT_LIBS)
 acme_submit_CFLAGS = $(AM_CFLAGS) $(NSS_CFLAGS) $(CURL_CFLAGS) \
 		     $(OPENSSL_CFLAGS) $(JANSSON_CFLAGS)
-acme_submit_SOURCES = acme.c acme-jose.c acme.h \
+acme_submit_SOURCES = acme.c acme-jose.c acme.h acme-p11.c \
+		tpm-token.c tpm-token.h tpm-token-p11.c tpm-token-p11.h \
 		submit-h.c submit-h.h submit-u.c submit-u.h submit-e.h \
 		util-o.c util-o.h util.c util.h log.c log.h \
 		store.h store-gen.c tm.c tm.h

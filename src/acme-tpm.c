@@ -872,8 +872,10 @@ service_post(struct tpm_state *state, const char *op, json_t *request,
 		state->error = "out of memory";
 		return CM_SUBMIT_STATUS_UNCONFIGURED;
 	}
-	ret = state->params->post_json(state->ctx, state->params->http_data,
-				       url, body, &response);
+	/* An ACME request signed by the account (contract section 2): the
+	 * account proves the device, as for everything else it asks. */
+	ret = state->params->post_signed(state->ctx, state->params->http_data,
+					 url, body, &response);
 	free(body);
 	if (ret != 0) {
 		state->error = talloc_asprintf(state->ctx,
@@ -922,7 +924,7 @@ certify_ak(struct tpm_state *state)
 {
 	struct cm_acme_tpm_params *params = state->params;
 	json_t *request, *reply = NULL, *chain;
-	unsigned char *ak_buf, mac[SHA256_DIGEST_LENGTH], *sig_buf;
+	unsigned char *ak_buf, *sig_buf;
 	unsigned char *import_pub_buf, *dup_buf, *seed_buf, *nonce_buf;
 	size_t ak_length, length, offset, i;
 	TPM2B_PUBLIC import_public;
@@ -939,39 +941,20 @@ certify_ak(struct tpm_state *state)
 	char *pem, *session_id;
 	long pem_length;
 	TSS2_RC rc;
-	const unsigned char *eab_key;
-	size_t eab_key_length;
 	int ret = CM_SUBMIT_STATUS_UNCONFIGURED;
 
-	if ((params->eab_kid == NULL) || (params->eab_key == NULL) ||
-	    (params->eab_key(params->eab_data, &eab_key,
-			     &eab_key_length) != 0)) {
-		state->error = "certifying the attestation key needs the "
-			       "external account binding credentials";
-		return CM_SUBMIT_STATUS_UNCONFIGURED;
-	}
 	if (marshal_public(state->ctx, &state->ak_public, &ak_buf,
 			   &ak_length) != 0) {
 		state->error = "error encoding the attestation key";
 		return CM_SUBMIT_STATUS_UNCONFIGURED;
 	}
-	if (cm_acme_hmac_sha256(eab_key, eab_key_length,
-				ak_buf, ak_length, mac) != 0) {
-		state->error = "error computing the proof of the external "
-			       "account binding";
-		return CM_SUBMIT_STATUS_UNCONFIGURED;
-	}
-	request = json_pack("{s:s,s:o,s:s,s:s,s:s}",
+	request = json_pack("{s:s,s:o,s:s}",
 			    "ek_certificate",
 			    cm_acme_b64_encode(state->ctx, state->ek_cert,
 					       state->ek_cert_length),
 			    "ek_chain", ek_chain(state),
 			    "ak_public",
-			    cm_acme_b64_encode(state->ctx, ak_buf, ak_length),
-			    "eab_kid", params->eab_kid,
-			    "eab_proof",
-			    cm_acme_b64_encode(state->ctx, mac, sizeof(mac)));
-	memset(mac, 0, sizeof(mac));
+			    cm_acme_b64_encode(state->ctx, ak_buf, ak_length));
 	if (params->verbose > 0) {
 		fprintf(stderr, "Requesting certification of the attestation "
 			"key.\n");

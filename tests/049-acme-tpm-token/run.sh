@@ -153,6 +153,12 @@ attested() {
 transient() {
 	echo "TPM objects left: `tpm2_getcap handles-transient | wc -l`"
 }
+# The ACME account key: in the token, where there is a TPM, never a file;
+# the token lists its two halves.
+account_key() {
+	echo "account key files: `ls "$tmpdir"/state/*/account.key 2> /dev/null | wc -l`"
+	echo "account keys in the TPM token: `token tpm2_ptool listobjects --label=certmonger --path "$TOKEN" 2> /dev/null | grep -c 'CKA_LABEL: acme-account-'`"
+}
 
 start_server
 
@@ -173,6 +179,7 @@ log | grep -E "^POST /(new|attest|chall)|^  "
 echo "token directory: `stat -c %a "$TOKEN"`"
 ls "$TOKEN" | sort
 transient
+account_key
 
 echo "[getcert resubmit]"
 run "$builddir"/../src/getcert resubmit -i device -w --wait-timeout=$timeout > /dev/null
@@ -197,10 +204,17 @@ run "$builddir"/../src/getcert request -c TPM -I other -w --wait-timeout=$timeou
 	-N CN=device42 -L $KID:$KEY > /dev/null
 status other
 
-echo "[a CA without attestation: storage must be given]"
+account_key
+
+echo "[a CA without attestation, on a machine with a TPM: its keys go to the token too]"
 run "$builddir"/../src/getcert add-acme-ca -c PLAIN -u $url \
 	-R "$tmpdir"/ca/root.crt
 run "$builddir"/../src/getcert request -c PLAIN -I plain -N CN=device42 | head -n 1
-run "$builddir"/../src/getcert list -i plain | head -n 1
+run "$builddir"/../src/getcert list -i plain | grep -E "key pair storage:" |
+	sed -e "s,$tmpdir,\$tmpdir,g"
+
+echo "[a CA which attests: no key in files]"
+run "$builddir"/../src/getcert request -c TPM -I file -N CN=device42 \
+	-k "$tmpdir"/file.key -f "$tmpdir"/file.crt | head -n 1
 
 echo OK

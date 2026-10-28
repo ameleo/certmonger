@@ -31,7 +31,10 @@ certificate.  If the server needs more time, \fIacme\-submit\fR tells
 suggested by the server's \fIRetry\-After\fR header.
 
 The account key is an ECDSA P\-256 key, which \fIacme\-submit\fR generates
-the first time it uses a server, and keeps with the account's URL in a
+the first time it uses a server.  On a machine with a TPM, when
+\fIcertmonger\fR points the \fItpm2\-pkcs11\fR module at its own token, the
+key is generated in that token and never leaves the TPM, which signs every
+request; elsewhere it is kept in a file, with the account's URL, in a
 directory of its own under the state directory.  The account is reused for
 every later order, including renewals.
 
@@ -40,6 +43,10 @@ If the server requires an external account binding (RFC 8555, section
 from the challenge password given to \fBgetcert request\fR using its
 \fB\-L\fR or \fB\-l\fR option, in the form \fIKID\fR:\fIKEY\fR, or else from
 the \fB\-k\fR and \fB\-K\fR options.  The MAC key is base64url\-encoded.
+It serves only to open the account: once the account exists, the copy which
+\fIcertmonger\fR kept of a key given to \fBgetcert add\-acme\-ca\fR is
+removed, and requests are signed by the account key alone, including the
+certification of the TPM attestation key.
 
 .SS Identifiers and challenges
 Without device attestation, the order names the DNS names and IP addresses
@@ -128,7 +135,8 @@ option is mainly useful for troubleshooting.  Secrets are never logged.
 .TP
 \fI@CM_STORE_ACME_DIRECTORY@/\fBHASH\fP/\fR
 The data kept for one ACME directory URL, where \fBHASH\fR is derived from
-the URL: \fIaccount.key\fR, \fIaccount.url\fR, and, for TPM attestation,
+the URL: \fIaccount.url\fR, \fIaccount.key\fR where there is no TPM, and,
+for TPM attestation,
 \fIak.pub\fR, \fIak.priv\fR and \fIak.crt\fR.  The helper holds a lock on
 the \fIlock\fR file there while it runs, so that requests which use the
 same account are handled one at a time.

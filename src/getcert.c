@@ -98,8 +98,16 @@ static struct {
 
 static char *find_ca_by_name(void *parent, enum cm_tdbus_type bus,
 			     const char *nickname, int verbose);
-static int ca_attests_with_tpm(enum cm_tdbus_type bus, const char *ca,
-			       int verbose, int argc, const char **argv);
+enum tpm_keys {
+	TPM_KEYS_NO_CA = -1,
+	TPM_KEYS_NONE = 0,
+	TPM_KEYS_ATTESTED,
+	TPM_KEYS_ACME,
+	TPM_KEYS_NO_TPM,
+};
+
+static enum tpm_keys ca_tpm_keys(enum cm_tdbus_type bus, const char *ca,
+				 int verbose, int argc, const char **argv);
 static char *find_request_by_name(void *parent, enum cm_tdbus_type bus,
 				  const char *path, int verbose);
 static char *find_ca_name(void *parent, enum cm_tdbus_type bus,
@@ -1104,20 +1112,40 @@ request(const char *argv0, int argc, const char **argv)
 		return 1;
 	}
 	/* With none of them, the daemon keeps the key in a TPM token of its
-	 * own, but only for a CA which wants keys that the TPM attests. */
-	if ((dbdir == NULL) &&
-	    (nickname == NULL) &&
-	    (certfile == NULL)) {
-		switch (ca_attests_with_tpm(bus, ca, verbose, argc, argv)) {
-		case 1:
-			break;
-		case -1:
-			printf(_("No CA with name \"%s\" found.\n"), ca);
+	 * own, for a CA which wants keys that the TPM attests, and for an ACME
+	 * CA on a machine with a TPM.  The keys of a CA which attests them
+	 * are in a token, never in files. */
+	switch (ca_tpm_keys(bus, ca, verbose, argc, argv)) {
+	case TPM_KEYS_NO_CA:
+		printf(_("No CA with name \"%s\" found.\n"), ca);
+		return 1;
+	case TPM_KEYS_ATTESTED:
+		if (certfile != NULL) {
+			printf(_("The CA \"%s\" has keys attested by the "
+				 "TPM: they are kept in a token, not in "
+				 "files.\n"), ca);
+			help(argv0, "request");
 			return 1;
-		case 0:
+		}
+		break;
+	case TPM_KEYS_ACME:
+		break;
+	case TPM_KEYS_NO_TPM:
+		if ((dbdir == NULL) && (nickname == NULL) &&
+		    (certfile == NULL)) {
+			printf(_("There is no TPM to keep the key in, so a "
+				 "database directory and nickname or a "
+				 "certificate file must be specified.\n"));
+			help(argv0, "request");
+			return 1;
+		}
+		break;
+	case TPM_KEYS_NONE:
+		if ((dbdir == NULL) && (nickname == NULL) &&
+		    (certfile == NULL)) {
 			if (ca != NULL) {
-				printf(_("The CA \"%s\" doesn't have keys "
-					 "attested by the TPM, so a database "
+				printf(_("The CA \"%s\" doesn't keep its "
+					 "keys in the TPM, so a database "
 					 "directory and nickname or a "
 					 "certificate file must be "
 					 "specified.\n"), ca);
@@ -1129,6 +1157,7 @@ request(const char *argv0, int argc, const char **argv)
 			help(argv0, "request");
 			return 1;
 		}
+		break;
 	}
 	if ((certfile != NULL) && (keyfile != NULL) &&
 	    (strcmp(certfile, keyfile) == 0)) {
@@ -1634,27 +1663,36 @@ find_ca_by_name(void *parent, enum cm_tdbus_type bus, const char *name,
 	return NULL;
 }
 
-/* Whether the named CA answers device-attest-01 challenges with a TPM
- * attestation: 1 if it does, 0 if it doesn't or none is named, -1 if
- * there is no CA of that name. */
-static int
-ca_attests_with_tpm(enum cm_tdbus_type bus, const char *ca, int verbose,
-		    int argc, const char **argv)
+/* Where the keys of the named CA's requests go when a request doesn't say:
+ * TPM_KEYS_ATTESTED if the CA attests them with the TPM, TPM_KEYS_ACME for an
+ * ACME CA on a machine with a TPM, TPM_KEYS_NO_TPM for an ACME CA without
+ * one, TPM_KEYS_NONE for any other CA or none named, TPM_KEYS_NO_CA if there
+ * is no CA of that name. */
+static enum tpm_keys
+ca_tpm_keys(enum cm_tdbus_type bus, const char *ca, int verbose,
+	    int argc, const char **argv)
 {
 	char *capath, *helper;
 
 	if (ca == NULL) {
-		return 0;
+		return TPM_KEYS_NONE;
 	}
 	prep_bus(bus, "request", verbose, argc, argv);
 	capath = find_ca_by_name(globals.tctx, bus, ca, verbose);
 	if (capath == NULL) {
-		return -1;
+		return TPM_KEYS_NO_CA;
 	}
 	helper = query_prop_s(bus, capath, CM_DBUS_CA_INTERFACE,
 			      CM_DBUS_PROP_EXTERNAL_HELPER, verbose,
 			      globals.tctx);
-	return cm_tpm_token_helper_attests(helper);
+	if (cm_tpm_token_helper_attests(helper)) {
+		return TPM_KEYS_ATTESTED;
+	}
+	if (cm_tpm_token_helper_is_acme(helper)) {
+		return cm_tpm_token_available() ? TPM_KEYS_ACME :
+						  TPM_KEYS_NO_TPM;
+	}
+	return TPM_KEYS_NONE;
 }
 
 static int

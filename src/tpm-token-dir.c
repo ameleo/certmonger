@@ -76,6 +76,15 @@ cm_tpm_token_entry_uses(struct cm_store_entry *entry)
 	       same_dir(entry->cm_key_storage_location, dir);
 }
 
+int
+cm_tpm_token_entry_uses_other(struct cm_store_entry *entry)
+{
+	return (entry != NULL) &&
+	       (entry->cm_key_storage_type == cm_key_storage_nssdb) &&
+	       (entry->cm_key_token != NULL) &&
+	       !cm_tpm_token_entry_uses(entry);
+}
+
 const char *
 cm_tpm_token_dir(void)
 {
@@ -256,6 +265,7 @@ cm_tpm_token_setenv(void)
 	if (getenv("TPM2_PKCS11_TCTI") == NULL) {
 		setenv("TPM2_PKCS11_TCTI", "device:/dev/tpmrm0", 1);
 	}
+	setenv(CM_TPM_TOKEN_ENV, "1", 1);
 }
 
 

@@ -85,6 +85,9 @@ run "$builddir"/../src/getcert request -c EAB -I r1 -k "$tmpdir"/key.pem \
 	-w --wait-timeout=$timeout > /dev/null
 status r1
 grep -c "new-account (eab)" "$tmpdir"/server.log
+# It served once, to open the account: our copy is gone.
+echo "kept after the account was opened: `ls "$tmpdir"/state/eab/ | wc -l`"
+echo "account key files: `ls "$tmpdir"/state/*/account.key 2> /dev/null | wc -l`"
 
 echo "[getcert resubmit]"
 run "$builddir"/../src/getcert resubmit -i r1 -w --wait-timeout=$timeout > /dev/null

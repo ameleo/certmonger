@@ -323,8 +323,8 @@ check_arg_parent_is_directory(const char *path)
  * which the helper is told to read.  The file which the user had it in may
  * be anywhere, readable by the user but not by us (a home directory, under
  * a SELinux policy), and may be removed once the CA is added; nothing of
- * the key shows in the CA's command line. */
-#define CM_ACME_EAB_SUBDIR "eab"
+ * the key shows in the CA's command line.  The helper removes our copy once
+ * it has opened the account, for which alone the key serves. */
 
 static char *
 acme_eab_dir(void *parent)
@@ -335,7 +335,7 @@ acme_eab_dir(void *parent)
 	if (acme == NULL) {
 		return NULL;
 	}
-	return talloc_asprintf(parent, "%s/%s", acme, CM_ACME_EAB_SUBDIR);
+	return talloc_asprintf(parent, "%s/%s", acme, CM_STORE_ACME_EAB_SUBDIR);
 }
 
 /* A key is base64 or base64url text on one line. */
@@ -684,7 +684,7 @@ add_tpm_token_defaults(void *parent, struct cm_context *ctx,
 						  cm_tdbusm_dict_p);
 	}
 	ca = (param != NULL) ? get_ca_for_path(ctx, param->value.s) : NULL;
-	if (!cm_tpm_token_ca_attests(ca)) {
+	if (!cm_tpm_token_ca_wants(ca)) {
 		return d;
 	}
 	dir = cm_tpm_token_dir();

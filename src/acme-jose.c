@@ -272,12 +272,15 @@ cm_acme_account_key(const char *filename, int create, const char **error)
  * no whitespace, which is also the form its thumbprint is computed over
  * (RFC 7638 3.2). */
 char *
-cm_acme_jwk(void *parent, EVP_PKEY *key)
+cm_acme_jwk(void *parent, const struct cm_acme_signer *signer)
 {
 	unsigned char point[1 + 2 * ES256_COORDINATE_LENGTH];
 	char *x, *y, *ret;
 
-	if (p256_point(key, point) != 0) {
+	if (signer->p11 != NULL) {
+		memcpy(point, cm_acme_p11_point(signer->p11), sizeof(point));
+	} else
+	if (p256_point(signer->key, point) != 0) {
 		return NULL;
 	}
 	x = cm_acme_b64url_encode(parent, point + 1, ES256_COORDINATE_LENGTH);
@@ -306,7 +309,8 @@ cm_acme_jwk_thumbprint(void *parent, const char *jwk)
 
 /* Sign with ES256, giving the signature as R || S (RFC 7518 3.4). */
 static char *
-es256_sign(void *parent, EVP_PKEY *key, const char *input)
+es256_sign(void *parent, const struct cm_acme_signer *signer,
+	   const char *input)
 {
 	EVP_MD_CTX *mctx;
 	ECDSA_SIG *sig = NULL;
@@ -315,7 +319,14 @@ es256_sign(void *parent, EVP_PKEY *key, const char *input)
 	const unsigned char *p;
 	size_t length = sizeof(der);
 	char *ret = NULL;
+	EVP_PKEY *key = signer->key;
 
+	if (signer->p11 != NULL) {
+		if (cm_acme_p11_sign_es256(signer->p11, input, raw) != 0) {
+			return NULL;
+		}
+		return cm_acme_b64url_encode(parent, raw, sizeof(raw));
+	}
 	mctx = EVP_MD_CTX_new();
 	if (mctx == NULL) {
 		return NULL;
@@ -351,8 +362,9 @@ done:
  * either by its JWK (for newAccount) or by the account URL.  A NULL payload
  * makes a POST-as-GET request, whose payload is empty (RFC 8555 6.3). */
 char *
-cm_acme_jws(void *parent, EVP_PKEY *key, const char *kid, const char *jwk,
-	    const char *nonce, const char *url, const char *payload)
+cm_acme_jws(void *parent, const struct cm_acme_signer *signer,
+	    const char *kid, const char *jwk, const char *nonce,
+	    const char *url, const char *payload)
 {
 	char *protected, *b64p, *b64b, *input, *sig, *ret;
 	void *tctx;
@@ -387,7 +399,7 @@ cm_acme_jws(void *parent, EVP_PKEY *key, const char *kid, const char *jwk,
 		talloc_free(tctx);
 		return NULL;
 	}
-	sig = es256_sign(tctx, key, input);
+	sig = es256_sign(tctx, signer, input);
 	if (sig == NULL) {
 		talloc_free(tctx);
 		return NULL;

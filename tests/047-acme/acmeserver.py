@@ -439,9 +439,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
         path = self.path
         with self.state.lock:
             try:
-                if path.startswith("/attest/v1/ak/"):
-                    self.log("POST " + path)
-                    return self.attest_service(path, json.loads(body))
                 if self.headers.get("Content-Type") != \
                         "application/jose+json":
                     raise Problem(415, "malformed", "wrong content type")
@@ -450,6 +447,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 jwk, account, payload = self.verify_jws(body)
                 self.log("POST %s%s" % (path, "" if payload is not None
                                         else " (POST-as-GET)"))
+                if path.startswith("/attest/v1/ak/"):
+                    # ACME requests of the account of the device.
+                    return self.attest_service(path, account,
+                                               json.loads(payload or b"{}"))
                 if path == "/new-order":
                     return self.new_order(account, payload)
                 parts = path.strip("/").split("/")
@@ -670,18 +671,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.reply(200, self.order_json(order), headers=headers +
                    [("Location", self.url("/order/" + order["id"]))])
 
-    # The attestation key certification service.
-    def attest_service(self, path, request):
+    # The attestation key certification service, for the account of the
+    # device: the external account binding served once, to open it.
+    def attest_service(self, path, account, request):
         st = self.state
+        if "eab_kid" in request or "eab_proof" in request:
+            raise Problem(400, "malformed", "the account proves the device")
         if path.endswith("/begin"):
-            if request.get("eab_kid") != st.opts.eab_kid:
-                raise Problem(403, "unauthorized", "unknown device")
             ak_public = base64.b64decode(request["ak_public"])
-            proof = hmac.new(unb64u(st.opts.eab_key), ak_public,
-                             hashlib.sha256).digest()
-            if not hmac.compare_digest(proof,
-                                       base64.b64decode(request["eab_proof"])):
-                raise Problem(403, "unauthorized", "bad proof")
             ek_cert = x509.load_der_x509_certificate(
                 base64.b64decode(request["ek_certificate"]))
             if st.opts.ek_ca:
@@ -702,7 +699,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             nonce = secrets.token_bytes(32)
             st.sessions[sid] = {"secret": secret, "name": hmac_name,
                                 "ak": ak_key, "ak_name": ak_name,
-                                "nonce": nonce}
+                                "nonce": nonce, "account": account["kid"]}
             return self.reply(200, {"session": sid,
                                     "import_public": b64(public),
                                     "import_duplicate": b64(duplicate),
@@ -710,7 +707,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                                     "nonce": b64(nonce)})
         if path.endswith("/finish"):
             session = st.sessions.pop(request.get("session"), None)
-            if session is None:
+            if session is None or session["account"] != account["kid"]:
                 raise Problem(403, "unauthorized", "unknown session")
             info = base64.b64decode(request["certify_info"])
             sig = Reader(base64.b64decode(request["certify_signature"]))

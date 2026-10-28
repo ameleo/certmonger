@@ -109,6 +109,42 @@ cm_tpm_token_helper_attests(const char *helper)
 	return ret;
 }
 
+int
+cm_tpm_token_helper_is_acme(const char *helper)
+{
+	char **argv;
+	const char *base;
+	int ret = 0;
+
+	if (helper == NULL) {
+		return 0;
+	}
+	argv = split_words(NULL, helper);
+	if ((argv != NULL) && (argv[0] != NULL)) {
+		base = strrchr(argv[0], '/');
+		base = (base != NULL) ? base + 1 : argv[0];
+		ret = (strcmp(base, "acme-submit") == 0);
+	}
+	talloc_free(argv);
+	return ret;
+}
+
+int
+cm_tpm_token_available(void)
+{
+#ifdef CM_TPM2_PKCS11_MODULE
+	if (access(CM_TPM2_PKCS11_MODULE, R_OK) != 0) {
+		return 0;
+	}
+	if (getenv("TPM2_PKCS11_TCTI") != NULL) {
+		return 1;
+	}
+	return access("/dev/tpmrm0", R_OK | W_OK) == 0;
+#else
+	return 0;
+#endif
+}
+
 void
 cm_tpm_token_client_setenv(void)
 {

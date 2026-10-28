@@ -21,6 +21,8 @@ key4.db
 pkcs11.txt
 tpm2_pkcs11.sqlite3
 TPM objects left: 0
+account key files: 0
+account keys in the TPM token: 2
 [getcert resubmit]
 	status: MONITORING
 	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='device',token='certmonger'
@@ -38,8 +40,12 @@ TPM objects left: 0
 	status: MONITORING
 	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
 	certificate: type=NSSDB,location='$tmpdir/token',nickname='other',token='certmonger'
-[a CA without attestation: storage must be given]
+account key files: 0
+account keys in the TPM token: 2
+[a CA without attestation, on a machine with a TPM: its keys go to the token too]
 New CA "PLAIN" added.
-The CA "PLAIN" doesn't have keys attested by the TPM, so a database directory and nickname or a certificate file must be specified.
-No request found with specified nickname.
+New signing request "plain" added.
+	key pair storage: type=NSSDB,location='$tmpdir/token',nickname='plain',token='certmonger'
+[a CA which attests: no key in files]
+The CA "TPM" has keys attested by the TPM: they are kept in a token, not in files.
 OK

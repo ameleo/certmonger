@@ -72,4 +72,9 @@ int cm_store_utf8_to_bmp_string(char *s,
 char *cm_store_utf8_from_bmp_string(unsigned char *bmp, unsigned int len);
 const char *cm_store_algorithm_to_name(int algorithm);
 
+/* Where, beside the state of the ACME helper, we keep the keys of external
+ * account bindings given when ACME CAs are added, until the helper has
+ * opened the account with them. */
+#define CM_STORE_ACME_EAB_SUBDIR "eab"
+
 #endif

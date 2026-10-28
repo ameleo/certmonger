@@ -15,9 +15,9 @@ token directory: 700
   tpm2_pkcs11.sqlite3: 600
 [a CA which doesn't exist]
 No CA with name "NONE" found.
-[a CA without attestation]
+[a CA without attestation, on a machine with a TPM]
 New CA "PLAIN" added.
-The CA "PLAIN" doesn't have keys attested by the TPM, so a database directory and nickname or a certificate file must be specified.
+New signing request "plain" added.
 [no CA named]
 None of database directory and nickname or certificate file specified.
 OK

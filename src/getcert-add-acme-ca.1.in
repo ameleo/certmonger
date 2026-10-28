@@ -27,7 +27,10 @@ been generated in the TPM through the \fItpm2\-pkcs11\fR module.  A request
 which names no key storage keeps its key and certificate in a token which
 \fIcertmonger\fR sets up for itself, in \fI@CM_STORE_TPM_DIRECTORY@\fR: a
 \fItpm2\-pkcs11\fR token named \fIcertmonger\fR, with an empty PIN, whose key
-can't leave the TPM.  See \fBcertmonger\-acme\-submit\fR(8).
+can't leave the TPM.  Their keys can't be kept in files.  On a machine with a
+TPM, the requests of an ACME CA without attestation which name no key
+storage keep their keys in that token too, and the account key is generated
+there.  See \fBcertmonger\-acme\-submit\fR(8).
 
 .SH OPTIONS
 .TP
@@ -54,10 +57,9 @@ The key identifier for the external account binding.
 The location of a file containing the base64url\-encoded MAC key for the
 external account binding.  \fIgetcert\fR reads the file and hands the key to
 \fIcertmonger\fR, which keeps a copy of its own, readable only by itself,
-for the helper to use when it opens an account or has an attestation key
-certified.  The file may be anywhere the user running \fIgetcert\fR can read
-it, and may be removed once the CA is added.  The copy is removed with the
-CA.
+for the helper to use when it opens the account.  The file may be anywhere
+the user running \fIgetcert\fR can read it, and may be removed once the CA
+is added.  The copy is removed once the account is opened, or with the CA.
 .TP
 \fB\-\-attest\fR=\fIFORMAT\fR
 Answer \fIdevice\-attest\-01\fR challenges with an attestation of the given

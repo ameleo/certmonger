@@ -153,7 +153,7 @@ for f in `ls "$TOKEN" | sort` ; do echo "  $f: `stat -c %a "$TOKEN"/$f`" ; done
 
 echo "[a CA which doesn't exist]"
 run "$builddir"/../src/getcert request -c NONE -I none -N CN=device42 2> /dev/null | head -n 1
-echo "[a CA without attestation]"
+echo "[a CA without attestation, on a machine with a TPM]"
 run "$builddir"/../src/getcert add-acme-ca -c PLAIN -u $url \
 	-R "$tmpdir"/ca/root.crt 2> /dev/null
 run "$builddir"/../src/getcert request -c PLAIN -I plain -N CN=device42 2> /dev/null | head -n 1

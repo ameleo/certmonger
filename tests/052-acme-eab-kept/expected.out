@@ -6,6 +6,8 @@ stored: 600, 1 key
 [getcert request]
 	status: MONITORING
 1
+kept after the account was opened: 0
+account key files: 1
 [getcert resubmit]
 	status: MONITORING
 [getcert remove-ca: the key goes with it]

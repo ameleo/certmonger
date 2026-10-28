@@ -18,8 +18,9 @@
 #ifndef cmtpmtoken_h
 #define cmtpmtoken_h
 
-/* When a CA wants keys which a TPM attests, and a request doesn't say where
- * to keep its key, we keep it in a TPM token of our own: a tpm2-pkcs11 token
+/* When a CA wants keys which a TPM attests, or is an ACME CA on a machine
+ * with a TPM, and a request doesn't say where to keep its key, we keep it in
+ * a TPM token of our own: a tpm2-pkcs11 token
  * in the module's system store, which only root can read, or in our own
  * directory where there is none, with an NSS database in our directory.  The
  * key can't leave the TPM, so the token has an empty user PIN, and its SO
@@ -40,6 +41,19 @@ int cm_tpm_token_helper_attests(const char *helper);
  * attestation, so that its keys belong in the TPM. */
 int cm_tpm_token_ca_attests(struct cm_store_ca *ca);
 
+/* Whether a CA's helper, given as its command line, is our ACME helper. */
+int cm_tpm_token_helper_is_acme(const char *helper);
+
+/* Whether this machine has a TPM we can use through the module: the module
+ * is installed, and something tells it how to reach a TPM or we may use the
+ * kernel's resource manager. */
+int cm_tpm_token_available(void);
+
+/* Whether the keys of the CA's requests which don't say where to keep them
+ * belong in our token: those of a CA which attests with the TPM, and those
+ * of an ACME CA wherever there is a TPM, which keeps them out of reach. */
+int cm_tpm_token_ca_wants(struct cm_store_ca *ca);
+
 /* Whether the entry's key is in our token. */
 int cm_tpm_token_entry_uses(struct cm_store_entry *entry);
 
@@ -56,8 +70,17 @@ const char *cm_tpm_token_dir(void);
 const char *cm_tpm_token_store(void);
 
 /* Point tpm2-pkcs11 at the token's store, and at the TPM if nothing else
- * says how to reach it. */
+ * says how to reach it, and tell a helper that it may keep keys of its own
+ * there. */
 void cm_tpm_token_setenv(void);
+
+/* Set for a helper when its environment points tpm2-pkcs11 at our token:
+ * the ACME helper then keeps its account key there. */
+#define CM_TPM_TOKEN_ENV "CERTMONGER_TPM_TOKEN"
+
+/* Whether the entry's key is in a token other than ours, which the module
+ * may only find through a store of its own. */
+int cm_tpm_token_entry_uses_other(struct cm_store_entry *entry);
 
 /* Where tpm2-pkcs11 looks for its store first, unless told otherwise. */
 #define CM_TPM2_PKCS11_DEFAULT_STORE "/etc/tpm2_pkcs11"

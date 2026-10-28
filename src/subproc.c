@@ -89,6 +89,11 @@ cm_subproc_propagate_environment(const char *p)
 	if ((equal > 12) && (strncmp(p, "TPM2_PKCS11_", 12) == 0)) {
 		return equal;
 	}
+	/* Whether those settings point the module at our token. */
+	if ((strlen(CM_TPM_TOKEN_ENV) == equal) &&
+	    (strncmp(p, CM_TPM_TOKEN_ENV, equal) == 0)) {
+		return equal;
+	}
 	if ((equal > 6) &&
 	    ((strncmp(p + equal - 6, "_PROXY", 6) == 0) ||
 	     (strncmp(p + equal - 6, "_proxy", 6) == 0))) {
@@ -143,9 +148,17 @@ cm_subproc_start(int (*cb)(int fd,
 				close(fds[0]);
 
 				/* Work on a key in our TPM token, by us or by
-				 * a helper, finds the token. */
-				if (cm_tpm_token_entry_uses(entry)) {
+				 * a helper, finds the token; so does a helper
+				 * which keeps its own keys there, as the ACME
+				 * helper keeps its account key, unless the
+				 * entry's key is in another token, which the
+				 * module finds through a store of its own. */
+				if (cm_tpm_token_entry_uses(entry) ||
+				    (cm_tpm_token_available() &&
+				     !cm_tpm_token_entry_uses_other(entry))) {
 					cm_tpm_token_setenv();
+				} else {
+					unsetenv(CM_TPM_TOKEN_ENV);
 				}
 
 				tmp = getenv(CM_STORE_CONFIG_DIRECTORY_ENV);
