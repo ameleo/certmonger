@@ -69,6 +69,7 @@
 #define HELP_TYPE_HOSTNAME _("HOSTNAME")
 #define HELP_TYPE_ID _("ID")
 #define HELP_TYPE_IP _("ADDRESS")
+#define HELP_TYPE_KEY _("KEY")
 #define HELP_TYPE_KEYSIZE _("BITS")
 #define HELP_TYPE_KU _("LIST")
 #define HELP_TYPE_MODE _("MODE")
@@ -5050,27 +5051,145 @@ add_est_ca(const char *argv0, int argc, const char **argv)
 	return 0;
 }
 
-/* The key of an external account binding, the first line of a file. */
+/* The key of an external account binding, read from a file, or from our
+ * standard input for "-". */
 static char *
 read_eab_key(void *parent, const char *filename)
 {
 	char buf[4096], *ret;
-	ssize_t n;
+	ssize_t n, got = 0;
 	int fd;
 
-	fd = open(filename, O_RDONLY);
-	if (fd == -1) {
+	if (strcmp(filename, "-") == 0) {
+		fd = STDIN_FILENO;
+	} else {
+		fd = open(filename, O_RDONLY);
+		if (fd == -1) {
+			return NULL;
+		}
+	}
+	while ((size_t) got < sizeof(buf) - 1) {
+		n = read(fd, buf + got, sizeof(buf) - 1 - got);
+		if (n < 0) {
+			if (errno == EINTR) {
+				continue;
+			}
+			got = -1;
+			break;
+		}
+		if (n == 0) {
+			break;
+		}
+		got += n;
+	}
+	if (fd != STDIN_FILENO) {
+		close(fd);
+	}
+	if (got < 0) {
+		memset(buf, '\0', sizeof(buf));
 		return NULL;
 	}
-	n = read(fd, buf, sizeof(buf) - 1);
-	close(fd);
-	if (n < 0) {
-		return NULL;
-	}
-	buf[n] = '\0';
-	ret = talloc_strndup(parent, buf, strcspn(buf, "\r\n"));
+	buf[got] = '\0';
+	ret = talloc_strdup(parent, buf);
 	memset(buf, '\0', sizeof(buf));
 	return ret;
+}
+
+/* Remove the white space around a value, line ends of a pasted or a
+ * written one included. */
+static void
+trim_value(char *value)
+{
+	size_t start = 0, end;
+
+	if (value == NULL) {
+		return;
+	}
+	end = strlen(value);
+	while ((end > 0) && (strchr(" \t\r\n", value[end - 1]) != NULL)) {
+		end--;
+	}
+	while ((start < end) && (strchr(" \t\r\n", value[start]) != NULL)) {
+		start++;
+	}
+	memmove(value, value + start, end - start);
+	memset(value + end - start, '\0', strlen(value + end - start));
+}
+
+/* What a character is, for a message about it. */
+static const char *
+describe_char(void *parent, unsigned char c)
+{
+	switch (c) {
+	case '\r':
+		return _("a control character (carriage return)");
+	case '\n':
+		return _("a control character (line feed)");
+	case '\t':
+		return _("a control character (tab)");
+	case ' ':
+		return _("a space");
+	case '"':
+		return _("a double quote");
+	case '\\':
+		return _("a backslash");
+	default:
+		if ((c < 0x20) || (c == 0x7f)) {
+			return talloc_asprintf(parent,
+					       _("a control character (0x%02x)"),
+					       c);
+		}
+		return talloc_asprintf(parent, _("the character '%c'"), c);
+	}
+}
+
+/* Whether an external account binding's key ID can be used as given, and
+ * where it can't, say why. */
+static int
+check_eab_kid(const char *kid)
+{
+	const unsigned char *p;
+
+	if (strlen(kid) == 0) {
+		printf(_("The external account key ID is empty.\n"));
+		return -1;
+	}
+	for (p = (const unsigned char *) kid; *p != '\0'; p++) {
+		if ((*p < 0x20) || (*p == 0x7f) || (*p == '"') || (*p == '\\')) {
+			printf(_("The external account key ID contains %s at "
+				 "position %d.\n"),
+			       describe_char(globals.tctx, *p),
+			       (int) ((const char *) p - kid) + 1);
+			return -1;
+		}
+	}
+	return 0;
+}
+
+/* Whether an external account binding's key is base64 text, and where it
+ * isn't, say why. */
+static int
+check_eab_key(const char *key)
+{
+	const char *p;
+
+	if (strlen(key) == 0) {
+		printf(_("The external account key is empty.\n"));
+		return -1;
+	}
+	for (p = key; *p != '\0'; p++) {
+		if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			   "abcdefghijklmnopqrstuvwxyz"
+			   "0123456789-_+/=", *p) == NULL) {
+			printf(_("The external account key contains %s at "
+				 "position %d: it is not base64 text.\n"),
+			       describe_char(globals.tctx,
+					     (unsigned char) *p),
+			       (int) (p - key) + 1);
+			return -1;
+		}
+	}
+	return 0;
 }
 
 static int
@@ -5079,7 +5198,7 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 	enum cm_tdbus_type bus = CM_DBUS_DEFAULT_BUS;
 	char *caname = NULL, *url = NULL, *path = NULL, *root = NULL;
 	char *eab_kid = NULL, *eab_key_file = NULL, *attest = NULL;
-	char *eab_key = NULL;
+	char *eab_key = NULL, *eab_key_arg = NULL;
 	char *permanent_identifier = NULL;
 	char *nickname, *command;
 	int c, i, verbose = 0;
@@ -5092,7 +5211,8 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		{"directory", 'u', POPT_ARG_STRING, &url, 0, _("location of the ACME server's directory"), HELP_TYPE_URL},
 		{"ca-cert", 'R', POPT_ARG_STRING, NULL, 'R', _("file containing certificate of the CA which issued the ACME server's certificate"), HELP_TYPE_FILENAME},
 		{"eab-kid", '\0', POPT_ARG_STRING, &eab_kid, 0, _("key identifier for external account binding"), HELP_TYPE_ID},
-		{"eab-key-file", '\0', POPT_ARG_STRING, &eab_key_file, 0, _("file containing the MAC key for external account binding"), HELP_TYPE_FILENAME},
+		{"eab-key", '\0', POPT_ARG_STRING, &eab_key_arg, 0, _("MAC key for external account binding"), HELP_TYPE_KEY},
+		{"eab-key-file", '\0', POPT_ARG_STRING, &eab_key_file, 0, _("file containing the MAC key for external account binding, or - for standard input"), HELP_TYPE_FILENAME},
 		{"attest", '\0', POPT_ARG_STRING, &attest, 0, _("answer device-attest-01 challenges using the given attestation format"), HELP_TYPE_MODE},
 		{"permanent-identifier", '\0', POPT_ARG_STRING, &permanent_identifier, 0, _("the device's permanent identifier"), HELP_TYPE_ID},
 		{"session", 's', POPT_ARG_NONE, NULL, 's', _("connect to the certmonger service on the session bus"), NULL},
@@ -5157,24 +5277,45 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		help(argv0, "add-acme-ca");
 		return 1;
 	}
-	if ((eab_key_file != NULL) && (eab_kid == NULL)) {
-		printf(_("An external account key file was given without its "
+	if ((eab_key_arg != NULL) && (eab_key_file != NULL)) {
+		printf(_("An external account key can be given directly or "
+			 "in a file, not both.\n"));
+		help(argv0, "add-acme-ca");
+		return 1;
+	}
+	if (((eab_key_arg != NULL) || (eab_key_file != NULL)) &&
+	    (eab_kid == NULL)) {
+		printf(_("An external account key was given without its "
 			 "key ID.\n"));
 		help(argv0, "add-acme-ca");
 		return 1;
 	}
+	if (eab_kid != NULL) {
+		/* A pasted value often brings a line end along. */
+		eab_kid = talloc_strdup(globals.tctx, eab_kid);
+		trim_value(eab_kid);
+		if (check_eab_kid(eab_kid) != 0) {
+			return 1;
+		}
+	}
+	if (eab_key_arg != NULL) {
+		eab_key = talloc_strdup(globals.tctx, eab_key_arg);
+		memset(eab_key_arg, '\0', strlen(eab_key_arg));
+	} else
 	if (eab_key_file != NULL) {
-		/* The service keeps a copy of the key, so that it does not
-		 * depend on where the file is and who may read it, and the
-		 * file can be removed once the CA is added. */
 		eab_key = read_eab_key(globals.tctx, eab_key_file);
 		if (eab_key == NULL) {
 			printf(_("Can't read \"%s\".\n"), eab_key_file);
 			return 1;
 		}
-		if (strlen(eab_key) == 0) {
-			printf(_("No external account key in \"%s\".\n"),
-			       eab_key_file);
+	}
+	if (eab_key != NULL) {
+		/* The service keeps a copy of the key, so that it does not
+		 * depend on where it came from, and a file can be removed
+		 * once the CA is added. */
+		trim_value(eab_key);
+		if (check_eab_key(eab_key) != 0) {
+			memset(eab_key, '\0', strlen(eab_key));
 			return 1;
 		}
 	}
@@ -6018,7 +6159,9 @@ help(const char *twopartcmd, const char *category)
 		N_("  -R FILE, --ca-cert=FILE\n"),
 		N_("			file containing web server's CA certificate\n"),
 		N_("  --eab-kid=KID		key identifier for external account binding\n"),
-		N_("  --eab-key-file=FILE	file containing the MAC key for external account binding\n"),
+		N_("  --eab-key=KEY		MAC key for external account binding\n"),
+		N_("  --eab-key-file=FILE	file containing the MAC key for external account binding,\n"),
+		N_("			or - for standard input\n"),
 		N_("  --attest=tpm		answer device-attest-01 challenges with a TPM attestation\n"),
 		N_("  --permanent-identifier=ID\n"),
 		N_("			the device's permanent identifier\n"),

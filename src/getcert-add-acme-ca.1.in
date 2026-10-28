@@ -51,15 +51,27 @@ issued the server's certificate.  If this option is not given, the system's
 trusted CA certificates are used to verify the server's certificate.
 .TP
 \fB\-\-eab\-kid\fR=\fIKID\fR
-The key identifier for the external account binding.
+The key identifier for the external account binding.  White space around
+it, such as the line end of a pasted value, is ignored; a value which still
+holds a control character, a double quote or a backslash is refused, with
+the position of the character.
+.TP
+\fB\-\-eab\-key\fR=\fIKEY\fR
+The base64url\-encoded MAC key for the external account binding, given
+directly.  \fIgetcert\fR hands the key to \fIcertmonger\fR, which keeps a
+copy of its own, readable only by itself, for the helper to use when it
+opens the account; the key does not appear in the CA's configuration.
+White space around it is ignored, and a value which is not base64 text is
+refused.  A key given this way may be seen in the process list while
+\fIgetcert\fR runs: where that matters, use \fB\-\-eab\-key\-file\fR.
 .TP
 \fB\-\-eab\-key\-file\fR=\fIFILE\fR
 The location of a file containing the base64url\-encoded MAC key for the
-external account binding.  \fIgetcert\fR reads the file and hands the key to
-\fIcertmonger\fR, which keeps a copy of its own, readable only by itself,
-for the helper to use when it opens the account.  The file may be anywhere
-the user running \fIgetcert\fR can read it, and may be removed once the CA
-is added.  The copy is removed once the account is opened, or with the CA.
+external account binding, or \fB\-\fR to read it from standard input.
+\fIgetcert\fR reads it and hands the key to \fIcertmonger\fR as for
+\fB\-\-eab\-key\fR.  The file may be anywhere the user running
+\fIgetcert\fR can read it, and may be removed once the CA is added.  The
+copy is removed once the account is opened, or with the CA.
 .TP
 \fB\-\-attest\fR=\fIFORMAT\fR
 Answer \fIdevice\-attest\-01\fR challenges with an attestation of the given
@@ -75,7 +87,7 @@ the daemon will be suppressed if the client can make a diagnostic suggestion.
 
 .SH EXAMPLES
 .TP
-getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-eab\-kid kid1 \-\-eab\-key\-file /etc/pki/acme\-eab.key
+getcert add\-acme\-ca \-c ACME \-u https://acme.example.com/directory \-\-eab\-kid kid1 \-\-eab\-key b64urlkey
 .TP
 getcert request \-c ACME \-k /etc/pki/tls/private/host.key \-f /etc/pki/tls/certs/host.crt \-G EC \-g 256 \-N CN=host.example.com \-D host.example.com
 .TP

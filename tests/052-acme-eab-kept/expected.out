@@ -13,4 +13,20 @@ account key files: 1
 [getcert remove-ca: the key goes with it]
 CA "EAB" removed.
 0
+[getcert add-acme-ca, the key given directly, pasted with line ends]
+New CA "Direct" added.
+files showing the key: 0
+helper-location: acme-submit -u https://localhost/directory -k kid1 -K $tmpdir/state/eab/key-XXXXXX$
+stored: 1 key, 0 carriage returns
+CA "Direct" removed.
+[getcert add-acme-ca, the key read from standard input]
+New CA "Stdin" added.
+stored: 1 key
+CA "Stdin" removed.
+[getcert add-acme-ca, values it can't use]
+The external account key ID contains a control character (carriage return) at position 3.
+The external account key contains a double quote at position 5: it is not base64 text.
+An external account key can be given directly or in a file, not both.
+An external account key was given without its key ID.
+The external account key is empty.
 OK

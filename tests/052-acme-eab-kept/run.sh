@@ -98,4 +98,32 @@ run "$builddir"/../src/getcert stop-tracking -i r1 > /dev/null
 run "$builddir"/../src/getcert remove-ca -c EAB
 ls "$tmpdir"/state/eab/ | wc -l
 
+echo "[getcert add-acme-ca, the key given directly, pasted with line ends]"
+run "$builddir"/../src/getcert add-acme-ca -c Direct -u $url \
+	-R "$tmpdir"/ca/root.crt --eab-kid "`printf '%s\r' $KID`" --eab-key "`printf '%s\r\n ' $KEY`"
+run "$builddir"/../src/getcert list-cas -c Direct > list
+echo "files showing the key: `grep -l $KEY list "$tmpdir"/cas/* | wc -l`"
+grep helper-location list | sed -e 's,localhost:[0-9]*,localhost,' -e 's,[^ ]*/acme-submit,acme-submit,' \
+	-e "s,$tmpdir,\$tmpdir,g" -e 's,key-[A-Za-z0-9]*,key-XXXXXX,' \
+	-e 's,^[[:space:]]*,,' -e 's, -R [^ ]*,,' | cat -A
+stored=`ls "$tmpdir"/state/eab/`
+echo "stored: `grep -c "^$KEY\$" "$tmpdir"/state/eab/$stored` key, `tr -d -c '\r' < "$tmpdir"/state/eab/$stored | wc -c` carriage returns"
+run "$builddir"/../src/getcert remove-ca -c Direct
+
+echo "[getcert add-acme-ca, the key read from standard input]"
+printf '%s\r\n' $KEY > "$tmpdir"/eab.key
+# The command the session service starts has no standard input of ours.
+run sh -c "'$builddir/../src/getcert add-acme-ca -c Stdin -u $url -R $tmpdir/ca/root.crt --eab-kid $KID --eab-key-file - < $tmpdir/eab.key'"
+rm -f "$tmpdir"/eab.key
+stored=`ls "$tmpdir"/state/eab/`
+echo "stored: `grep -c "^$KEY\$" "$tmpdir"/state/eab/$stored` key"
+run "$builddir"/../src/getcert remove-ca -c Stdin
+
+echo "[getcert add-acme-ca, values it can't use]"
+"$builddir"/../src/getcert add-acme-ca -c Bad -u $url --eab-kid "`printf 'ki\rd1'`" --eab-key $KEY | head -n 1
+"$builddir"/../src/getcert add-acme-ca -c Bad -u $url --eab-kid $KID --eab-key 'c2Vj"cmV0' | head -n 1
+"$builddir"/../src/getcert add-acme-ca -c Bad -u $url --eab-kid $KID --eab-key "$KEY" --eab-key-file /dev/null | head -n 1
+"$builddir"/../src/getcert add-acme-ca -c Bad -u $url --eab-key "$KEY" | head -n 1
+"$builddir"/../src/getcert add-acme-ca -c Bad -u $url --eab-kid $KID --eab-key ' ' | head -n 1
+
 echo OK
