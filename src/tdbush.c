@@ -33,14 +33,17 @@
 #include "log.h"
 #include "cm.h"
 #include "certext.h"
+#include "env.h"
 #include "prefs.h"
 #include "store.h"
 #include "store-int.h"
+#include "subproc.h"
 #include "submit-int.h"
 #include "tdbus.h"
 #include "tdbush.h"
 #include "tdbusm.h"
 #include "tpm-token.h"
+#include "util.h"
 
 #ifdef ENABLE_NLS
 #include <libintl.h>
@@ -315,25 +318,143 @@ check_arg_parent_is_directory(const char *path)
 	return -1;
 }
 
-/* org.fedorahosted.certmonger.add_known_ca */
+/* The key of an external account binding given when an ACME CA is added
+ * is kept by us, in a file of our own beside the state of the ACME helper,
+ * which the helper is told to read.  The file which the user had it in may
+ * be anywhere, readable by the user but not by us (a home directory, under
+ * a SELinux policy), and may be removed once the CA is added; nothing of
+ * the key shows in the CA's command line. */
+#define CM_ACME_EAB_SUBDIR "eab"
+
+static char *
+acme_eab_dir(void *parent)
+{
+	const char *acme;
+
+	acme = cm_env_acme_dir();
+	if (acme == NULL) {
+		return NULL;
+	}
+	return talloc_asprintf(parent, "%s/%s", acme, CM_ACME_EAB_SUBDIR);
+}
+
+/* A key is base64 or base64url text on one line. */
+static int
+acme_eab_key_valid(const char *key)
+{
+	const char *p;
+
+	if ((key == NULL) || (strlen(key) == 0)) {
+		return 0;
+	}
+	for (p = key; *p != '\0'; p++) {
+		if ((strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			    "abcdefghijklmnopqrstuvwxyz"
+			    "0123456789-_+/=", *p) == NULL)) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+/* Save the key in a file of its own, readable by us only, and return the
+ * file's name. */
+static char *
+acme_eab_store(void *parent, const char *key)
+{
+	char *dir, *path;
+	const char *acme;
+	mode_t mask;
+	size_t length;
+	int fd;
+
+	acme = cm_env_acme_dir();
+	dir = acme_eab_dir(parent);
+	if ((acme == NULL) || (dir == NULL)) {
+		return NULL;
+	}
+	if (((mkdir(acme, S_IRWXU) != 0) && (errno != EEXIST)) ||
+	    ((mkdir(dir, S_IRWXU) != 0) && (errno != EEXIST))) {
+		cm_log(1, "Error creating \"%s\": %s.\n", dir,
+		       strerror(errno));
+		return NULL;
+	}
+	path = talloc_asprintf(parent, "%s/key-XXXXXX", dir);
+	if (path == NULL) {
+		return NULL;
+	}
+	mask = umask(S_IRWXG | S_IRWXO);
+	fd = mkstemp(path);
+	umask(mask);
+	if (fd == -1) {
+		cm_log(1, "Error creating a file in \"%s\": %s.\n", dir,
+		       strerror(errno));
+		return NULL;
+	}
+	length = strlen(key);
+	if ((write(fd, key, length) != (ssize_t) length) ||
+	    (write(fd, "\n", 1) != 1) ||
+	    (fsync(fd) != 0)) {
+		cm_log(1, "Error writing \"%s\": %s.\n", path,
+		       strerror(errno));
+		close(fd);
+		unlink(path);
+		return NULL;
+	}
+	close(fd);
+	return path;
+}
+
+/* Remove the key which the helper of a CA we no longer know was told to
+ * read, if it is one of ours. */
+static void
+acme_eab_forget(void *parent, const char *helper)
+{
+	char **argv, *dir;
+	const char *file;
+	size_t length;
+	int i;
+
+	dir = acme_eab_dir(parent);
+	argv = cm_subproc_parse_args(parent, helper, NULL);
+	if ((dir == NULL) || (argv == NULL)) {
+		return;
+	}
+	length = strlen(dir);
+	for (i = 1; argv[i] != NULL; i++) {
+		file = NULL;
+		if (((strcmp(argv[i], "-K") == 0) ||
+		     (strcmp(argv[i], "--eab-key-file") == 0)) &&
+		    (argv[i + 1] != NULL)) {
+			file = argv[++i];
+		} else
+		if (strncmp(argv[i], "--eab-key-file=", 15) == 0) {
+			file = argv[i] + 15;
+		}
+		if ((file != NULL) &&
+		    (strncmp(file, dir, length) == 0) &&
+		    (file[length] == '/') &&
+		    (strchr(file + length + 1, '/') == NULL) &&
+		    (unlink(file) != 0) && (errno != ENOENT)) {
+			cm_log(1, "Error removing \"%s\": %s.\n", file,
+			       strerror(errno));
+		}
+	}
+}
+
+/* Add a CA whose helper is the given command, telling an ACME helper to read
+ * the key of its external account binding, when one is given, from a file
+ * of ours. */
 static DBusHandlerResult
-base_add_known_ca(DBusConnection *conn, DBusMessage *msg,
-		  struct cm_client_info *ci, struct cm_context *ctx)
+add_known_ca(DBusConnection *conn, DBusMessage *msg, struct cm_context *ctx,
+	     void *parent, const char *ca_name, const char *ca_command,
+	     char **ca_issuer_names, const char *eab_key)
 {
 	DBusMessage *rep;
-	void *parent;
-	char *ca_name, *ca_command, **ca_issuer_names, *path;
+	char *path, *eab_file = NULL, **argv;
+	const char *base;
 	struct cm_store_ca *ca, *new_ca;
 	int i, n_cas;
-
-	parent = talloc_new(NULL);
-	if (cm_tdbusm_get_ssoas(msg, parent,
-				&ca_name, &ca_command,
-				&ca_issuer_names) != 0) {
-		cm_log(1, "Error parsing arguments.\n");
-		talloc_free(parent);
-		return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-	}
 
 	n_cas = cm_get_n_cas(ctx);
 	for (i = 0; i < n_cas; i++) {
@@ -350,9 +471,36 @@ base_add_known_ca(DBusConnection *conn, DBusMessage *msg,
 								  NULL);
 		}
 	}
+	if (eab_key != NULL) {
+		/* Only the ACME helper reads one. */
+		argv = cm_subproc_parse_args(parent, ca_command, NULL);
+		base = ((argv != NULL) && (argv[0] != NULL)) ?
+		       strrchr(argv[0], '/') : NULL;
+		base = (base != NULL) ? base + 1 :
+		       (((argv != NULL) && (argv[0] != NULL)) ? argv[0] : "");
+		if ((strcmp(base, "acme-submit") != 0) ||
+		    !acme_eab_key_valid(eab_key)) {
+			cm_log(1, "An external account key can only be given "
+			       "to the ACME helper, as base64 text.\n");
+			talloc_free(parent);
+			return send_internal_base_bad_arg_error(conn, msg,
+								_("An external account key can only be given to the ACME helper, as base64 text."),
+								ca_command, NULL);
+		}
+		eab_file = acme_eab_store(parent, eab_key);
+		if (eab_file == NULL) {
+			talloc_free(parent);
+			return send_internal_base_error(conn, msg);
+		}
+		ca_command = talloc_asprintf(parent, "%s -K %s", ca_command,
+					     shell_escape(parent, eab_file));
+	}
 	/* Okay, we can go ahead and add the CA. */
 	new_ca = cm_store_ca_new(parent);
 	if (new_ca == NULL) {
+		if (eab_file != NULL) {
+			unlink(eab_file);
+		}
 		talloc_free(parent);
 		return send_internal_base_error(conn, msg);
 	}
@@ -368,6 +516,9 @@ base_add_known_ca(DBusConnection *conn, DBusMessage *msg,
 	/* Hand it off to the main loop. */
 	if (cm_add_ca(ctx, new_ca) != 0) {
 		cm_log(1, "Error adding CA to main context.\n");
+		if (eab_file != NULL) {
+			unlink(eab_file);
+		}
 		rep = dbus_message_new_method_return(msg);
 		if (rep != NULL) {
 			cm_tdbusm_set_b(rep, FALSE);
@@ -392,6 +543,49 @@ base_add_known_ca(DBusConnection *conn, DBusMessage *msg,
 			return send_internal_base_error(conn, msg);
 		}
 	}
+}
+
+/* org.fedorahosted.certmonger.add_known_ca */
+static DBusHandlerResult
+base_add_known_ca(DBusConnection *conn, DBusMessage *msg,
+		  struct cm_client_info *ci, struct cm_context *ctx)
+{
+	void *parent;
+	char *ca_name, *ca_command, **ca_issuer_names;
+
+	parent = talloc_new(NULL);
+	if (cm_tdbusm_get_ssoas(msg, parent,
+				&ca_name, &ca_command,
+				&ca_issuer_names) != 0) {
+		cm_log(1, "Error parsing arguments.\n");
+		talloc_free(parent);
+		return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+	}
+	return add_known_ca(conn, msg, ctx, parent, ca_name, ca_command,
+			    ca_issuer_names, NULL);
+}
+
+/* org.fedorahosted.certmonger.add_known_ca_with_eab_key */
+static DBusHandlerResult
+base_add_known_ca_with_eab_key(DBusConnection *conn, DBusMessage *msg,
+			       struct cm_client_info *ci,
+			       struct cm_context *ctx)
+{
+	void *parent;
+	char *ca_name, *ca_command, **ca_issuer_names, *eab_key;
+
+	parent = talloc_new(NULL);
+	if (cm_tdbusm_get_ss_as_s(msg, parent,
+				  &ca_name, &ca_command,
+				  &ca_issuer_names, &eab_key) != 0) {
+		cm_log(1, "Error parsing arguments.\n");
+		talloc_free(parent);
+		return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+	}
+	return add_known_ca(conn, msg, ctx, parent, ca_name, ca_command,
+			    ca_issuer_names,
+			    ((eab_key != NULL) && (strlen(eab_key) > 0)) ?
+			    eab_key : NULL);
 }
 
 #ifdef CM_ENABLE_ML_DSA
@@ -2072,7 +2266,7 @@ base_remove_known_ca(DBusConnection *conn, DBusMessage *msg,
 	struct cm_store_ca *ca;
 	int ret;
 	void *parent;
-	char *path;
+	char *path, *helper;
 
 	rep = dbus_message_new_method_return(msg);
 	if (rep == NULL) {
@@ -2082,14 +2276,20 @@ base_remove_known_ca(DBusConnection *conn, DBusMessage *msg,
 	parent = talloc_new(NULL);
 	if (cm_tdbusm_get_p(msg, parent, &path) == 0) {
 		ca = get_ca_for_path(ctx, path);
-		talloc_free(parent);
 		if (ca != NULL) {
+			helper = talloc_strdup(parent,
+					       ca->cm_ca_external_helper);
 			ret = cm_remove_ca(ctx, ca->cm_nickname);
+			if ((ret == 0) && (helper != NULL)) {
+				acme_eab_forget(parent, helper);
+			}
+			talloc_free(parent);
 			cm_tdbusm_set_b(rep, (ret == 0));
 			dbus_connection_send(conn, rep, NULL);
 			dbus_message_unref(rep);
 			return DBUS_HANDLER_RESULT_HANDLED;
 		} else {
+			talloc_free(parent);
 			dbus_message_unref(rep);
 			return send_internal_base_no_such_entry_error(conn,
 								      msg);
@@ -7987,6 +8187,30 @@ cm_tdbush_iface_base(void)
 										     NULL))))),
 								     NULL),
 				     make_interface_item(cm_tdbush_interface_method,
+							 make_method("add_known_ca_with_eab_key",
+								     base_add_known_ca_with_eab_key,
+								     make_method_arg("nickname",
+										     DBUS_TYPE_STRING_AS_STRING,
+										     cm_tdbush_method_arg_in,
+								     make_method_arg("command",
+										     DBUS_TYPE_STRING_AS_STRING,
+										     cm_tdbush_method_arg_in,
+								     make_method_arg("known_names",
+										     DBUS_TYPE_ARRAY_AS_STRING
+										     DBUS_TYPE_STRING_AS_STRING,
+										     cm_tdbush_method_arg_in,
+								     make_method_arg("eab_key",
+										     DBUS_TYPE_STRING_AS_STRING,
+										     cm_tdbush_method_arg_in,
+								     make_method_arg("status",
+										     DBUS_TYPE_BOOLEAN_AS_STRING,
+										     cm_tdbush_method_arg_out,
+								     make_method_arg("name",
+										     DBUS_TYPE_OBJECT_PATH_AS_STRING,
+										     cm_tdbush_method_arg_out,
+										     NULL)))))),
+								     NULL),
+				     make_interface_item(cm_tdbush_interface_method,
 							 make_method("add_request",
 								     base_add_request,
 								     make_method_arg("template",
@@ -8093,7 +8317,7 @@ cm_tdbush_iface_base(void)
 										     cm_tdbush_method_arg_out,
 										     NULL)),
 								     NULL),
-				     NULL))))))))))));
+				     NULL)))))))))))));
 	}
 	return ret;
 }

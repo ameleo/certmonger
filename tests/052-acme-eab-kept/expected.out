@@ -1,0 +1,14 @@
+[getcert add-acme-ca, the key in a file removed afterwards]
+New CA "EAB" added.
+files showing the key: 0
+helper-location: acme-submit -u https://localhost/directory -k kid1 -K $tmpdir/state/eab/key-XXXXXX
+stored: 600, 1 key
+[getcert request]
+	status: MONITORING
+1
+[getcert resubmit]
+	status: MONITORING
+[getcert remove-ca: the key goes with it]
+CA "EAB" removed.
+0
+OK

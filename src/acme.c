@@ -115,6 +115,65 @@ read_secret(void *parent, const char *filename)
 	return ret;
 }
 
+/* The external account binding: its key is read only when it is used, to
+ * open an account or to have an attestation key certified, so that a
+ * renewal through an account we have needs neither the key nor its file. */
+struct acme_eab {
+	void *ctx;
+	const char *kid;
+	const char *secret;	/* given with the request */
+	const char *file;	/* or kept in this file */
+	unsigned char *key;
+	size_t length;
+	int tried;
+};
+
+static int
+eab_given(const struct acme_eab *eab)
+{
+	return (eab->kid != NULL) &&
+	       ((eab->secret != NULL) || (eab->file != NULL));
+}
+
+static int
+eab_key(void *data, const unsigned char **key, size_t *length)
+{
+	struct acme_eab *eab = data;
+	char *secret;
+
+	if (!eab->tried) {
+		eab->tried = 1;
+		if (eab->secret != NULL) {
+			secret = talloc_strdup(eab->ctx, eab->secret);
+		} else
+		if (eab->file != NULL) {
+			secret = read_secret(eab->ctx, eab->file);
+			if (secret == NULL) {
+				printf(_("Error reading the external account "
+					 "key from \"%s\".\n"), eab->file);
+			}
+		} else {
+			secret = NULL;
+		}
+		if (secret != NULL) {
+			eab->key = cm_acme_b64_decode(eab->ctx, secret,
+						      &eab->length);
+			if ((eab->key == NULL) || (eab->length == 0)) {
+				printf(_("The external account key is not "
+					 "base64url-encoded.\n"));
+				eab->key = NULL;
+			}
+			memset(secret, '\0', strlen(secret));
+		}
+	}
+	if ((eab->kid == NULL) || (eab->key == NULL)) {
+		return -1;
+	}
+	*key = eab->key;
+	*length = eab->length;
+	return 0;
+}
+
 /* Values which the server gives us and which we put into JSON documents
  * which we build by hand. */
 static int
@@ -526,13 +585,14 @@ come_back_later(const struct cm_acme_response *response,
 /* Use the account we have, or create one, binding it to the account which
  * the CA gave us if we have its credentials. */
 static int
-setup_account(struct acme_client *client, const char *eab_kid,
-	      const unsigned char *eab_key, size_t eab_key_length)
+setup_account(struct acme_client *client, struct acme_eab *eab)
 {
+	const unsigned char *key;
+	size_t key_length;
 	struct cm_acme_response response;
 	json_t *meta, *account;
 	const char *error, *url, *status;
-	char *path, *payload, *eab, *kid;
+	char *path, *payload, *binding, *kid;
 	int ret;
 
 	path = state_file(client, ACME_ACCOUNT_KEY_FILE);
@@ -564,21 +624,24 @@ setup_account(struct acme_client *client, const char *eab_kid,
 	/* A new account.  If the key is already registered, the server
 	 * tells us so, and where the account is (RFC 8555 7.3.1). */
 	url = directory_url(client, "newAccount");
-	if ((eab_kid != NULL) && (eab_key != NULL)) {
-		if (!json_safe(eab_kid)) {
+	if (eab_given(eab)) {
+		if (!json_safe(eab->kid)) {
 			printf(_("Invalid external account key ID.\n"));
 			return CM_SUBMIT_STATUS_UNCONFIGURED;
 		}
-		eab = cm_acme_eab(client->ctx, eab_kid, eab_key,
-				  eab_key_length, client->jwk, url);
-		if (eab == NULL) {
+		if (eab_key(eab, &key, &key_length) != 0) {
+			return CM_SUBMIT_STATUS_UNCONFIGURED;
+		}
+		binding = cm_acme_eab(client->ctx, eab->kid, key, key_length,
+				      client->jwk, url);
+		if (binding == NULL) {
 			printf(_("Error binding the external account.\n"));
 			return CM_SUBMIT_STATUS_UNCONFIGURED;
 		}
 		payload = talloc_asprintf(client->ctx,
 					  "{\"termsOfServiceAgreed\":true,"
 					  "\"externalAccountBinding\":%s}",
-					  eab);
+					  binding);
 	} else {
 		meta = json_object_get(client->directory, "meta");
 		if (json_is_true(json_object_get(meta,
@@ -766,9 +829,7 @@ attestation_service_url(void *parent, const char *directory)
 struct acme_attestation {
 	enum attest_format format;
 	const char *tcti;
-	const char *eab_kid;
-	const unsigned char *eab_key;
-	size_t eab_key_length;
+	struct acme_eab *eab;
 	const char *key_storage_type, *key_location, *key_token, *key_pin;
 	const char *csr;
 };
@@ -799,9 +860,9 @@ answer_device_attest(struct acme_client *client,
 	params.tcti = attestation->tcti;
 	params.service_url = attestation_service_url(client->ctx,
 						     client->directory_url);
-	params.eab_kid = attestation->eab_kid;
-	params.eab_key = attestation->eab_key;
-	params.eab_key_length = attestation->eab_key_length;
+	params.eab_kid = attestation->eab->kid;
+	params.eab_key = eab_key;
+	params.eab_data = attestation->eab;
 	params.key_storage_type = attestation->key_storage_type;
 	params.key_location = attestation->key_location;
 	params.key_token = attestation->key_token;
@@ -1151,9 +1212,8 @@ main(int argc, const char **argv)
 	struct acme_client client;
 	struct acme_attestation attestation;
 	struct cm_acme_response response;
-	unsigned char *eab_key = NULL;
-	size_t eab_key_length = 0;
-	char *eab_secret = NULL, *key_pin = NULL, *csr_der_b64 = NULL;
+	struct acme_eab eab;
+	char *key_pin = NULL, *csr_der_b64 = NULL;
 	char *payload, *order_url, *path;
 	json_t *identifiers, *order;
 	X509_REQ *req = NULL;
@@ -1228,6 +1288,8 @@ main(int argc, const char **argv)
 	ctx = talloc_new(NULL);
 	memset(&client, 0, sizeof(client));
 	memset(&attestation, 0, sizeof(attestation));
+	memset(&eab, 0, sizeof(eab));
+	eab.ctx = ctx;
 	client.ctx = ctx;
 	client.verbose = verbose;
 	client.cainfo = cainfo;
@@ -1272,29 +1334,17 @@ main(int argc, const char **argv)
 	 * in the CA configuration. */
 	p = getenv(CM_SUBMIT_CHALLENGE_PASSWORD_ENV);
 	if ((p != NULL) && (strchr(p, ':') != NULL)) {
-		eab_kid = talloc_strndup(ctx, p, strchr(p, ':') - p);
-		eab_secret = talloc_strdup(ctx, strchr(p, ':') + 1);
-	} else
-	if (eab_key_file != NULL) {
-		eab_secret = read_secret(ctx, eab_key_file);
-		if (eab_secret == NULL) {
-			printf(_("Error reading the external account key "
-				 "from \"%s\".\n"), eab_key_file);
-			goto done;
-		}
+		eab.kid = talloc_strndup(ctx, p, strchr(p, ':') - p);
+		eab.secret = talloc_strdup(ctx, strchr(p, ':') + 1);
+	} else {
+		eab.kid = eab_kid;
+		eab.file = eab_key_file;
 	}
-	if (eab_secret != NULL) {
-		if (eab_kid == NULL) {
-			printf(_("An external account key was given without "
-				 "its key ID.\n"));
-			goto done;
-		}
-		eab_key = cm_acme_b64_decode(ctx, eab_secret, &eab_key_length);
-		if ((eab_key == NULL) || (eab_key_length == 0)) {
-			printf(_("The external account key is not "
-				 "base64url-encoded.\n"));
-			goto done;
-		}
+	if ((eab.kid == NULL) &&
+	    ((eab.secret != NULL) || (eab.file != NULL))) {
+		printf(_("An external account key was given without "
+			 "its key ID.\n"));
+		goto done;
 	}
 
 	/* The key's PIN, if it's protected by one. */
@@ -1311,9 +1361,7 @@ main(int argc, const char **argv)
 		}
 	}
 	attestation.tcti = tcti;
-	attestation.eab_kid = eab_kid;
-	attestation.eab_key = eab_key;
-	attestation.eab_key_length = eab_key_length;
+	attestation.eab = &eab;
 	attestation.key_storage_type = getenv(CM_SUBMIT_KEY_STORAGE_TYPE_ENV);
 	attestation.key_location = getenv(CM_SUBMIT_KEY_STORAGE_LOCATION_ENV);
 	attestation.key_token = getenv(CM_SUBMIT_KEY_TOKEN_ENV);
@@ -1353,7 +1401,7 @@ main(int argc, const char **argv)
 	if (rval != 0) {
 		goto done;
 	}
-	rval = setup_account(&client, eab_kid, eab_key, eab_key_length);
+	rval = setup_account(&client, &eab);
 	if (rval != 0) {
 		goto done;
 	}
@@ -1399,12 +1447,11 @@ main(int argc, const char **argv)
 			 * and try again. */
 			json_t *problem = response_json(&response);
 			const char *type = json_str(problem, "type");
-			if ((type != NULL) && (eab_key != NULL) &&
+			if ((type != NULL) && eab_given(&eab) &&
 			    ((strcmp(type, ACME_ERROR_PREFIX "accountDoesNotExist") == 0) ||
 			     (strcmp(type, ACME_ERROR_PREFIX "unauthorized") == 0))) {
 				forget_account(&client);
-				rval = setup_account(&client, eab_kid, eab_key,
-						     eab_key_length);
+				rval = setup_account(&client, &eab);
 				if (rval == 0) {
 					rval = acme_post(&client,
 							 directory_url(&client, "newOrder"),
@@ -1441,11 +1488,8 @@ main(int argc, const char **argv)
 			     &attestation);
 
 done:
-	if (eab_secret != NULL) {
-		memset(eab_secret, '\0', strlen(eab_secret));
-	}
-	if (eab_key != NULL) {
-		memset(eab_key, '\0', eab_key_length);
+	if (eab.key != NULL) {
+		memset(eab.key, '\0', eab.length);
 	}
 	if (key_pin != NULL) {
 		memset(key_pin, '\0', strlen(key_pin));

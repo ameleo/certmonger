@@ -140,6 +140,13 @@ matches rsa.key out
 log | head -n 2
 grep -c $KEY err
 
+echo "[enroll, existing account: the external account key is not read]"
+rm -f eab.key
+acme CERTMONGER_OPERATION=SUBMIT CERTMONGER_CSR="`cat ec.key.csr`" \
+	"$ACME" -u $url -R ca/root.crt -k $KID -K "$tmpdir"/eab.key
+matches ec.key out
+log | head -n 2
+
 echo "[enroll, nonce refused once]"
 start_server --eab-kid $KID --eab-key $KEY --bad-nonce
 rm -fr "$tmpdir"/state
@@ -202,7 +209,9 @@ echo "[getcert add-acme-ca]"
 echo $KEY > "$tmpdir"/files/eab.key
 run "$builddir"/../src/getcert add-acme-ca -c ACME -u $url -R "$tmpdir"/ca/root.crt \
 	--eab-kid $KID --eab-key-file "$tmpdir"/files/eab.key
-sed -n -e 's,localhost:[0-9]*,localhost,' -e "s,$tmpdir,\$tmpdir,g" -e 's,^ca_external_helper=.*/acme-submit,ca_external_helper=acme-submit,p' "$tmpdir"/cas/*
+# The service keeps a copy of the key: the file is no longer needed.
+rm -f "$tmpdir"/files/eab.key
+sed -n -e 's,localhost:[0-9]*,localhost,' -e "s,$tmpdir,\$tmpdir,g" -e 's,key-[A-Za-z0-9]*$,key-XXXXXX,' -e 's,^ca_external_helper=.*/acme-submit,ca_external_helper=acme-submit,p' "$tmpdir"/cas/*
 # Use the helper we just built.
 sed -i -e "s,^ca_external_helper=[^ ]*acme-submit ,ca_external_helper=$ACME ," "$tmpdir"/cas/*
 

@@ -43,6 +43,11 @@ certificate is for the key
 GET /directory
 POST /new-account (eab)
 0
+[enroll, existing account: the external account key is not read]
+exit: 0
+certificate is for the key
+GET /directory
+POST /new-order
 [enroll, nonce refused once]
 exit: 0
 certificate is for the key
@@ -76,7 +81,7 @@ No challenge we can answer for device42 (offered: device-attest-01).
   identifiers: permanent-identifier:device42
 [getcert add-acme-ca]
 New CA "ACME" added.
-ca_external_helper=acme-submit -u https://localhost/directory -R $tmpdir/ca/root.crt -k kid1 -K $tmpdir/files/eab.key
+ca_external_helper=acme-submit -u https://localhost/directory -R $tmpdir/ca/root.crt -k kid1 -K $tmpdir/state/eab/key-XXXXXX
 [getcert request, EC P-256, files]
 	status: MONITORING
 certificate is for the key

@@ -5012,15 +5012,39 @@ add_est_ca(const char *argv0, int argc, const char **argv)
 	return 0;
 }
 
+/* The key of an external account binding, the first line of a file. */
+static char *
+read_eab_key(void *parent, const char *filename)
+{
+	char buf[4096], *ret;
+	ssize_t n;
+	int fd;
+
+	fd = open(filename, O_RDONLY);
+	if (fd == -1) {
+		return NULL;
+	}
+	n = read(fd, buf, sizeof(buf) - 1);
+	close(fd);
+	if (n < 0) {
+		return NULL;
+	}
+	buf[n] = '\0';
+	ret = talloc_strndup(parent, buf, strcspn(buf, "\r\n"));
+	memset(buf, '\0', sizeof(buf));
+	return ret;
+}
+
 static int
 add_acme_ca(const char *argv0, int argc, const char **argv)
 {
 	enum cm_tdbus_type bus = CM_DBUS_DEFAULT_BUS;
 	char *caname = NULL, *url = NULL, *path = NULL, *root = NULL;
 	char *eab_kid = NULL, *eab_key_file = NULL, *attest = NULL;
+	char *eab_key = NULL;
 	char *permanent_identifier = NULL;
 	char *nickname, *command;
-	int c, verbose = 0;
+	int c, i, verbose = 0;
 	dbus_bool_t b;
 	static DBusMessage *req, *rep;
 	const char *poptarg;
@@ -5102,12 +5126,19 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		return 1;
 	}
 	if (eab_key_file != NULL) {
-		if (access(eab_key_file, R_OK) != 0) {
+		/* The service keeps a copy of the key, so that it does not
+		 * depend on where the file is and who may read it, and the
+		 * file can be removed once the CA is added. */
+		eab_key = read_eab_key(globals.tctx, eab_key_file);
+		if (eab_key == NULL) {
 			printf(_("Can't read \"%s\".\n"), eab_key_file);
 			return 1;
 		}
-		eab_key_file = ensure_path_is_absolute(globals.tctx,
-						       eab_key_file);
+		if (strlen(eab_key) == 0) {
+			printf(_("No external account key in \"%s\".\n"),
+			       eab_key_file);
+			return 1;
+		}
 	}
 	if ((attest != NULL) && (strcasecmp(attest, "tpm") != 0)) {
 		printf(_("Unknown attestation format \"%s\".\n"), attest);
@@ -5133,11 +5164,6 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 						 shell_escape(globals.tctx,
 							      eab_kid));
 	}
-	if (eab_key_file != NULL) {
-		command = talloc_asprintf_append(command, " -K %s",
-						 shell_escape(globals.tctx,
-							      eab_key_file));
-	}
 	if (attest != NULL) {
 		command = talloc_asprintf_append(command, " -a %s",
 						 shell_escape(globals.tctx,
@@ -5156,9 +5182,17 @@ add_acme_ca(const char *argv0, int argc, const char **argv)
 		exit(1);
 	}
 	prep_bus(bus, "add-acme-ca", verbose, argc, argv);
-	req = prep_req(bus, CM_DBUS_BASE_PATH, CM_DBUS_BASE_INTERFACE,
-		       "add_known_ca");
-	if (cm_tdbusm_set_ssoas(req, caname, command, NULL) != 0) {
+	if (eab_key != NULL) {
+		req = prep_req(bus, CM_DBUS_BASE_PATH, CM_DBUS_BASE_INTERFACE,
+			       "add_known_ca_with_eab_key");
+		i = cm_tdbusm_set_ss_as_s(req, caname, command, NULL, eab_key);
+		memset(eab_key, '\0', strlen(eab_key));
+	} else {
+		req = prep_req(bus, CM_DBUS_BASE_PATH, CM_DBUS_BASE_INTERFACE,
+			       "add_known_ca");
+		i = cm_tdbusm_set_ssoas(req, caname, command, NULL);
+	}
+	if (i != 0) {
 		printf(_("Error setting request arguments.\n"));
 		exit(1);
 	}

@@ -52,8 +52,12 @@ The key identifier for the external account binding.
 .TP
 \fB\-\-eab\-key\-file\fR=\fIFILE\fR
 The location of a file containing the base64url\-encoded MAC key for the
-external account binding.  The file is read by the helper each time it is
-needed, and should only be readable by the user which runs \fIcertmonger\fR.
+external account binding.  \fIgetcert\fR reads the file and hands the key to
+\fIcertmonger\fR, which keeps a copy of its own, readable only by itself,
+for the helper to use when it opens an account or has an attestation key
+certified.  The file may be anywhere the user running \fIgetcert\fR can read
+it, and may be removed once the CA is added.  The copy is removed with the
+CA.
 .TP
 \fB\-\-attest\fR=\fIFORMAT\fR
 Answer \fIdevice\-attest\-01\fR challenges with an attestation of the given

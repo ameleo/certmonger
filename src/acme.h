@@ -87,8 +87,10 @@ struct cm_acme_tpm_params {
 	const char *tcti;		/* NULL for the default TCTI */
 	const char *service_url;	/* base of attest/v1/ak/{begin,finish} */
 	const char *eab_kid;
-	const unsigned char *eab_key;
-	size_t eab_key_length;
+	/* The key of the external account binding, asked for only when the
+	 * attestation key is to be certified. */
+	int (*eab_key)(void *data, const unsigned char **key, size_t *length);
+	void *eab_data;
 	/* The device key, as the daemon describes it. */
 	const char *key_storage_type;
 	const char *key_location;

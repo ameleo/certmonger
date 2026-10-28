@@ -939,9 +939,13 @@ certify_ak(struct tpm_state *state)
 	char *pem, *session_id;
 	long pem_length;
 	TSS2_RC rc;
+	const unsigned char *eab_key;
+	size_t eab_key_length;
 	int ret = CM_SUBMIT_STATUS_UNCONFIGURED;
 
-	if ((params->eab_kid == NULL) || (params->eab_key == NULL)) {
+	if ((params->eab_kid == NULL) || (params->eab_key == NULL) ||
+	    (params->eab_key(params->eab_data, &eab_key,
+			     &eab_key_length) != 0)) {
 		state->error = "certifying the attestation key needs the "
 			       "external account binding credentials";
 		return CM_SUBMIT_STATUS_UNCONFIGURED;
@@ -951,7 +955,7 @@ certify_ak(struct tpm_state *state)
 		state->error = "error encoding the attestation key";
 		return CM_SUBMIT_STATUS_UNCONFIGURED;
 	}
-	if (cm_acme_hmac_sha256(params->eab_key, params->eab_key_length,
+	if (cm_acme_hmac_sha256(eab_key, eab_key_length,
 				ak_buf, ak_length, mac) != 0) {
 		state->error = "error computing the proof of the external "
 			       "account binding";
