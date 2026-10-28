@@ -125,6 +125,14 @@ CA 'dogtag-ipa-renew-agent':
    <arg name="status" type="b" direction="out"/>
    <arg name="name" type="o" direction="out"/>
   </method>
+  <method name="add_known_ca_with_eab_key">
+   <arg name="nickname" type="s" direction="in"/>
+   <arg name="command" type="s" direction="in"/>
+   <arg name="known_names" type="as" direction="in"/>
+   <arg name="eab_key" type="s" direction="in"/>
+   <arg name="status" type="b" direction="out"/>
+   <arg name="name" type="o" direction="out"/>
+  </method>
   <method name="add_request">
    <arg name="template" type="a{sv}" direction="in"/>
    <arg name="status" type="b" direction="out"/>
@@ -167,6 +175,9 @@ CA 'dogtag-ipa-renew-agent':
 </node>
 
 [ /org/fedorahosted/certmonger : org.fedorahosted.certmonger.add_known_ca ]
+OK
+
+[ /org/fedorahosted/certmonger : org.fedorahosted.certmonger.add_known_ca_with_eab_key ]
 OK
 
 [ /org/fedorahosted/certmonger : org.fedorahosted.certmonger.add_request ]

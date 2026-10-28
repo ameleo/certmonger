@@ -357,6 +357,30 @@ acme_eab_key_valid(const char *key)
 	return 1;
 }
 
+/* Create a directory and those above it which are missing, for us only:
+ * the helper's state directory may not exist yet. */
+static int
+acme_eab_mkdirs(void *parent, const char *dir)
+{
+	char *path, *p;
+
+	path = talloc_strdup(parent, dir);
+	if (path == NULL) {
+		return -1;
+	}
+	for (p = strchr(path + 1, '/'); p != NULL; p = strchr(p + 1, '/')) {
+		*p = '\0';
+		if ((mkdir(path, S_IRWXU) != 0) && (errno != EEXIST)) {
+			return -1;
+		}
+		*p = '/';
+	}
+	if ((mkdir(path, S_IRWXU) != 0) && (errno != EEXIST)) {
+		return -1;
+	}
+	return 0;
+}
+
 /* Save the key in a file of its own, readable by us only, and return the
  * file's name. */
 static char *
@@ -373,8 +397,7 @@ acme_eab_store(void *parent, const char *key)
 	if ((acme == NULL) || (dir == NULL)) {
 		return NULL;
 	}
-	if (((mkdir(acme, S_IRWXU) != 0) && (errno != EEXIST)) ||
-	    ((mkdir(dir, S_IRWXU) != 0) && (errno != EEXIST))) {
+	if (acme_eab_mkdirs(parent, dir) != 0) {
 		cm_log(1, "Error creating \"%s\": %s.\n", dir,
 		       strerror(errno));
 		return NULL;

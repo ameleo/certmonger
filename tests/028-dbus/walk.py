@@ -56,6 +56,16 @@ def examine_method(objpath, interface, method, idata):
 			print("[ %s : %s.%s ]: remove_known_ca error\n" % (objpath, interface, method))
 			return False
 		print("[ %s : %s.%s ]\nOK\n" % (objpath, interface, method))
+	elif method == 'add_known_ca_with_eab_key':
+		(result, path) = i.add_known_ca_with_eab_key('Test ACME CA', '/usr/libexec/certmonger/acme-submit -u https://localhost/directory -k kid1', [], 'c2VjcmV0')
+		if not result:
+			print("[ %s : %s.%s ]: add_known_ca_with_eab_key error\n" % (objpath, interface, method))
+			return False
+		result = i.remove_known_ca(path)
+		if not result:
+			print("[ %s : %s.%s ]: remove_known_ca error\n" % (objpath, interface, method))
+			return False
+		print("[ %s : %s.%s ]\nOK\n" % (objpath, interface, method))
 	elif method == 'add_request' or method == 'remove_request':
 		tmpdir = os.getenv('TMPDIR')
 		if not tmpdir or tmpdir == '':
